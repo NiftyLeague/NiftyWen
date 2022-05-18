@@ -6,16 +6,33 @@ using TMPro;
 
 public class GameplayManager : MonoBehaviour
 {
+    public int score;
+    public float currentTimeScale = 1.0f;
+    [Space]
+    public TextMeshProUGUI scoreText;
     public TextMeshProUGUI wenMessageText;
     public TextMeshProUGUI soonMessageText;
+    public TextMeshProUGUI instructionMessageText;
+    [Space]
+    public SimpleAnim ballMachineAnim;
+    public Sprite[] ballMachineSpritesIdle;
+    public Sprite[] ballMachineSpritesFire;
+    [Space]
+    public ProjectileHitter projectileHitter;
+    public GameObject ballPrefab;
+    public Transform ballStartLocation;
 
     string[] wenMessages;
-    float nextBallTimer;
+    float nextBallTimer = 3;
+
+    private InputState input = new InputState();
 
     void Awake()
     {
+        UpdateScoreText();
         ResetWenMessageTexts();
         InitializeWenMessages();
+        StartCoroutine(InstructionMessageFade());
     }
 
     void Update()
@@ -27,7 +44,35 @@ public class GameplayManager : MonoBehaviour
             StartCoroutine(PlayWenMessages());
 
             nextBallTimer = 0;
-        }   
+        }
+
+        InputReader.GetInput(input);
+
+        if (input.PressedA)
+        {
+            projectileHitter.TurnOn();
+        }
+    }
+
+    public void ScorePoint()
+    {
+        score++;
+        currentTimeScale += 0.04f;
+        Time.timeScale = currentTimeScale;
+        UpdateScoreText();
+    }
+
+    void UpdateScoreText()
+    {
+        scoreText.text = score.ToString("0");
+    }
+
+    public void Lose()
+    {
+        score = 0;
+        currentTimeScale = 0;
+        Time.timeScale = currentTimeScale;
+        UpdateScoreText();
     }
 
     void InitializeWenMessages()
@@ -46,6 +91,23 @@ public class GameplayManager : MonoBehaviour
     string GetRandomWenMessage()
     {
         return wenMessages[Random.Range(0, wenMessages.Length-1)].ToString();
+    }
+
+    IEnumerator InstructionMessageFade()
+    {
+        yield return new WaitForSeconds(8);
+
+        int a = 255;
+        int b = 0;
+
+        Tween<float> alphaTween = new Tween<float>(a, b, 0.5f, TweenEaseType.CubicInOut);
+
+        while (!alphaTween.IsEnded())
+        {
+            yield return new WaitForEndOfFrame();
+            byte alphaTweenByte = (byte)alphaTween.Update(Time.deltaTime);
+            instructionMessageText.color = new Color32(0, 153, 219, alphaTweenByte);
+        }
     }
 
     IEnumerator PlayWenMessages()
@@ -79,6 +141,23 @@ public class GameplayManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1);
+
         ResetWenMessageTexts();
+
+        ballMachineAnim.Play(ballMachineSpritesFire, false);
+
+        yield return new WaitForSeconds(0.2f);
+
+        SpawnProjectile();
+
+        yield return new WaitForSeconds(0.3f);
+
+        ballMachineAnim.Play(ballMachineSpritesIdle, false);
+    }
+
+    void SpawnProjectile()
+    {
+        var newProjectile = Instantiate(ballPrefab, ballStartLocation);
+        newProjectile.transform.localPosition = new Vector3(0, 0, 0);
     }
 }
