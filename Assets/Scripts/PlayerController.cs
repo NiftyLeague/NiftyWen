@@ -5,13 +5,27 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public GameplayManager gameplayManager;
+    public AudioManager audioManager;
     public Rigidbody2D rigidBody;
-    public float speed;
-    private float moveInput;
+    public float jumpForce;
+    private InputState input = new InputState();
+    private bool isInTheAir;
 
-    void Update()
+    void FixedUpdate()
     {
-        
+        InputReader.GetInput(input);
+
+        if (input.aButton && transform.position.y < -7)
+        {
+            rigidBody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+            isInTheAir = true;
+        }
+
+        if (isInTheAir && Mathf.Abs(rigidBody.velocity.y) < 0.001f)
+        {
+            audioManager.PlaySound(AudioManager.SoundID.playerLand);
+            isInTheAir = false;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

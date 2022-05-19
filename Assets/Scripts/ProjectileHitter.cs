@@ -5,6 +5,7 @@ using UnityEngine;
 public class ProjectileHitter : MonoBehaviour
 {
     public GameplayManager gameplayManager;
+    public AudioManager audioManager;
     float turnOffTimer;
 
     void Update()
@@ -20,6 +21,7 @@ public class ProjectileHitter : MonoBehaviour
     public void TurnOn()
     {
         gameObject.SetActive(true);
+        audioManager.PlaySound(AudioManager.SoundID.batSwing);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -35,6 +37,7 @@ public class ProjectileHitter : MonoBehaviour
             else
             {
                 gameplayManager.ScorePoint();
+                audioManager.PlaySound(AudioManager.SoundID.projectileHit);
             }
         }
     }

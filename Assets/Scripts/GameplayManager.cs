@@ -174,6 +174,8 @@ public class GameplayManager : MonoBehaviour
 
     IEnumerator PlayGameOverScreen()
     {
+        audioManager.PlaySound(AudioManager.SoundID.lose);
+
         scoreText.text = "GAME OVER";
 
         yield return new WaitForSeconds(3);

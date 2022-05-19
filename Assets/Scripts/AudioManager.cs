@@ -63,5 +63,7 @@ public class AudioManager : MonoBehaviour
         projectileHit,
         gainPoint,
         lose,
+        batSwing,
+        playerLand,
     }
 }
