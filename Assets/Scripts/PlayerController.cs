@@ -7,12 +7,18 @@ public class PlayerController : MonoBehaviour
     public GameplayManager gameplayManager;
     public AudioManager audioManager;
     public Rigidbody2D rigidBody;
+    public ProjectileHitter projectileHitter;
     public float jumpForce;
     private InputState input = new InputState();
     private bool isInTheAir;
 
     void FixedUpdate()
     {
+        if (gameplayManager.hasGameEnded)
+        {
+            return;
+        }
+
         InputReader.GetInput(input);
 
         if (input.aButton && transform.position.y < -7)
@@ -25,6 +31,11 @@ public class PlayerController : MonoBehaviour
         {
             audioManager.PlaySound(AudioManager.SoundID.playerLand);
             isInTheAir = false;
+        }
+
+        if (input.PressedX)
+        {
+            projectileHitter.TurnOn();
         }
     }
 

@@ -65,5 +65,6 @@ public class AudioManager : MonoBehaviour
         lose,
         batSwing,
         playerLand,
+        menuOptionSelect,
     }
 }

@@ -11,14 +11,7 @@ public class DodgeChecker : MonoBehaviour
         if (collision.CompareTag("Projectile"))
         {
             Projectile hitProjectile = collision.GetComponent<Projectile>();
-            if (hitProjectile.isABomb)
-            {
-                gameplayManager.bombsDodged++;
-            }
-            else
-            {
-                gameplayManager.ballsDodged++;
-            }
+            gameplayManager.Dodge(hitProjectile.isABomb);
         }
     }
 }

@@ -6,6 +6,7 @@ using TMPro;
 
 public class GameplayManager : MonoBehaviour
 {
+    public MenuManager menuManager;
     public AudioManager audioManager;
     [Space]
     public int score;
@@ -32,15 +33,15 @@ public class GameplayManager : MonoBehaviour
     public Sprite[] ballMachineSpritesIdle;
     public Sprite[] ballMachineSpritesFire;
     [Space]
-    public ProjectileHitter projectileHitter;
     public GameObject ballPrefab;
     public GameObject bombPrefab;
     public Transform ballStartLocation;
 
     string[] wenMessages;
-    float nextBallTimer = 3;
+    float nextBallTimer;
+    [HideInInspector] public bool nextBallReadyToLaunch;
     bool hasLaunchedABomb;
-    bool hasGameEnded;
+    public bool hasGameEnded;
     int bombsFiredInARow;
 
     private InputState input = new InputState();
@@ -51,6 +52,7 @@ public class GameplayManager : MonoBehaviour
         ResetEverythingForANewGame();
         ResetWenMessageTexts();
         InitializeWenMessages();
+        menuManager.menuPanel.SetActive(false);
         StartCoroutine(InstructionMessageFade());
     }
 
@@ -63,18 +65,11 @@ public class GameplayManager : MonoBehaviour
 
         nextBallTimer += Time.deltaTime;
 
-        if (nextBallTimer >= 5)
+        if (nextBallTimer >= 2 && nextBallReadyToLaunch)
         {
             StartCoroutine(PlayWenMessages());
-
+            nextBallReadyToLaunch = false;
             nextBallTimer = 0;
-        }
-
-        InputReader.GetInput(input);
-
-        if (input.PressedX)
-        {
-            projectileHitter.TurnOn();
         }
     }
 
@@ -90,11 +85,11 @@ public class GameplayManager : MonoBehaviour
 
     public void ScorePoint()
     {
+        nextBallReadyToLaunch = true;
         cameraShake.Shake(0.2f, 10);
         score++;
         StartCoroutine(AnimateScoreText());
-        currentTimeScale += 0.04f;
-        Time.timeScale = currentTimeScale;
+        ChangeTimeScale();
         UpdateScoreText();
     }
 
@@ -111,12 +106,35 @@ public class GameplayManager : MonoBehaviour
         {
             highScore = score;
         }
-        currentTimeScale = 1.0f;
-        Time.timeScale = currentTimeScale;
+        ChangeTimeScale(true);
         StartCoroutine(PlayGameOverScreen());
     }
 
-    void ResetEverythingForANewGame()
+    public void Dodge(bool isABomb)
+    {
+        if (isABomb)
+        {
+            bombsDodged++;
+        }
+        else
+        {
+            ballsDodged++;
+        }
+        nextBallReadyToLaunch = true;
+        ChangeTimeScale();
+    }
+
+    public void ChangeTimeScale(bool reset = false)
+    {
+        currentTimeScale += 0.04f;
+        if (reset)
+        {
+            currentTimeScale = 1;
+        }
+        Time.timeScale = currentTimeScale;
+    }
+
+    public void ResetEverythingForANewGame()
     {
         score = 0;
         ballsTotal = 0;
@@ -133,6 +151,7 @@ public class GameplayManager : MonoBehaviour
         bombsFiredInARow = 0;
         hasGameEnded = false;
         hasLaunchedABomb = false;
+        nextBallReadyToLaunch = true;
 
         UpdateScoreText();
     }
@@ -204,9 +223,7 @@ public class GameplayManager : MonoBehaviour
         gameOverLeaderboardPositionsText.gameObject.SetActive(true);
         gameOverLeaderboardScoresText.gameObject.SetActive(true);
 
-        yield return new WaitForSeconds(3);
-
-        ResetEverythingForANewGame();
+        menuManager.TurnOnMenu();
     }
 
     IEnumerator PlayWenMessages()
@@ -241,7 +258,9 @@ public class GameplayManager : MonoBehaviour
             soonMessageText.transform.localScale = new Vector3(scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime));
         }
 
-        yield return new WaitForSeconds(1);
+        float randomTime = Random.Range(0.5f, 3.0f);
+
+        yield return new WaitForSeconds(randomTime);
 
         ResetWenMessageTexts();
 
