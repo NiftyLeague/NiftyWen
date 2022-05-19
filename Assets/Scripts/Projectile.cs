@@ -8,7 +8,7 @@ public class Projectile : MonoBehaviour
     public Rigidbody2D rigidBody;
     public float moveSpeed;
     float arc = 20;
-    bool gotHit;
+    public bool gotHit;
 
     private void Start()
     {
@@ -33,7 +33,7 @@ public class Projectile : MonoBehaviour
     {
         if (isABomb)
         {
-
+            Destroy(gameObject);
         }
         else
         {

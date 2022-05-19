@@ -6,13 +6,27 @@ using TMPro;
 
 public class GameplayManager : MonoBehaviour
 {
+    public AudioManager audioManager;
+    [Space]
     public int score;
+    public int highScore;
+    public float timePlayed;
+    public int ballsTotal;
+    public int ballsDodged;
+    public int bombsDodged;
+    [Space]
     public float currentTimeScale = 1.0f;
+    public CameraShake cameraShake;
     [Space]
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI wenMessageText;
     public TextMeshProUGUI soonMessageText;
     public TextMeshProUGUI instructionMessageText;
+    public TextMeshProUGUI gameOverStatNamesText;
+    public TextMeshProUGUI gameOverStatNumbersText;
+    public TextMeshProUGUI gameOverLeaderboardPositionsText;
+    public TextMeshProUGUI gameOverLeaderboardNamesText;
+    public TextMeshProUGUI gameOverLeaderboardScoresText;
     [Space]
     public SimpleAnim ballMachineAnim;
     public Sprite[] ballMachineSpritesIdle;
@@ -20,16 +34,21 @@ public class GameplayManager : MonoBehaviour
     [Space]
     public ProjectileHitter projectileHitter;
     public GameObject ballPrefab;
+    public GameObject bombPrefab;
     public Transform ballStartLocation;
 
     string[] wenMessages;
     float nextBallTimer = 3;
+    bool hasLaunchedABomb;
+    bool hasGameEnded;
+    int bombsFiredInARow;
 
     private InputState input = new InputState();
 
     void Awake()
     {
         UpdateScoreText();
+        ResetEverythingForANewGame();
         ResetWenMessageTexts();
         InitializeWenMessages();
         StartCoroutine(InstructionMessageFade());
@@ -37,6 +56,11 @@ public class GameplayManager : MonoBehaviour
 
     void Update()
     {
+        if (hasGameEnded)
+        {
+            return;
+        }
+
         nextBallTimer += Time.deltaTime;
 
         if (nextBallTimer >= 5)
@@ -48,15 +72,27 @@ public class GameplayManager : MonoBehaviour
 
         InputReader.GetInput(input);
 
-        if (input.PressedA)
+        if (input.PressedX)
         {
             projectileHitter.TurnOn();
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (hasGameEnded)
+        {
+            return;
+        }
+
+        timePlayed += Time.deltaTime;
+    }
+
     public void ScorePoint()
     {
+        cameraShake.Shake(0.2f, 10);
         score++;
+        StartCoroutine(AnimateScoreText());
         currentTimeScale += 0.04f;
         Time.timeScale = currentTimeScale;
         UpdateScoreText();
@@ -69,9 +105,35 @@ public class GameplayManager : MonoBehaviour
 
     public void Lose()
     {
-        score = 0;
-        currentTimeScale = 0;
+        hasGameEnded = true;
+        cameraShake.Shake(0.5f, 5);
+        if (score > highScore)
+        {
+            highScore = score;
+        }
+        currentTimeScale = 1.0f;
         Time.timeScale = currentTimeScale;
+        StartCoroutine(PlayGameOverScreen());
+    }
+
+    void ResetEverythingForANewGame()
+    {
+        score = 0;
+        ballsTotal = 0;
+        ballsDodged = 0;
+        timePlayed = 0;
+        bombsDodged = 0;
+
+        gameOverStatNamesText.text = "";
+        gameOverStatNumbersText.text = "";
+        gameOverLeaderboardNamesText.gameObject.SetActive(false);
+        gameOverLeaderboardPositionsText.gameObject.SetActive(false);
+        gameOverLeaderboardScoresText.gameObject.SetActive(false);
+
+        bombsFiredInARow = 0;
+        hasGameEnded = false;
+        hasLaunchedABomb = false;
+
         UpdateScoreText();
     }
 
@@ -110,9 +172,45 @@ public class GameplayManager : MonoBehaviour
         }
     }
 
+    IEnumerator PlayGameOverScreen()
+    {
+        scoreText.text = "GAME OVER";
+
+        yield return new WaitForSeconds(3);
+
+        scoreText.text = "";
+
+        gameOverStatNamesText.text = "SCORE\nHIGH SCORE\nTIME PLAYED\nTOTAL BALLS\nBALLS DODGED";
+
+        float secondsPlayed = timePlayed % 60;
+        float minutesPlayed = timePlayed / 60;
+        float hoursPlayed = timePlayed / 60 / 60;
+        gameOverStatNumbersText.text = score.ToString("0") + "\n" + highScore.ToString("0") + "\n" + hoursPlayed.ToString("0") + ":" + minutesPlayed.ToString("00") + ":" + secondsPlayed.ToString("00") + "\n" + ballsTotal.ToString("0") + "\n" + ballsDodged.ToString("0");
+
+        if (hasLaunchedABomb)
+        {
+            gameOverStatNamesText.text += "\nBOMBS DODGED";
+            gameOverStatNumbersText.text += "\n" + bombsDodged.ToString("0");
+        }
+
+        yield return new WaitForSeconds(5);
+
+        gameOverStatNamesText.text = "";
+        gameOverStatNumbersText.text = "";
+
+        gameOverLeaderboardNamesText.gameObject.SetActive(true);
+        gameOverLeaderboardPositionsText.gameObject.SetActive(true);
+        gameOverLeaderboardScoresText.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(3);
+
+        ResetEverythingForANewGame();
+    }
+
     IEnumerator PlayWenMessages()
     {
         ResetWenMessageTexts();
+        audioManager.PlaySound(AudioManager.SoundID.messagePopup);
         wenMessageText.text = GetRandomWenMessage();
 
         float a = 0;
@@ -128,6 +226,7 @@ public class GameplayManager : MonoBehaviour
 
         yield return new WaitForSeconds(1);
         ResetWenMessageTexts();
+        audioManager.PlaySound(AudioManager.SoundID.messagePopup);
 
         a = 0;
         b = 0.1f;
@@ -155,9 +254,51 @@ public class GameplayManager : MonoBehaviour
         ballMachineAnim.Play(ballMachineSpritesIdle, false);
     }
 
+    IEnumerator AnimateScoreText()
+    {
+        float a = 0.09f;
+        float b = 0.1f;
+
+        Tween<float> scaleTween = new Tween<float>(a, b, 0.5f, TweenEaseType.CubicIn);
+
+        while (!scaleTween.IsEnded())
+        {
+            yield return new WaitForEndOfFrame();
+            scoreText.transform.localScale = new Vector3(scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime));
+        }
+
+        audioManager.PlaySound(AudioManager.SoundID.gainPoint);
+    }
+
     void SpawnProjectile()
     {
-        var newProjectile = Instantiate(ballPrefab, ballStartLocation);
+        GameObject chosenProjectile = ballPrefab;
+        if (score >= 10)
+        {
+            if (Random.Range(0, 100 + (int)(score / 2)) >= 50)
+            {
+                chosenProjectile = bombPrefab;
+                hasLaunchedABomb = true;
+                bombsFiredInARow++;
+
+                if (bombsFiredInARow >= 10)
+                {
+                    chosenProjectile = ballPrefab;
+                }
+            }
+            else
+            {
+                bombsFiredInARow = 0;
+            }
+        }
+
+        var newProjectile = Instantiate(chosenProjectile, ballStartLocation);
         newProjectile.transform.localPosition = new Vector3(0, 0, 0);
+        if (!newProjectile.GetComponent<Projectile>().isABomb)
+        {
+            ballsTotal++;
+        }
+
+        audioManager.PlaySound(AudioManager.SoundID.projectileShoot);
     }
 }
