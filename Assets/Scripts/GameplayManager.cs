@@ -65,7 +65,7 @@ public class GameplayManager : MonoBehaviour
 
         nextBallTimer += Time.deltaTime;
 
-        if (nextBallTimer >= 2 && nextBallReadyToLaunch)
+        if (nextBallTimer >= 4 && nextBallReadyToLaunch)
         {
             StartCoroutine(PlayWenMessages());
             nextBallReadyToLaunch = false;

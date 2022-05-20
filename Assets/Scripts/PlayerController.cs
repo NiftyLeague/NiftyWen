@@ -5,8 +5,12 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public GameplayManager gameplayManager;
+    public PlayerSpriteManager playerSpriteManager;
     public AudioManager audioManager;
+    [Space]
     public Rigidbody2D rigidBody;
+    public SpriteRenderer spriteRenderer;
+    public Sprite[] playerSprites;
     public ProjectileHitter projectileHitter;
     public float jumpForce;
     private InputState input = new InputState();
@@ -36,6 +40,12 @@ public class PlayerController : MonoBehaviour
         if (input.PressedX)
         {
             projectileHitter.TurnOn();
+        }
+
+        if (input.PressedY)
+        {
+            audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
+            playerSpriteManager.ChangeCharacter();
         }
     }
 
