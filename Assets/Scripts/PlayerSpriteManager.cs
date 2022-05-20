@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class PlayerSpriteManager : MonoBehaviour
 {
@@ -15,6 +16,26 @@ public class PlayerSpriteManager : MonoBehaviour
 
     private void Start()
     {
+        StartCoroutine(GetSpriteSheetsFromUrl());
+    }
+
+    private IEnumerator GetSpriteSheetsFromUrl()
+    {
+        UnityWebRequest uwr = UnityWebRequestTexture.GetTexture("https://nifty-league.s3.amazonaws.com/assets/sheets/92/1256.png");
+        yield return uwr.SendWebRequest();
+
+        if (uwr.isNetworkError)
+        {
+            Debug.Log("Error While Sending: " + uwr.error);
+        }
+        else
+        {
+            Debug.Log("GOT IT");
+            Texture2D spriteSheetTexture = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
+            Sprite spriteSheetSprite = Sprite.Create(spriteSheetTexture, new Rect(0, 0, spriteSheetTexture.width, spriteSheetTexture.height), new Vector2(0.5f,0.5f), 16);
+            importedCharacterSpriteSheets.Add(spriteSheetSprite);
+        }
+
         InitializeSpriteSheets();
     }
 
@@ -25,10 +46,13 @@ public class PlayerSpriteManager : MonoBehaviour
             return;
         }
 
-        //foreach (Sprite spriteSheet in importedCharacterSpriteSheets)
-        //{
-        //    allCharacterSpriteSheets.Add(spriteSheet);
-        //}
+        if (importedCharacterSpriteSheets.Count > 0)
+        {
+            foreach (Sprite spriteSheet in importedCharacterSpriteSheets)
+            {
+                allCharacterSpriteSheets.Add(spriteSheet);
+            }
+        }
 
         foreach (Sprite spriteSheet in demoCharacterSpriteSheets)
         {
