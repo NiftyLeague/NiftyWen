@@ -8,46 +8,25 @@ public class PlayerController : MonoBehaviour
     public PlayerSpriteManager playerSpriteManager;
     public AudioManager audioManager;
     [Space]
-    public Rigidbody2D rigidBody;
     public SpriteRenderer spriteRenderer;
     public Sprite[] playerSprites;
-    public ProjectileHitter projectileHitter;
-    public float jumpForce;
-    private InputState input = new InputState();
-    private bool isInTheAir;
+    //private InputState input = new InputState();
 
-    void FixedUpdate()
-    {
-        if (gameplayManager.hasGameEnded)
-        {
-            return;
-        }
+    //void FixedUpdate()
+    //{
+    //    if (gameplayManager.hasGameEnded)
+    //    {
+    //        return;
+    //    }
 
-        InputReader.GetInput(input);
+    //    InputReader.GetInput(input);
 
-        if (input.aButton && transform.position.y < -7)
-        {
-            rigidBody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
-            isInTheAir = true;
-        }
-
-        if (isInTheAir && Mathf.Abs(rigidBody.velocity.y) < 0.001f)
-        {
-            audioManager.PlaySound(AudioManager.SoundID.playerLand);
-            isInTheAir = false;
-        }
-
-        if (input.PressedX)
-        {
-            projectileHitter.TurnOn();
-        }
-
-        if (input.PressedY)
-        {
-            audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
-            playerSpriteManager.ChangeCharacter();
-        }
-    }
+    //    if (input.PressedY)
+    //    {
+    //        audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
+    //        playerSpriteManager.ChangeCharacter();
+    //    }
+    //}
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

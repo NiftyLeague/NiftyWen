@@ -29,6 +29,9 @@ public class GameplayManager : MonoBehaviour
     public TextMeshProUGUI gameOverLeaderboardNamesText;
     public TextMeshProUGUI gameOverLeaderboardScoresText;
     [Space]
+    public Transform playerTransform;
+    public Transform doublePointLineTransform;
+    [Space]
     public SimpleAnim ballMachineAnim;
     public Sprite[] ballMachineSpritesIdle;
     public Sprite[] ballMachineSpritesFire;
@@ -87,7 +90,16 @@ public class GameplayManager : MonoBehaviour
     {
         nextBallReadyToLaunch = true;
         cameraShake.Shake(0.2f, 10);
-        score++;
+        if (playerTransform.position.x >= doublePointLineTransform.position.x)
+        {
+            score += 2;
+            Debug.Log("DOUBLE SCORED");
+        }
+        else
+        {
+            score++;
+            Debug.Log("SINGLE SCORED");
+        }
         StartCoroutine(AnimateScoreText());
         ChangeTimeScale();
         UpdateScoreText();

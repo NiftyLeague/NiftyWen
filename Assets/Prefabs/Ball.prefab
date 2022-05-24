@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2101283796660733793}
   - component: {fileID: 2101283796660733792}
   - component: {fileID: 8825958817702963430}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Ball
   m_TagString: Projectile
   m_Icon: {fileID: 0}
@@ -124,6 +124,7 @@ MonoBehaviour:
   isABomb: 0
   rigidBody: {fileID: 2101283796660733792}
   moveSpeed: 20
+  gotHit: 0
 --- !u!50 &2101283796660733792
 Rigidbody2D:
   serializedVersion: 4

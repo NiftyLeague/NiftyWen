@@ -1,20 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ProjectileHitter : MonoBehaviour
 {
     public GameplayManager gameplayManager;
     public AudioManager audioManager;
-    float turnOffTimer;
+    public Collider2D hitCollider;
+    float hitterTimer;
 
     void Update()
     {
-        turnOffTimer += Time.deltaTime;
-        if (turnOffTimer >= 0.2f)
+        hitterTimer += Time.deltaTime;
+        if (hitterTimer >= 0.05f)
         {
-            turnOffTimer = 0;
-            gameObject.SetActive(false);
+            hitCollider.enabled = true;
+        }
+        if (hitterTimer >= 0.2f)
+        {
+            hitterTimer = 0;
+            TurnOff();
         }
     }
 
@@ -22,6 +25,12 @@ public class ProjectileHitter : MonoBehaviour
     {
         gameObject.SetActive(true);
         audioManager.PlaySound(AudioManager.SoundID.batSwing);
+    }
+
+    void TurnOff()
+    {
+        hitCollider.enabled = false;
+        gameObject.SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

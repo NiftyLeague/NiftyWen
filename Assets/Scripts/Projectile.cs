@@ -21,6 +21,7 @@ public class Projectile : MonoBehaviour
         {
             arc = Mathf.Lerp(arc, 0, 0.002f);
             rigidBody.velocity = new Vector2(moveSpeed * 2, arc);
+            Debug.Log(rigidBody.velocity);
         }
         else
         {
