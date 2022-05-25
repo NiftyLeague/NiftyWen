@@ -4,6 +4,7 @@ public class ProjectileHitter : MonoBehaviour
 {
     public GameplayManager gameplayManager;
     public AudioManager audioManager;
+    public Character playerCharacter;
     public Collider2D hitCollider;
     float hitterTimer;
 
@@ -38,7 +39,11 @@ public class ProjectileHitter : MonoBehaviour
         if (collision.CompareTag("Projectile"))
         {
             Projectile hitProjectile = collision.GetComponent<Projectile>();
-            hitProjectile.HitProjectile();
+            if (hitProjectile.gotHit)
+            {
+                return;
+            }
+            hitProjectile.HitProjectile(playerCharacter.attackChargeM);
             if (hitProjectile.isABomb)
             {
                 gameplayManager.Lose();

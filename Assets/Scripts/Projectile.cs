@@ -7,11 +7,12 @@ public class Projectile : MonoBehaviour
     public bool isABomb;
     public Rigidbody2D rigidBody;
     public float moveSpeed;
-    float arc = 20;
+    float arc = 30;
     public bool gotHit;
 
     private void Start()
     {
+        
         Destroy(gameObject, 10);
     }
 
@@ -21,7 +22,6 @@ public class Projectile : MonoBehaviour
         {
             arc = Mathf.Lerp(arc, 0, 0.002f);
             rigidBody.velocity = new Vector2(moveSpeed * 2, arc);
-            Debug.Log(rigidBody.velocity);
         }
         else
         {
@@ -30,7 +30,12 @@ public class Projectile : MonoBehaviour
         
     }
 
-    public void HitProjectile()
+    public void SetNewSpeed(float amount)
+    {
+        moveSpeed += amount;
+    }
+
+    public void HitProjectile(float chargePower)
     {
         if (isABomb)
         {
@@ -39,6 +44,7 @@ public class Projectile : MonoBehaviour
         else
         {
             gotHit = true;
+            moveSpeed *= (1 + chargePower);
         }
     }
 }

@@ -33,12 +33,14 @@ public class AudioManager : MonoBehaviour
         hasInitializedSoundDictionary = true;
     }
 
-    public void PlaySound(SoundID soundID)
+    public void PlaySound(SoundID soundID, float volume = 1f)
     {
-        AudioSource soundEffectSource = soundDictionary[soundID].audioSource;
+        List<AudioSource> audioSourcesInSound = new List<AudioSource>();
+        audioSourcesInSound = soundDictionary[soundID].audioSources;
+        AudioSource soundEffectSource = audioSourcesInSound[UnityEngine.Random.Range(0, audioSourcesInSound.Count)];
         AudioSource currentEffectSource = soundEffectAudioSources[lastAudioSourceUsed];
         currentEffectSource.clip = soundEffectSource.clip;
-        currentEffectSource.volume = soundEffectSource.volume;
+        currentEffectSource.volume = volume;
         currentEffectSource.Play();
 
         lastAudioSourceUsed++;
@@ -51,7 +53,7 @@ public class AudioManager : MonoBehaviour
     [Serializable]
     public class Sound
     {
-        public AudioSource audioSource;
+        public List<AudioSource> audioSources;
         public SoundID soundID;
     }
 
@@ -66,5 +68,9 @@ public class AudioManager : MonoBehaviour
         batSwing,
         playerLand,
         menuOptionSelect,
+        playerJump,
+        batCharge,
+        playerFootstep,
+        playerBatSwingVoice,
     }
 }

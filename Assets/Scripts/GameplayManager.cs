@@ -8,6 +8,7 @@ public class GameplayManager : MonoBehaviour
 {
     public MenuManager menuManager;
     public AudioManager audioManager;
+    public Character playerCharacter;
     [Space]
     public int score;
     public int highScore;
@@ -16,7 +17,7 @@ public class GameplayManager : MonoBehaviour
     public int ballsDodged;
     public int bombsDodged;
     [Space]
-    public float currentTimeScale = 1.0f;
+    public float currentSpeedIncrease;
     public CameraShake cameraShake;
     [Space]
     public TextMeshProUGUI scoreText;
@@ -93,15 +94,13 @@ public class GameplayManager : MonoBehaviour
         if (playerTransform.position.x >= doublePointLineTransform.position.x)
         {
             score += 2;
-            Debug.Log("DOUBLE SCORED");
         }
         else
         {
             score++;
-            Debug.Log("SINGLE SCORED");
         }
         StartCoroutine(AnimateScoreText());
-        ChangeTimeScale();
+        IncreaseSpeed();
         UpdateScoreText();
     }
 
@@ -118,7 +117,8 @@ public class GameplayManager : MonoBehaviour
         {
             highScore = score;
         }
-        ChangeTimeScale(true);
+        IncreaseSpeed(true);
+        playerCharacter.Lose();
         StartCoroutine(PlayGameOverScreen());
     }
 
@@ -133,17 +133,16 @@ public class GameplayManager : MonoBehaviour
             ballsDodged++;
         }
         nextBallReadyToLaunch = true;
-        ChangeTimeScale();
+        IncreaseSpeed();
     }
 
-    public void ChangeTimeScale(bool reset = false)
+    public void IncreaseSpeed(bool reset = false)
     {
-        currentTimeScale += 0.04f;
+        currentSpeedIncrease += 0.5f;
         if (reset)
         {
-            currentTimeScale = 1;
+            currentSpeedIncrease = 0;
         }
-        Time.timeScale = currentTimeScale;
     }
 
     public void ResetEverythingForANewGame()
@@ -164,6 +163,8 @@ public class GameplayManager : MonoBehaviour
         hasGameEnded = false;
         hasLaunchedABomb = false;
         nextBallReadyToLaunch = true;
+
+        playerCharacter.UnLose();
 
         UpdateScoreText();
     }
@@ -247,30 +248,30 @@ public class GameplayManager : MonoBehaviour
         float a = 0;
         float b = 0.1f;
 
-        Tween<float> scaleTween = new Tween<float>(a, b, 1f, TweenEaseType.CubicIn);
+        Tween<float> scaleTween = new Tween<float>(a, b, 0.2f, TweenEaseType.CubicIn);
 
         while (!scaleTween.IsEnded())
         {
             yield return new WaitForEndOfFrame();
-            wenMessageText.transform.localScale = new Vector3(scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime));
+            wenMessageText.transform.localScale = new Vector3(0.1f, scaleTween.Update(Time.deltaTime), 0.1f);
         }
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1.5f);
         ResetWenMessageTexts();
         audioManager.PlaySound(AudioManager.SoundID.messagePopup);
 
         a = 0;
         b = 0.1f;
 
-        scaleTween = new Tween<float>(a, b, 1f, TweenEaseType.CubicIn);
+        scaleTween = new Tween<float>(a, b, 0.2f, TweenEaseType.CubicIn);
 
         while (!scaleTween.IsEnded())
         {
             yield return new WaitForEndOfFrame();
-            soonMessageText.transform.localScale = new Vector3(scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime));
+            soonMessageText.transform.localScale = new Vector3(0.1f, scaleTween.Update(Time.deltaTime), 0.1f);
         }
 
-        float randomTime = Random.Range(0.5f, 3.0f);
+        float randomTime = Random.Range(0.5f, 2.0f);
 
         yield return new WaitForSeconds(randomTime);
 
@@ -327,7 +328,9 @@ public class GameplayManager : MonoBehaviour
 
         var newProjectile = Instantiate(chosenProjectile, ballStartLocation);
         newProjectile.transform.localPosition = new Vector3(0, 0, 0);
-        if (!newProjectile.GetComponent<Projectile>().isABomb)
+        var spawnedProjectile = newProjectile.GetComponent<Projectile>();
+        spawnedProjectile.SetNewSpeed(currentSpeedIncrease);
+        if (!spawnedProjectile.isABomb)
         {
             ballsTotal++;
         }

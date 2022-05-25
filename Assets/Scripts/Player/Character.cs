@@ -8,7 +8,8 @@ public enum CharacterState
     Normal,
     Attacking,
     Bouncing,
-    Tounge
+    Tounge,
+    Lost
 }
 public enum AttackState
 {
@@ -39,7 +40,9 @@ public class Character : MonoBehaviour
     public AttackState attackState;
 
     public static bool isTeamMode;
+    public static bool hasLost;
 
+    public AudioManager audioManager;
     public ProjectileHitter projectileHitter;
 
     int facingDir = 1;
@@ -155,7 +158,7 @@ public class Character : MonoBehaviour
     public float attackRecoverTimeLeft;
 
 
-
+    public Transform playerStartPosition;
 
     public bool attackFullyCharged
     {
@@ -300,6 +303,11 @@ public class Character : MonoBehaviour
             t = Time.deltaTime;
         }
 
+        if (hasLost)
+        {
+            return;
+        }
+
         if (state != CharacterState.Bouncing)
             AddInputMotionNormal();
         else
@@ -435,8 +443,12 @@ public class Character : MonoBehaviour
         {
             attackState = AttackState.Attacking;
             //SoundController.PlaySoundEffect("BatSwing", 0.4f + attackChargeM * 0.4f, transform.position);
-            //if (attackChargeM > 0.25f || IngestedFly)
-            //    SoundController.PlaySoundEffect("BatSwingVoice", 0.4f, transform.position);
+            audioManager.PlaySound(AudioManager.SoundID.batSwing, 0.4f + attackChargeM * 0.4f);
+            if (attackChargeM > 0.25f || IngestedFly)
+            {
+                //SoundController.PlaySoundEffect("BatSwingVoice", 0.4f, transform.position);
+                audioManager.PlaySound(AudioManager.SoundID.playerBatSwingVoice, 0.4f);
+            }
             attackTimeLeft = attackTime;
             //if (attackChargeM > 0.5f)
             //{
@@ -725,12 +737,14 @@ public class Character : MonoBehaviour
         if (OnGround && !wasOnGround)
         {
             //SoundController.PlaySoundEffect("Land", 0.4f, transform.position);
+            audioManager.PlaySound(AudioManager.SoundID.playerLand);
             jumpCooldownLeft = 0.1f;
 
         }
         if (WallSliding && !wasWallSlide)
         {
             //SoundController.PlaySoundEffect("Land", 0.4f, transform.position);
+            audioManager.PlaySound(AudioManager.SoundID.playerLand);
             jumpCooldownLeft = 0.1f;
         }
 
@@ -1032,9 +1046,6 @@ public class Character : MonoBehaviour
 
     void RunPhysics()
     {
-
-
-
         if (state == CharacterState.Bouncing)
         {
             RunPhysicsBouncing();
@@ -1203,6 +1214,7 @@ public class Character : MonoBehaviour
                 {
                     attackState = AttackState.Charging;
                     //SoundController.PlaySoundEffect("BatChargeUp", 0.5f, transform.position);
+                    audioManager.PlaySound(AudioManager.SoundID.batCharge);
                     attackChargeCounter = 0f;
                 }
             }
@@ -1250,6 +1262,7 @@ public class Character : MonoBehaviour
 
                 //Debug.Break();
                 //SoundController.PlaySoundEffect("Jump", 0.4f, transform.position);
+                audioManager.PlaySound(AudioManager.SoundID.playerJump);
                 //if (WallSliding)
                 //    EffectsController.CreateJumpPuffStraight(transform.position, WallSlideSide);
                 //else
@@ -1519,5 +1532,19 @@ public class Character : MonoBehaviour
             }
         }
         tongueDir = tongueDir.normalized;
+    }
+
+    public void Lose()
+    {
+        hasLost = true;
+        state = CharacterState.Lost;
+        attackState = AttackState.Idle;
+    }
+
+    public void UnLose()
+    {
+        transform.position = playerStartPosition.position;
+        hasLost = false;
+        state = CharacterState.Normal;
     }
 }

@@ -16,7 +16,8 @@ public class CharacterAnimator : MonoBehaviour
         Attacking,
         AttackRecover,
         WallSlide,
-        Tongue
+        Tongue,
+        Lost,
     }
 
     enum AttackDirection
@@ -163,8 +164,6 @@ public class CharacterAnimator : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-
-
         var newAnimState = DetermineAnimState();
         rend.transform.localRotation = Quaternion.identity;
         rend.transform.localPosition = spriteDefaultOffset;
@@ -243,6 +242,9 @@ public class CharacterAnimator : MonoBehaviour
             case AnimState.Tongue:
                 //AnimateTongue();
                 break;
+            case AnimState.Lost:
+                AnimateLose();
+                break;
             default:
                 break;
         }
@@ -261,13 +263,18 @@ public class CharacterAnimator : MonoBehaviour
     {
         int frameBefore = frame;
         RunAnimation(run, 0.04f);
-        if (frame != frameBefore && frame % 2 == 1)
+        if (frame != frameBefore && frame % 2.5 == 1)
         {
             //SoundController.PlaySoundEffect("Footstep", 0.1f, transform.position);
+            character.audioManager.PlaySound(AudioManager.SoundID.playerFootstep, 0.2f);
             //EffectsController.CreateDustPuff(transform.position, character.FacingDirection);
         }
     }
 
+    void AnimateLose()
+    {
+        RunAnimation(skid, 0.05f);
+    }
 
     void AnimateIdle()
     {
@@ -814,6 +821,10 @@ public class CharacterAnimator : MonoBehaviour
             }
             else
                 return AnimState.Jumping;
+        }
+        else if (character.state == CharacterState.Lost)
+        {
+            return AnimState.Lost;
         }
 
         return AnimState.Idle;

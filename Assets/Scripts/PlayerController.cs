@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,25 +9,40 @@ public class PlayerController : MonoBehaviour
     public PlayerSpriteManager playerSpriteManager;
     public AudioManager audioManager;
     [Space]
+    public Transform playerTransform;
+    public RectTransform wenTextTransform;
+    public TextMeshProUGUI wenText;
+    [Space]
     public SpriteRenderer spriteRenderer;
     public Sprite[] playerSprites;
-    //private InputState input = new InputState();
+    private InputState input = new InputState();
 
-    //void FixedUpdate()
-    //{
-    //    if (gameplayManager.hasGameEnded)
-    //    {
-    //        return;
-    //    }
+    void FixedUpdate()
+    {
+        if (gameplayManager.hasGameEnded)
+        {
+            return;
+        }
 
-    //    InputReader.GetInput(input);
+        InputReader.GetInput(input);
 
-    //    if (input.PressedY)
-    //    {
-    //        audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
-    //        playerSpriteManager.ChangeCharacter();
-    //    }
-    //}
+        if (input.PressedY)
+        {
+            audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
+            playerSpriteManager.ChangeCharacter();
+        }
+
+        if (playerTransform.position.x > 0)
+        {
+            wenTextTransform.anchoredPosition = new Vector2(-18.5f, 8);
+            wenText.alignment = TextAlignmentOptions.TopRight;
+        }
+        else
+        {
+            wenTextTransform.anchoredPosition = new Vector2(18.5f, 8);
+            wenText.alignment = TextAlignmentOptions.TopLeft;
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -37,7 +53,7 @@ public class PlayerController : MonoBehaviour
             {
                 return;
             }
-            hitProjectile.HitProjectile();
+            hitProjectile.HitProjectile(0);
             gameplayManager.Lose();
         }
     }

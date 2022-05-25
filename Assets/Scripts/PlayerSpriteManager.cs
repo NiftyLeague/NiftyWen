@@ -30,9 +30,9 @@ public class PlayerSpriteManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("GOT IT");
             Texture2D spriteSheetTexture = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
             Sprite spriteSheetSprite = Sprite.Create(spriteSheetTexture, new Rect(0, 0, spriteSheetTexture.width, spriteSheetTexture.height), new Vector2(0.5f,0.5f), 16);
+            
             importedCharacterSpriteSheets.Add(spriteSheetSprite);
         }
 
@@ -75,6 +75,6 @@ public class PlayerSpriteManager : MonoBehaviour
     void SetCharacterSpriteSheet()
     {
         playerController.spriteRenderer.sprite = allCharacterSpriteSheets[currentCharacterSpriteSheet];
-        //playerController.playerSprites = characterSpriteSheet.ToArray();
+        //playerController.playerSprites = allCharacterSpriteSheets[currentCharacterSpriteSheet].ToArray();
     }
 }

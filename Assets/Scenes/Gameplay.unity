@@ -445,7 +445,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 10, y: 5.3333335}
+  m_AnchoredPosition: {x: 0, y: 5.3333335}
   m_SizeDelta: {x: 40, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &125923081
@@ -613,6 +613,9 @@ MonoBehaviour:
   gameplayManager: {fileID: 203195491}
   playerSpriteManager: {fileID: 1722793760}
   audioManager: {fileID: 201607129}
+  playerTransform: {fileID: 1489606864}
+  wenTextTransform: {fileID: 297390869}
+  wenText: {fileID: 297390870}
   spriteRenderer: {fileID: 0}
   playerSprites: []
 --- !u!61 &192207256
@@ -702,13 +705,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menuManager: {fileID: 2013845589}
   audioManager: {fileID: 201607129}
+  playerCharacter: {fileID: 1489606863}
   score: 0
   highScore: 0
   timePlayed: 0
   ballsTotal: 0
   ballsDodged: 0
   bombsDodged: 0
-  currentTimeScale: 1
+  currentSpeedIncrease: 0
   cameraShake: {fileID: 963194229}
   scoreText: {fileID: 1649469988}
   wenMessageText: {fileID: 297390870}
@@ -762,7 +766,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 210668435}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.92, y: -9.25, z: -1}
+  m_LocalPosition: {x: 14.92, y: -9.59, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1589952814}
@@ -800,11 +804,11 @@ RectTransform:
   m_Father: {fileID: 125923080}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 2, y: 8}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 18, y: 8}
   m_SizeDelta: {x: 400, y: 50}
-  m_Pivot: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &297390870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2246,13 +2250,9 @@ MonoBehaviour:
   rend: {fileID: 1791346930}
   skidEffectDistance: 0
   idle:
-  - {fileID: -3916597074543127001, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: 7861783408383499671, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: 3402199164420597175, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: -3573817547456215854, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: 8534148167324035198, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: -5725999611395101321, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: -6824401276353707423, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  - {fileID: -6235489344251449046, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  - {fileID: -6235489344251449046, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  - {fileID: -6235489344251449046, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   run:
   - {fileID: 4909888060915361026, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: 5676463031760075792, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
@@ -2263,24 +2263,19 @@ MonoBehaviour:
   - {fileID: -836406985570643028, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: -8145284101525036784, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   jumpLaunch:
-  - {fileID: 3008745662859662983, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: 356524066052333537, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: 7018888099868812131, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: 4224742283362193036, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  - {fileID: 7018888099868812131, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   jumpUp:
-  - {fileID: 3008745662859662983, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: 356524066052333537, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: 7018888099868812131, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: 4224742283362193036, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   jumpDown:
-  - {fileID: -2847289066553060596, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: -7991943558200462248, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: 1607337845265198961, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: -5355798866487857296, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: -1333992568784832814, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  skidLand: {fileID: 0}
-  skid: []
-  skidRecover: {fileID: 0}
+  skidLand: {fileID: -8836844614563334834, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  skid:
+  - {fileID: -2005586820037446554, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  - {fileID: -4553913146871010941, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  skidRecover: {fileID: -3330822218792457045, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   somersault:
   - {fileID: -5299307240153629615, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: 6404339896401038219, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
@@ -2302,15 +2297,12 @@ MonoBehaviour:
   - {fileID: -6740610793864007941, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: -290317644494988020, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: -537022610835440017, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: 6861094379118215864, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   attack:
   - {fileID: 6861094379118215864, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: -2693462803556545111, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: 1510363225149057644, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: 4833079235782904373, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   attackRecover:
-  - {fileID: 6861094379118215864, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  - {fileID: -2693462803556545111, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: 1510363225149057644, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: 4833079235782904373, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   attachChargeUp:
@@ -2385,19 +2377,27 @@ MonoBehaviour:
   - {fileID: -2693462803556545111, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: 1510363225149057644, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: 4833079235782904373, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  impact: []
+  impact:
+  - {fileID: -4074259732152177036, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  - {fileID: -8422895786125622210, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   wallSlide:
   - {fileID: 8223456064281025778, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   - {fileID: 4536893391464912092, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   wallSlideJumpLaunch:
-  - {fileID: -490649299238813106, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  - {fileID: 7018888099868812131, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  - {fileID: 7018888099868812131, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   tongue: []
   tongueDownMovingUp: []
   tongueDownMovingDown: []
   tongueRetractStunned: []
   tongueBurp: []
-  blush: []
-  win: []
+  blush:
+  - {fileID: -5276232212806827811, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  - {fileID: -5276232212806827811, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  win:
+  - {fileID: -7059657650926350757, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  - {fileID: -6003133948807424185, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
+  - {fileID: -421902485811039358, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
   flight: []
   flightAudioSource: {fileID: 0}
   flightHeightPitchMod: 0
@@ -2420,6 +2420,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   attackState: 0
+  audioManager: {fileID: 201607129}
   projectileHitter: {fileID: 1825532306}
   maxRunSpeed: 20
   runAccel: 175
@@ -2460,6 +2461,7 @@ MonoBehaviour:
   hitsTaken: 0
   attackTimeLeft: 0
   attackRecoverTimeLeft: 0
+  playerStartPosition: {fileID: 1980257945}
   attackDir: {x: 0, y: 0}
 --- !u!4 &1489606864
 Transform:
@@ -2866,7 +2868,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1701095804}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4, y: -9.5, z: -1}
+  m_LocalPosition: {x: 4, y: -9.5, z: -0.5}
   m_LocalScale: {x: 0.5, y: 3, z: 1}
   m_Children: []
   m_Father: {fileID: 1589952814}
@@ -2953,7 +2955,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1996494851}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1722793760
 MonoBehaviour:
@@ -3298,6 +3300,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameplayManager: {fileID: 203195491}
   audioManager: {fileID: 201607129}
+  playerCharacter: {fileID: 1489606863}
   hitCollider: {fileID: 1825532305}
 --- !u!50 &1825532307
 Rigidbody2D:
@@ -3640,6 +3643,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1924318881}
   m_CullTransparentMesh: 1
+--- !u!1 &1980257944
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1980257945}
+  m_Layer: 0
+  m_Name: Player Start Position
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1980257945
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1980257944}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -15, y: -8, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1986840136
 GameObject:
   m_ObjectHideFlags: 0
@@ -3708,8 +3741,8 @@ Transform:
   - {fileID: 1815226036}
   - {fileID: 203195490}
   - {fileID: 2013845588}
-  - {fileID: 201607128}
   - {fileID: 1722793759}
+  - {fileID: 201607128}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3947,7 +3980,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2636386230541264305, guid: 320d59aa6cff1b64997d7804572c376a, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2636386230541264305, guid: 320d59aa6cff1b64997d7804572c376a, type: 3}
       propertyPath: m_LocalPosition.x
