@@ -1,80 +1,180 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.Networking;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerSpriteManager : MonoBehaviour
 {
-    public PlayerController playerController;
+    CharacterAnimator characterAnimator;
     [Space]
-    public List<Sprite> importedCharacterSpriteSheets;
-    public List<Sprite> demoCharacterSpriteSheets;
-    public List<Sprite> allCharacterSpriteSheets;
+    private static List<CharacterSprites> importedCharacterSprites;
+    public List<CharacterSprites> demoCharacterSprites;
+    private static List<CharacterSprites> allCharacterSprites;
 
-    private int currentCharacterSpriteSheet;
-    private bool hasBeenInitializedAlready;
+    private int currentCharacterSprites;
+    private static bool hasBeenInitializedAlready;
+    private static bool hasFilledSpritesAlready;
 
-    private void Start()
+    private static bool spawned;
+
+    void Awake()
     {
-        StartCoroutine(GetSpriteSheetsFromUrl());
-    }
-
-    private IEnumerator GetSpriteSheetsFromUrl()
-    {
-        UnityWebRequest uwr = UnityWebRequestTexture.GetTexture("https://nifty-league.s3.amazonaws.com/assets/sheets/92/1256.png");
-        yield return uwr.SendWebRequest();
-
-        if (uwr.isNetworkError)
+        if (spawned == false)
         {
-            Debug.Log("Error While Sending: " + uwr.error);
+            spawned = true;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Texture2D spriteSheetTexture = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
-            Sprite spriteSheetSprite = Sprite.Create(spriteSheetTexture, new Rect(0, 0, spriteSheetTexture.width, spriteSheetTexture.height), new Vector2(0.5f,0.5f), 16);
-            
-            importedCharacterSpriteSheets.Add(spriteSheetSprite);
+            DestroyImmediate(gameObject);
         }
-
-        InitializeSpriteSheets();
     }
 
-    void InitializeSpriteSheets()
+    private void Start()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        if (scene.buildIndex == 1)
+        {
+            InitializeSprites();
+            FillSprites();
+            SetCharacterSprites();
+        }
+    }
+
+    public void GetSprites(List<Sprite> sprites)
+    {
+        Debug.Log(sprites[5]);
+        InitializeSprites();
+        CharacterSprites newImportedCharacterSprites = new CharacterSprites();
+        newImportedCharacterSprites.sprites = new List<Sprite>();
+        foreach (Sprite sprite in sprites)
+        {
+            newImportedCharacterSprites.sprites.Add(sprite);
+        }
+        importedCharacterSprites.Add(newImportedCharacterSprites);
+
+        FillSprites();
+    }
+
+    void InitializeSprites()
     {
         if (hasBeenInitializedAlready)
         {
             return;
         }
 
-        if (importedCharacterSpriteSheets.Count > 0)
-        {
-            foreach (Sprite spriteSheet in importedCharacterSpriteSheets)
-            {
-                allCharacterSpriteSheets.Add(spriteSheet);
-            }
-        }
-
-        foreach (Sprite spriteSheet in demoCharacterSpriteSheets)
-        {
-            allCharacterSpriteSheets.Add(spriteSheet);
-        }
+        allCharacterSprites = new List<CharacterSprites>();
+        importedCharacterSprites = new List<CharacterSprites>();
 
         hasBeenInitializedAlready = true;
     }
 
-    public void ChangeCharacter()
+    void FillSprites()
     {
-        currentCharacterSpriteSheet++;
-        if (currentCharacterSpriteSheet > allCharacterSpriteSheets.Count - 1)
+        if (hasFilledSpritesAlready)
         {
-            currentCharacterSpriteSheet = 0;
+            return;
         }
-        SetCharacterSpriteSheet();
+
+        if (importedCharacterSprites.Count > 0)
+        {
+            foreach (CharacterSprites sprites in importedCharacterSprites)
+            {
+                allCharacterSprites.Add(sprites);
+            }
+        }
+
+        foreach (CharacterSprites sprites in demoCharacterSprites)
+        {
+            allCharacterSprites.Add(sprites);
+        }
+
+        hasFilledSpritesAlready = true;
     }
 
-    void SetCharacterSpriteSheet()
+    public void ChangeCharacter()
     {
-        playerController.spriteRenderer.sprite = allCharacterSpriteSheets[currentCharacterSpriteSheet];
-        //playerController.playerSprites = allCharacterSpriteSheets[currentCharacterSpriteSheet].ToArray();
+        currentCharacterSprites++;
+        if (currentCharacterSprites > allCharacterSprites.Count - 1)
+        {
+            currentCharacterSprites = 0;
+        }
+        SetCharacterSprites();
     }
+
+    public void SetCharacterSprites()
+    {
+        if (characterAnimator == null)
+        {
+            characterAnimator = FindObjectOfType<CharacterAnimator>();
+        }
+
+        List<Sprite> spritesToUse = new List<Sprite>();
+        foreach (Sprite sprite in allCharacterSprites[currentCharacterSprites].sprites)
+        {
+            spritesToUse.Add(sprite);
+        }
+        characterAnimator.idle.Clear();
+        characterAnimator.idle.Add(spritesToUse[0]);
+        characterAnimator.idle.Add(spritesToUse[0]);
+        characterAnimator.idle.Add(spritesToUse[0]);
+
+        characterAnimator.run.Clear();
+        for (int i = 9; i <= 16; i++)
+            characterAnimator.run.Add(spritesToUse[i]);
+        
+        characterAnimator.jumpLaunch.Clear();
+        characterAnimator.jumpLaunch.Add(spritesToUse[59]);
+        characterAnimator.jumpLaunch.Add(spritesToUse[59]);
+
+        characterAnimator.jumpUp.Clear();
+        for (int i = 59; i <= 60; i++)
+            characterAnimator.jumpUp.Add(spritesToUse[i]);
+
+        characterAnimator.jumpDown.Clear();
+        for (int i = 64; i <= 65; i++)
+            characterAnimator.jumpDown.Add(spritesToUse[i]);
+
+        characterAnimator.skidLand = spritesToUse[88];
+        characterAnimator.skid.Clear();
+        for (int i = 89; i <= 90; i++)
+            characterAnimator.skid.Add(spritesToUse[i]);
+        characterAnimator.skidRecover = spritesToUse[91];
+
+        characterAnimator.somersault.Clear();
+        for (int i = 66; i <= 73; i++)
+            characterAnimator.somersault.Add(spritesToUse[i]);
+
+        characterAnimator.attackCharge.Clear();
+        for (int i = 19; i <= 24; i++)
+            characterAnimator.attackCharge.Add(spritesToUse[i]);
+
+        characterAnimator.attack.Clear();
+        for (int i = 25; i <= 28; i++)
+            characterAnimator.attack.Add(spritesToUse[i]);
+
+        characterAnimator.attackRecover.Clear();
+        for (int i = 27; i <= 28; i++)
+            characterAnimator.attackRecover.Add(spritesToUse[i]);
+
+        //characterAnimator.impact.Clear();
+        //for (int i = 80; i <= 81; i++)
+        //    characterAnimator.impact.Add(spritesToUse[i]);
+
+        characterAnimator.wallSlide.Clear();
+        for (int i = 75; i <= 76; i++)
+            characterAnimator.wallSlide.Add(spritesToUse[i]);
+
+        characterAnimator.wallSlideJumpLaunch.Clear();
+        characterAnimator.wallSlideJumpLaunch.Add(spritesToUse[59]);
+        characterAnimator.wallSlideJumpLaunch.Add(spritesToUse[59]);
+    }
+}
+
+[Serializable]
+public class CharacterSprites
+{
+    public List<Sprite> sprites;
 }

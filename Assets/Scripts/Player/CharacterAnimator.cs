@@ -68,53 +68,49 @@ public class CharacterAnimator : MonoBehaviour
     float lastSkidXPos;
     public float skidEffectDistance;
 
-    public Sprite[] idle;
-    public Sprite[] run;
-    public Sprite[] jumpLaunch;
-    public Sprite[] jumpUp;
-    public Sprite[] jumpDown;
+    public List<Sprite> idle;
+    public List<Sprite> run;
+    public List<Sprite> jumpLaunch;
+    public List<Sprite> jumpUp;
+    public List<Sprite> jumpDown;
     public Sprite skidLand;
-    public Sprite[] skid;
+    public List<Sprite> skid;
     public Sprite skidRecover;
-    public Sprite[] somersault;
-    public Sprite[] bouncedFlying;
-    public Sprite[] bouncedFlyingComet;
-    public Sprite[] bouncedFlyingRecovered;
-    public Sprite[] bouncedFlyingSpinning;
-    public Sprite[] bouncedFlyingRotationg;
+    public List<Sprite> somersault;
+    public List<Sprite> bouncedFlying;
+    public List<Sprite> bouncedFlyingComet;
+    public List<Sprite> bouncedFlyingRecovered;
+    public List<Sprite> bouncedFlyingSpinning;
+    public List<Sprite> bouncedFlyingRotationg;
 
-    public Sprite[] attackCharge;
-    public Sprite[] attack;
-    public Sprite[] attackRecover;
+    public List<Sprite> attackCharge;
+    public List<Sprite> attack;
+    public List<Sprite> attackRecover;
+    public List<Sprite> attachChargeUp;
+    public List<Sprite> attackUp;
+    public List<Sprite> attackRecoverUp;
+    public List<Sprite> attackChargeDiagUp;
+    public List<Sprite> attackDiagUp;
+    public List<Sprite> attackRecoverDiagUp;
+    public List<Sprite> attackChargeDown;
+    public List<Sprite> attackDown;
+    public List<Sprite> attackRecoverDown;
+    public List<Sprite> attackChargeDownForward;
+    public List<Sprite> attackDownForward;
+    public List<Sprite> attackRecoverDownForward;
 
-    public Sprite[] attachChargeUp;
-    public Sprite[] attackUp;
-    public Sprite[] attackRecoverUp;
+    public List<Sprite> impact;
 
-    public Sprite[] attackChargeDiagUp;
-    public Sprite[] attackDiagUp;
-    public Sprite[] attackRecoverDiagUp;
+    public List<Sprite> wallSlide;
+    public List<Sprite> wallSlideJumpLaunch;
+    public List<Sprite> tongue;
+    public List<Sprite> tongueDownMovingUp;
+    public List<Sprite> tongueDownMovingDown;
+    public List<Sprite> tongueRetractStunned;
+    public List<Sprite> tongueBurp;
+    public List<Sprite> blush;
 
-    public Sprite[] attackChargeDown;
-    public Sprite[] attackDown;
-    public Sprite[] attackRecoverDown;
-
-    public Sprite[] attackChargeDownForward;
-    public Sprite[] attackDownForward;
-    public Sprite[] attackRecoverDownForward;
-
-    public Sprite[] impact;
-
-    public Sprite[] wallSlide;
-    public Sprite[] wallSlideJumpLaunch;
-    public Sprite[] tongue;
-    public Sprite[] tongueDownMovingUp;
-    public Sprite[] tongueDownMovingDown;
-    public Sprite[] tongueRetractStunned;
-    public Sprite[] tongueBurp;
-    public Sprite[] blush;
-
-    public Sprite[] win;
+    public List<Sprite> win;
 
     public AudioClip[] flight;
 
@@ -696,12 +692,12 @@ public class CharacterAnimator : MonoBehaviour
         if (character.velocity.y < character.gravityGraceThreshold && character.input.aButton && character.gravityGraceTimeLeft > 0f)
         {
             float m = 1f - character.gravityGraceTimeLeft / character.gravityGraceTime;
-            rend.sprite = somersault[(int)(m * somersault.Length)];
+            rend.sprite = somersault[(int)(m * somersault.Count)];
         }
         else
         if (character.Velocity.y > 0f)
         {
-            if (frame < jumpLaunch.Length)
+            if (frame < jumpLaunch.Count)
             {
                 //transform.position = new Vector3(transform.position.x, jumpFromPosition.y, transform.position.z);
                 rend.sprite = jumpLaunch[frame];
@@ -752,7 +748,7 @@ public class CharacterAnimator : MonoBehaviour
             RunTrailSilhouette();
     }
 
-    void RunAnimation(Sprite[] frames, float frameDelay, bool clamp = false, bool ignoreCharacterTimescale = false)
+    void RunAnimation(List<Sprite> frames, float frameDelay, bool clamp = false, bool ignoreCharacterTimescale = false)
     {
         if (ignoreCharacterTimescale)
             frameCounter += Time.deltaTime;
@@ -765,9 +761,9 @@ public class CharacterAnimator : MonoBehaviour
             frameCounter -= frameDelay;
         }
         if (clamp)
-            rend.sprite = frames[Mathf.Clamp(frame, 0, frames.Length - 1)];
+            rend.sprite = frames[Mathf.Clamp(frame, 0, frames.Count - 1)];
         else
-            rend.sprite = frames[frame % frames.Length];
+            rend.sprite = frames[frame % frames.Count];
     }
 
     void AnimateWallSlide()

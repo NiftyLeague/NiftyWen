@@ -12,9 +12,14 @@ public class SpriteLoader : MonoBehaviour
 	public SpriteRenderer sr;
 	public int id;
 
+	[Space]
+	public PlayerSpriteManager playerSpriteManager;
+	public GameObject loadingDegenMenu;
+
 	private void Awake()
 	{
 		I = this;
+		loadingDegenMenu.SetActive(true);
 	}
 
 	private void Start()
@@ -25,21 +30,25 @@ public class SpriteLoader : MonoBehaviour
 
 	private void OnComplete(List<Sprite> sprites)
 	{
-		StartCoroutine(TestAnimation(sprites));
+		Debug.Log(sprites[5]);
+		loadingDegenMenu.SetActive(false);
+		playerSpriteManager.GetSprites(sprites);
+
+		//StartCoroutine(TestAnimation(sprites));
 	}
 
-	private IEnumerator TestAnimation(List<Sprite> sprites)
-	{
-		int frame = 0;
-		int len = sprites.Count;
-		while (true)
-		{
-			yield return new WaitForSeconds(0.07f);
-			sr.sprite = sprites[frame++ % len];
-		}
-	}
+    private IEnumerator TestAnimation(List<Sprite> sprites)
+    {
+        int frame = 0;
+        int len = sprites.Count;
+        while (true)
+        {
+            yield return new WaitForSeconds(0.07f);
+            sr.sprite = sprites[frame++ % len];
+        }
+    }
 
-	public static void LoadSpritesheet(string url, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete)
+    public static void LoadSpritesheet(string url, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete)
 	{
 		I.StartCoroutine(I._LoadSpritesheet(url, columns, rows, cellWith, cellHeight, onComplete));
 	}

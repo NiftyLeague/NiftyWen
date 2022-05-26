@@ -17,6 +17,11 @@ public class PlayerController : MonoBehaviour
     public Sprite[] playerSprites;
     private InputState input = new InputState();
 
+    private void Start()
+    {
+        playerSpriteManager.SetCharacterSprites();
+    }
+
     void FixedUpdate()
     {
         if (gameplayManager.hasGameEnded)
@@ -34,12 +39,12 @@ public class PlayerController : MonoBehaviour
 
         if (playerTransform.position.x > 0)
         {
-            wenTextTransform.anchoredPosition = new Vector2(-18.5f, 8);
+            wenTextTransform.anchoredPosition = new Vector2(-19.5f, 8);
             wenText.alignment = TextAlignmentOptions.TopRight;
         }
         else
         {
-            wenTextTransform.anchoredPosition = new Vector2(18.5f, 8);
+            wenTextTransform.anchoredPosition = new Vector2(19.5f, 8);
             wenText.alignment = TextAlignmentOptions.TopLeft;
         }
     }
