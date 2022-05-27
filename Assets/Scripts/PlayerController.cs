@@ -33,6 +33,10 @@ public class PlayerController : MonoBehaviour
 
         if (input.PressedY)
         {
+            if (!playerSpriteManager.CanChangeCharacters())
+            {
+                return;
+            }
             audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
             playerSpriteManager.ChangeCharacter();
         }

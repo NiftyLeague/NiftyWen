@@ -31,26 +31,28 @@ public class CharacterAnimator : MonoBehaviour
 
     AttackDirection DetermineAttackDirection()
     {
-        if (character.attackDir.y == 1f && character.attackDir.x == 0f)
-        {
-            return AttackDirection.Up;
-        }
-        else if (character.attackDir.y > 0.45f && Mathf.Abs(character.attackDir.x) > 0.45f)
-        {
-            return AttackDirection.DiagonalUp;
-        }
-        else if (character.attackDir.y < -0.45f && Mathf.Abs(character.attackDir.x) > 0.45f)
-        {
-            return AttackDirection.DownForward;
-        }
-        else if (character.attackDir.y == -1f)
-        {
-            return AttackDirection.Down;
-        }
-        else
-        {
-            return AttackDirection.Forward;
-        }
+        return AttackDirection.Forward;
+
+        //if (character.attackDir.y == 1f && character.attackDir.x == 0f)
+        //{
+        //    return AttackDirection.Up;
+        //}
+        //else if (character.attackDir.y > 0.45f && Mathf.Abs(character.attackDir.x) > 0.45f)
+        //{
+        //    return AttackDirection.DiagonalUp;
+        //}
+        //else if (character.attackDir.y < -0.45f && Mathf.Abs(character.attackDir.x) > 0.45f)
+        //{
+        //    return AttackDirection.DownForward;
+        //}
+        //else if (character.attackDir.y == -1f)
+        //{
+        //    return AttackDirection.Down;
+        //}
+        //else
+        //{
+        //    return AttackDirection.Forward;
+        //}
     }
 
     //Vector3 defaultOffset;

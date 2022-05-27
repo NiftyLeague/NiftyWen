@@ -8,22 +8,21 @@ using UnityEngine.SceneManagement;
 public class PlayerSpriteManager : MonoBehaviour
 {
     CharacterAnimator characterAnimator;
-    [Space]
+
     private static List<CharacterSprites> importedCharacterSprites;
     public List<CharacterSprites> demoCharacterSprites;
-    private static List<CharacterSprites> allCharacterSprites;
 
+    public static bool canChangeCharacters;
     private int currentCharacterSprites;
     private static bool hasBeenInitializedAlready;
-    private static bool hasFilledSpritesAlready;
 
-    private static bool spawned;
+    private static bool created;
 
     void Awake()
     {
-        if (spawned == false)
+        if (created == false)
         {
-            spawned = true;
+            created = true;
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -37,9 +36,7 @@ public class PlayerSpriteManager : MonoBehaviour
         Scene scene = SceneManager.GetActiveScene();
         if (scene.buildIndex == 1)
         {
-            InitializeSprites();
-            FillSprites();
-            SetCharacterSprites();
+            ChangeCharacter();
         }
     }
 
@@ -54,8 +51,7 @@ public class PlayerSpriteManager : MonoBehaviour
             newImportedCharacterSprites.sprites.Add(sprite);
         }
         importedCharacterSprites.Add(newImportedCharacterSprites);
-
-        FillSprites();
+        canChangeCharacters = true;
     }
 
     void InitializeSprites()
@@ -65,43 +61,37 @@ public class PlayerSpriteManager : MonoBehaviour
             return;
         }
 
-        allCharacterSprites = new List<CharacterSprites>();
         importedCharacterSprites = new List<CharacterSprites>();
 
         hasBeenInitializedAlready = true;
     }
 
-    void FillSprites()
-    {
-        if (hasFilledSpritesAlready)
-        {
-            return;
-        }
-
-        if (importedCharacterSprites.Count > 0)
-        {
-            foreach (CharacterSprites sprites in importedCharacterSprites)
-            {
-                allCharacterSprites.Add(sprites);
-            }
-        }
-
-        foreach (CharacterSprites sprites in demoCharacterSprites)
-        {
-            allCharacterSprites.Add(sprites);
-        }
-
-        hasFilledSpritesAlready = true;
-    }
-
     public void ChangeCharacter()
     {
-        currentCharacterSprites++;
-        if (currentCharacterSprites > allCharacterSprites.Count - 1)
+        if (canChangeCharacters)
         {
-            currentCharacterSprites = 0;
+            currentCharacterSprites++;
+            if (currentCharacterSprites > importedCharacterSprites.Count - 1)
+            {
+                currentCharacterSprites = 0;
+            }
         }
+        else
+        {
+            currentCharacterSprites = UnityEngine.Random.Range(0, 6);
+        }
+
         SetCharacterSprites();
+    }
+
+    public bool CanChangeCharacters()
+    {
+        if (importedCharacterSprites.Count <= 1)
+        {
+            canChangeCharacters = false;
+        }
+
+        return canChangeCharacters;
     }
 
     public void SetCharacterSprites()
@@ -112,10 +102,22 @@ public class PlayerSpriteManager : MonoBehaviour
         }
 
         List<Sprite> spritesToUse = new List<Sprite>();
-        foreach (Sprite sprite in allCharacterSprites[currentCharacterSprites].sprites)
+
+        if (canChangeCharacters)
         {
-            spritesToUse.Add(sprite);
+            foreach (Sprite sprite in importedCharacterSprites[currentCharacterSprites].sprites)
+            {
+                spritesToUse.Add(sprite);
+            }
         }
+        else
+        {
+            foreach (Sprite sprite in demoCharacterSprites[currentCharacterSprites].sprites)
+            {
+                spritesToUse.Add(sprite);
+            }
+        }
+
         characterAnimator.idle.Clear();
         characterAnimator.idle.Add(spritesToUse[0]);
         characterAnimator.idle.Add(spritesToUse[0]);

@@ -8,6 +8,7 @@ public class GameplayManager : MonoBehaviour
 {
     public MenuManager menuManager;
     public AudioManager audioManager;
+    public WenManager wenManager;
     public Character playerCharacter;
     [Space]
     public int score;
@@ -41,7 +42,6 @@ public class GameplayManager : MonoBehaviour
     public GameObject bombPrefab;
     public Transform ballStartLocation;
 
-    string[] wenMessages;
     float nextBallTimer;
     [HideInInspector] public bool nextBallReadyToLaunch;
     bool hasLaunchedABomb;
@@ -55,7 +55,6 @@ public class GameplayManager : MonoBehaviour
         UpdateScoreText();
         ResetEverythingForANewGame();
         ResetWenMessageTexts();
-        InitializeWenMessages();
         menuManager.menuPanel.SetActive(false);
         StartCoroutine(InstructionMessageFade());
     }
@@ -169,22 +168,10 @@ public class GameplayManager : MonoBehaviour
         UpdateScoreText();
     }
 
-    void InitializeWenMessages()
-    {
-        TextAsset wenMessagesFile = Resources.Load<TextAsset>("wen");
-
-        wenMessages = wenMessagesFile.text.Split(new char[] { '\n' });
-    }
-
     void ResetWenMessageTexts()
     {
         wenMessageText.transform.localScale = new Vector3(0, 0, 0);
         soonMessageText.transform.localScale = new Vector3(0, 0, 0);
-    }
-
-    string GetRandomWenMessage()
-    {
-        return wenMessages[Random.Range(0, wenMessages.Length-1)].ToString();
     }
 
     IEnumerator InstructionMessageFade()
@@ -243,7 +230,7 @@ public class GameplayManager : MonoBehaviour
     {
         ResetWenMessageTexts();
         audioManager.PlaySound(AudioManager.SoundID.messagePopup);
-        wenMessageText.text = GetRandomWenMessage();
+        wenMessageText.text = wenManager.GetRandomWenMessage();
 
         float a = 0;
         float b = 0.1f;
