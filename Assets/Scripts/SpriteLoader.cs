@@ -17,6 +17,8 @@ public class SpriteLoader : MonoBehaviour
 	public PlayerSpriteManager playerSpriteManager;
 	public LoadingDegensMenu loadingDegensMenu;
 
+	int degensToLoad;
+
 	private void Awake()
 	{
 		I = this;
@@ -25,16 +27,35 @@ public class SpriteLoader : MonoBehaviour
 
 	private void Start()
 	{
-		LoadSpritesheet($"https://d7ct17ettlkln.cloudfront.net/assets/sheets/92/{id}.png",
-			16, 16, 128, 128, OnComplete);
+		List<int> degenIDsToLoad = new List<int>();
+		degenIDsToLoad.Add(2);
+		degenIDsToLoad.Add(3);
+		degenIDsToLoad.Add(1256);
+		GetDegensFromIDs(degenIDsToLoad);
+	}
+
+	private void GetDegensFromIDs(List<int> degenIDs)
+	{
+		degensToLoad = degenIDs.Count;
+
+		foreach (int degenID in degenIDs)
+		{
+			LoadSpritesheet($"https://d7ct17ettlkln.cloudfront.net/assets/sheets/92/{degenID}.png",
+				16, 16, 128, 128, OnComplete);
+		}
 	}
 
 	private void OnComplete(List<Sprite> sprites)
 	{
-		Debug.Log(sprites[5]);
-		loadingDegensMenu.CloseScreen();
+		Debug.Log(sprites[5]);		
 		playerSpriteManager.GetSprites(sprites);
-		menuManager.TurnOnMenu();
+
+		degensToLoad--;
+		if (degensToLoad <= 0)
+		{
+			loadingDegensMenu.CloseScreen();
+			menuManager.TurnOnMenu();
+		}
 
 		//StartCoroutine(TestAnimation(sprites));
 	}
@@ -71,7 +92,7 @@ public class SpriteLoader : MonoBehaviour
 			texture.filterMode = FilterMode.Point;
 			yield return GetSprites(texture, columns, rows, cellWith, cellHeight, onComplete);
 		}
-		onComplete(null);
+		//onComplete(null);
 	}
 
 	private IEnumerator GetSprites(Texture2D texture, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete)
