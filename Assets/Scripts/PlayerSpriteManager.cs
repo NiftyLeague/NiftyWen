@@ -86,6 +86,8 @@ public class PlayerSpriteManager : MonoBehaviour
 
     public bool CanChangeCharacters()
     {
+        InitializeSprites();
+        
         if (importedCharacterSprites.Count <= 1)
         {
             canChangeCharacters = false;

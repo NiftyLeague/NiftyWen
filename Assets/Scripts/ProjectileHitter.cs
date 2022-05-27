@@ -15,7 +15,7 @@ public class ProjectileHitter : MonoBehaviour
         {
             hitCollider.enabled = true;
         }
-        if (hitterTimer >= 0.15f)
+        if (hitterTimer >= 0.12f)
         {
             hitterTimer = 0;
             TurnOff();
