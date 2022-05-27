@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 
 public class SpriteLoader : MonoBehaviour
 {
+	public MenuManager menuManager;
 	private static SpriteLoader I;
 
 	public SpriteRenderer sr;
@@ -14,12 +15,12 @@ public class SpriteLoader : MonoBehaviour
 
 	[Space]
 	public PlayerSpriteManager playerSpriteManager;
-	public GameObject loadingDegenMenu;
+	public LoadingDegensMenu loadingDegensMenu;
 
 	private void Awake()
 	{
 		I = this;
-		loadingDegenMenu.SetActive(true);
+		loadingDegensMenu.gameObject.SetActive(true);
 	}
 
 	private void Start()
@@ -31,8 +32,9 @@ public class SpriteLoader : MonoBehaviour
 	private void OnComplete(List<Sprite> sprites)
 	{
 		Debug.Log(sprites[5]);
-		loadingDegenMenu.SetActive(false);
+		loadingDegensMenu.CloseScreen();
 		playerSpriteManager.GetSprites(sprites);
+		menuManager.TurnOnMenu();
 
 		//StartCoroutine(TestAnimation(sprites));
 	}
@@ -55,7 +57,7 @@ public class SpriteLoader : MonoBehaviour
 
 	private IEnumerator _LoadSpritesheet(string url, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete)
 	{
-		yield return new WaitForSecondsRealtime(4f);
+		//yield return new WaitForSecondsRealtime(4f);
 		UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
 		yield return www.SendWebRequest();
 

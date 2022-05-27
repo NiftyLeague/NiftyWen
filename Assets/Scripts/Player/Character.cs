@@ -1159,8 +1159,8 @@ public class Character : MonoBehaviour
             }
             else
             {
-                //velocity.x += t * airAccel;
-                velocity.x = 0;
+                velocity.x += t * airAccel;
+                //velocity.x = 0;
             }
             if (velocity.x > maxRunSpeed)
                 velocity.x = maxRunSpeed;
@@ -1182,8 +1182,8 @@ public class Character : MonoBehaviour
             }
             else
             {
-                //velocity.x -= t * airAccel;
-                velocity.x = 0;
+                velocity.x -= t * airAccel;
+                //velocity.x = 0;
             }
             if (velocity.x < -maxRunSpeed)
                 velocity.x = -maxRunSpeed;

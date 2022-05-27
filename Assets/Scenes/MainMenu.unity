@@ -4041,6 +4041,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f36ffdd33a6d5d45bdd69caf1b6b796, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  imageBackground: {fileID: 1410713756}
   loadingDegensText: {fileID: 1406106172}
   loadingTexts:
   - Loading Degen(s).
@@ -4128,10 +4129,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fe7b0e251d8ff54c8c0dc7df3bf9bc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menuManager: {fileID: 2013845589}
   sr: {fileID: 1050952916}
   id: 6599
   playerSpriteManager: {fileID: 1388834711}
-  loadingDegenMenu: {fileID: 1410713753}
+  loadingDegensMenu: {fileID: 1410713755}
 --- !u!1 &1478721888
 GameObject:
   m_ObjectHideFlags: 0
@@ -6027,7 +6029,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da26601a03d28c040a666e8932032b2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuManager: {fileID: 2013845589}
   wenTitle: {fileID: 1679852713}
   howToPlayPanel: {fileID: 868440912}
   leaderboardsPanel: {fileID: 466106455}

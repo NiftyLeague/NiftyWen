@@ -24,6 +24,7 @@ public class GameplayManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI wenMessageText;
     public TextMeshProUGUI soonMessageText;
+    public TextMeshProUGUI scoreGainedText;
     public TextMeshProUGUI instructionMessageText;
     public TextMeshProUGUI gameOverStatNamesText;
     public TextMeshProUGUI gameOverStatNumbersText;
@@ -41,6 +42,8 @@ public class GameplayManager : MonoBehaviour
     public GameObject ballPrefab;
     public GameObject bombPrefab;
     public Transform ballStartLocation;
+    [Space]
+    public List<Color32> randomScoreGainedColors;
 
     float nextBallTimer;
     [HideInInspector] public bool nextBallReadyToLaunch;
@@ -90,14 +93,13 @@ public class GameplayManager : MonoBehaviour
     {
         nextBallReadyToLaunch = true;
         cameraShake.Shake(0.2f, 10);
+        int scoreGainedAmount = 1;
         if (playerTransform.position.x >= doublePointLineTransform.position.x)
         {
-            score += 2;
+            scoreGainedAmount = 2;
         }
-        else
-        {
-            score++;
-        }
+        score += scoreGainedAmount;
+        scoreGainedText.text = "+" + scoreGainedAmount.ToString("0");
         StartCoroutine(AnimateScoreText());
         IncreaseSpeed();
         UpdateScoreText();
@@ -154,6 +156,8 @@ public class GameplayManager : MonoBehaviour
 
         gameOverStatNamesText.text = "";
         gameOverStatNumbersText.text = "";
+        scoreGainedText.transform.localScale = new Vector3(0, 0, 0);
+
         gameOverLeaderboardNamesText.gameObject.SetActive(false);
         gameOverLeaderboardPositionsText.gameObject.SetActive(false);
         gameOverLeaderboardScoresText.gameObject.SetActive(false);
@@ -289,6 +293,29 @@ public class GameplayManager : MonoBehaviour
         }
 
         audioManager.PlaySound(AudioManager.SoundID.gainPoint);
+
+        a = 0;
+        b = 0.1f;
+
+        Tween<float> scalePointMessageTween = new Tween<float>(a, b, 0.2f, TweenEaseType.CubicIn);
+
+        while (!scalePointMessageTween.IsEnded())
+        {
+            yield return new WaitForEndOfFrame();
+            scoreGainedText.transform.localScale = new Vector3(0.1f, scalePointMessageTween.Update(Time.deltaTime), 0.1f);
+        }
+
+        float timeBetweenRandomColors = 0.1f;
+        int repeatTimes = 10;
+
+        while (repeatTimes > 0)
+        {
+            yield return new WaitForSeconds(timeBetweenRandomColors);
+            scoreGainedText.color = randomScoreGainedColors[Random.Range(0, randomScoreGainedColors.Count)];
+            repeatTimes--;
+        }
+
+        scoreGainedText.transform.localScale = new Vector3(0, 0, 0);
     }
 
     void SpawnProjectile()
