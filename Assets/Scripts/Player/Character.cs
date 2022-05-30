@@ -1538,10 +1538,15 @@ public class Character : MonoBehaviour
 
     public void Lose()
     {
+        transform.position = new Vector2(transform.position.x, -5.3f);
         hasLost = true;
         state = CharacterState.Lost;
-        attackState = AttackState.Idle;
-        transform.position = new Vector2(transform.position.x, -6.3f);
+        attackState = AttackState.Idle;    
+    }
+
+    public void StandBackUp()
+    {
+        state = CharacterState.Normal;
     }
 
     public void UnLose()

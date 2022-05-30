@@ -203,6 +203,8 @@ public class GameplayManager : MonoBehaviour
 
         yield return new WaitForSeconds(3);
 
+        playerCharacter.StandBackUp();
+
         scoreText.text = "";
 
         gameOverStatNamesText.text = "SCORE\nHIGH SCORE\nTIME PLAYED\nTOTAL BALLS\nBALLS DODGED";
