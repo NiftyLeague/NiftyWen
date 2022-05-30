@@ -1541,6 +1541,7 @@ public class Character : MonoBehaviour
         hasLost = true;
         state = CharacterState.Lost;
         attackState = AttackState.Idle;
+        transform.position = new Vector2(transform.position.x, -6.3f);
     }
 
     public void UnLose()

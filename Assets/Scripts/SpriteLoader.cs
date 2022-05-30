@@ -42,7 +42,6 @@ public class SpriteLoader : MonoBehaviour
 		{
 			degensToLoadMin = 1;
 		}
-		playerSpriteManager.LoadingDegensText(degensToLoadMin, degensToLoadMax);
 
 		GetDegen(degenIDsToLoad[0]);
 	}
@@ -51,19 +50,21 @@ public class SpriteLoader : MonoBehaviour
 	{
 		LoadSpritesheet($"https://d7ct17ettlkln.cloudfront.net/assets/sheets/92/{degenID}.png",
 		16, 16, 128, 128, OnComplete);
+
+		playerSpriteManager.LoadingDegensText(degensToLoadMin, degensToLoadMax);
+	}
+
+	public void GetNextUnloadedDegen()
+	{
+		GetDegen(degenIDsToLoad[degensToLoadMin - 1]);
 	}
 
 	private void OnComplete(List<Sprite> sprites)
 	{
-		//Debug.Log(sprites[5]);		
 		playerSpriteManager.GetSprites(sprites);
 		Debug.Log("Degen Complete!");
 		degensToLoadMin++;
-		playerSpriteManager.LoadingDegensText(degensToLoadMin, degensToLoadMax);
-		if (degensToLoadMin <= degensToLoadMax)
-		{
-			GetDegen(degenIDsToLoad[degensToLoadMin - 1]);
-		}
+		playerSpriteManager.EndLoadingDegensText();
 
 		//StartCoroutine(TestAnimation(sprites));
 	}
@@ -131,5 +132,10 @@ public class SpriteLoader : MonoBehaviour
 			}
 		}
 		onComplete(sprites);
+	}
+
+	public int GetTotalDegensOnAccount()
+	{
+		return degensToLoadMax;
 	}
 }

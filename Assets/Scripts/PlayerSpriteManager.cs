@@ -9,9 +9,12 @@ using TMPro;
 public class PlayerSpriteManager : MonoBehaviour
 {
     CharacterAnimator characterAnimator;
+    public SpriteLoader spriteLoader;
 
     private static List<CharacterSprites> importedCharacterSprites;
+    private static List<bool> hasImportedCharacterSpriteBeenDownloaded;
     public List<CharacterSprites> demoCharacterSprites;
+    
 
     public TextMeshProUGUI loadingDegensText;
 
@@ -20,6 +23,8 @@ public class PlayerSpriteManager : MonoBehaviour
     private static bool hasBeenInitializedAlready;
 
     private static bool created;
+    private static Coroutine currentEndLoadingDegensTextRoutine;
+    private static bool isLoadingADegen;
 
     void Awake()
     {
@@ -45,7 +50,6 @@ public class PlayerSpriteManager : MonoBehaviour
 
     public void GetSprites(List<Sprite> sprites)
     {
-        //Debug.Log(sprites[5]);
         InitializeSprites();
         CharacterSprites newImportedCharacterSprites = new CharacterSprites();
         newImportedCharacterSprites.sprites = new List<Sprite>();
@@ -54,7 +58,17 @@ public class PlayerSpriteManager : MonoBehaviour
             newImportedCharacterSprites.sprites.Add(sprite);
         }
         importedCharacterSprites.Add(newImportedCharacterSprites);
+        hasImportedCharacterSpriteBeenDownloaded[importedCharacterSprites.Count - 1] = true;
         canChangeCharacters = true;
+        isLoadingADegen = false;
+
+        Scene scene = SceneManager.GetActiveScene();
+        if (scene.buildIndex == 1)
+        {
+            currentCharacterSprites = importedCharacterSprites.Count - 1;
+
+            SetCharacterSprites();
+        }
     }
 
     void InitializeSprites()
@@ -65,6 +79,11 @@ public class PlayerSpriteManager : MonoBehaviour
         }
 
         importedCharacterSprites = new List<CharacterSprites>();
+        hasImportedCharacterSpriteBeenDownloaded = new List<bool>();
+        for (int i = 0; i < spriteLoader.GetTotalDegensOnAccount(); i++)
+        {
+            hasImportedCharacterSpriteBeenDownloaded.Add(false);
+        }
 
         hasBeenInitializedAlready = true;
     }
@@ -73,25 +92,46 @@ public class PlayerSpriteManager : MonoBehaviour
     {
         if (canChangeCharacters)
         {
+            if (isLoadingADegen)
+            {
+                return;
+            }
+
             currentCharacterSprites++;
-            if (currentCharacterSprites > importedCharacterSprites.Count - 1)
+
+            if (currentCharacterSprites >= hasImportedCharacterSpriteBeenDownloaded.Count)
             {
                 currentCharacterSprites = 0;
+            }
+
+            if (hasImportedCharacterSpriteBeenDownloaded[currentCharacterSprites])
+            {
+                SetCharacterSprites();
+            }
+            else
+            {
+                isLoadingADegen = true;
+                //spriteLoader.GetNextUnloadedDegen();
+                FindObjectOfType<SpriteLoader>().GetNextUnloadedDegen();
             }
         }
         else
         {
             currentCharacterSprites = UnityEngine.Random.Range(0, 6);
+            SetCharacterSprites();
         }
-
-        SetCharacterSprites();
     }
 
     public bool CanChangeCharacters()
     {
         InitializeSprites();
+
+        if (isLoadingADegen)
+        {
+            return false;
+        }
         
-        if (importedCharacterSprites.Count <= 1)
+        if (importedCharacterSprites.Count <= 0)
         {
             canChangeCharacters = false;
         }
@@ -177,11 +217,21 @@ public class PlayerSpriteManager : MonoBehaviour
 
     public void LoadingDegensText(int min, int max)
     {
+        if (currentEndLoadingDegensTextRoutine != null)
+        {
+            StopCoroutine(currentEndLoadingDegensTextRoutine);
+        }
+
+        loadingDegensText.color = new Color32(255, 255, 255, 255);
+
         loadingDegensText.text = "Loading Degen(s): " + min.ToString("0") + " / " + max.ToString("0");
+        if (min == 1)
+        {
+            loadingDegensText.text = "Loading First Degen...";
+        }
         if (min > max)
         {
-            loadingDegensText.text = "Degen(s) Loaded!";
-            StartCoroutine(EndLoadingDegensText());
+            EndLoadingDegensText();
         }
         if (min == 0 || max == 0)
         {
@@ -189,8 +239,19 @@ public class PlayerSpriteManager : MonoBehaviour
         }   
     }
 
-    IEnumerator EndLoadingDegensText()
+    public void EndLoadingDegensText()
     {
+        if (currentEndLoadingDegensTextRoutine != null)
+        {
+            StopCoroutine(currentEndLoadingDegensTextRoutine);
+        }
+        currentEndLoadingDegensTextRoutine = StartCoroutine(EndLoadingDegensTextRoutine());
+    }
+
+    IEnumerator EndLoadingDegensTextRoutine()
+    {
+        loadingDegensText.text = "Degen(s) Loaded!";
+
         loadingDegensText.color = new Color32(255, 255, 0, 255);
 
         yield return new WaitForSeconds(2);
