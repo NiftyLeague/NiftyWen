@@ -7,23 +7,22 @@ using UnityEngine.Networking;
 
 public class SpriteLoader : MonoBehaviour
 {
-	public MenuManager menuManager;
-	private static SpriteLoader I;
+	//private static SpriteLoader I;
 
-	public SpriteRenderer sr;
-	public int id;
+	//public SpriteRenderer sr;
+	//public int id;
 
-	[Space]
+	//[Space]
 	public PlayerSpriteManager playerSpriteManager;
-	public LoadingDegensMenu loadingDegensMenu;
 
-	int degensToLoad;
+	static int degensToLoadMin;
+	static int degensToLoadMax;
+	static List<int> degenIDsToLoad;
 
-	private void Awake()
-	{
-		I = this;
-		loadingDegensMenu.gameObject.SetActive(true);
-	}
+	//private void Awake()
+	//{
+	//	I = this;
+	//}
 
 	private void Start()
 	{
@@ -36,44 +35,54 @@ public class SpriteLoader : MonoBehaviour
 
 	private void GetDegensFromIDs(List<int> degenIDs)
 	{
-		degensToLoad = degenIDs.Count;
-
-		foreach (int degenID in degenIDs)
+		degenIDsToLoad = new List<int>();
+		degenIDsToLoad = degenIDs;
+		degensToLoadMax = degenIDs.Count;
+		if (degensToLoadMax > 0)
 		{
-			LoadSpritesheet($"https://d7ct17ettlkln.cloudfront.net/assets/sheets/92/{degenID}.png",
-				16, 16, 128, 128, OnComplete);
+			degensToLoadMin = 1;
 		}
+		playerSpriteManager.LoadingDegensText(degensToLoadMin, degensToLoadMax);
+
+		GetDegen(degenIDsToLoad[0]);
+	}
+
+	private void GetDegen(int degenID)
+	{
+		LoadSpritesheet($"https://d7ct17ettlkln.cloudfront.net/assets/sheets/92/{degenID}.png",
+		16, 16, 128, 128, OnComplete);
 	}
 
 	private void OnComplete(List<Sprite> sprites)
 	{
-		Debug.Log(sprites[5]);		
+		//Debug.Log(sprites[5]);		
 		playerSpriteManager.GetSprites(sprites);
-
-		degensToLoad--;
-		if (degensToLoad <= 0)
+		Debug.Log("Degen Complete!");
+		degensToLoadMin++;
+		playerSpriteManager.LoadingDegensText(degensToLoadMin, degensToLoadMax);
+		if (degensToLoadMin <= degensToLoadMax)
 		{
-			loadingDegensMenu.CloseScreen();
-			menuManager.TurnOnMenu();
+			GetDegen(degenIDsToLoad[degensToLoadMin - 1]);
 		}
 
 		//StartCoroutine(TestAnimation(sprites));
 	}
 
-    private IEnumerator TestAnimation(List<Sprite> sprites)
-    {
-        int frame = 0;
-        int len = sprites.Count;
-        while (true)
-        {
-            yield return new WaitForSeconds(0.07f);
-            sr.sprite = sprites[frame++ % len];
-        }
-    }
+    //private IEnumerator TestAnimation(List<Sprite> sprites)
+    //{
+    //    int frame = 0;
+    //    int len = sprites.Count;
+    //    while (true)
+    //    {
+    //        yield return new WaitForSeconds(0.07f);
+    //        sr.sprite = sprites[frame++ % len];
+    //    }
+    //}
 
-    public static void LoadSpritesheet(string url, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete)
+    public void LoadSpritesheet(string url, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete)
 	{
-		I.StartCoroutine(I._LoadSpritesheet(url, columns, rows, cellWith, cellHeight, onComplete));
+		//I.StartCoroutine(I._LoadSpritesheet(url, columns, rows, cellWith, cellHeight, onComplete));
+		StartCoroutine(_LoadSpritesheet(url, columns, rows, cellWith, cellHeight, onComplete));
 	}
 
 	private IEnumerator _LoadSpritesheet(string url, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete)
@@ -114,7 +123,8 @@ public class SpriteLoader : MonoBehaviour
 				s.name = frame.ToString();
 				sprites.Add(s);
 				frame++;
-				if (frame % 4 == 0)
+				//if (frame % 4 == 0)
+				if (frame % 2 == 0)
 				{
 					yield return new WaitForEndOfFrame();
 				}

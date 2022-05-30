@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class PlayerSpriteManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class PlayerSpriteManager : MonoBehaviour
 
     private static List<CharacterSprites> importedCharacterSprites;
     public List<CharacterSprites> demoCharacterSprites;
+
+    public TextMeshProUGUI loadingDegensText;
 
     public static bool canChangeCharacters;
     private int currentCharacterSprites;
@@ -42,7 +45,7 @@ public class PlayerSpriteManager : MonoBehaviour
 
     public void GetSprites(List<Sprite> sprites)
     {
-        Debug.Log(sprites[5]);
+        //Debug.Log(sprites[5]);
         InitializeSprites();
         CharacterSprites newImportedCharacterSprites = new CharacterSprites();
         newImportedCharacterSprites.sprites = new List<Sprite>();
@@ -163,10 +166,6 @@ public class PlayerSpriteManager : MonoBehaviour
         for (int i = 27; i <= 28; i++)
             characterAnimator.attackRecover.Add(spritesToUse[i]);
 
-        //characterAnimator.impact.Clear();
-        //for (int i = 80; i <= 81; i++)
-        //    characterAnimator.impact.Add(spritesToUse[i]);
-
         characterAnimator.wallSlide.Clear();
         for (int i = 75; i <= 76; i++)
             characterAnimator.wallSlide.Add(spritesToUse[i]);
@@ -174,6 +173,39 @@ public class PlayerSpriteManager : MonoBehaviour
         characterAnimator.wallSlideJumpLaunch.Clear();
         characterAnimator.wallSlideJumpLaunch.Add(spritesToUse[59]);
         characterAnimator.wallSlideJumpLaunch.Add(spritesToUse[59]);
+    }
+
+    public void LoadingDegensText(int min, int max)
+    {
+        loadingDegensText.text = "Loading Degen(s): " + min.ToString("0") + " / " + max.ToString("0");
+        if (min > max)
+        {
+            loadingDegensText.text = "Degen(s) Loaded!";
+            StartCoroutine(EndLoadingDegensText());
+        }
+        if (min == 0 || max == 0)
+        {
+            loadingDegensText.text = "";
+        }   
+    }
+
+    IEnumerator EndLoadingDegensText()
+    {
+        loadingDegensText.color = new Color32(255, 255, 0, 255);
+
+        yield return new WaitForSeconds(2);
+
+        int a = 255;
+        int b = 0;
+
+        Tween<float> alphaTween = new Tween<float>(a, b, 1f, TweenEaseType.CubicInOut);
+
+        while (!alphaTween.IsEnded())
+        {
+            yield return new WaitForEndOfFrame();
+            byte alphaTweenByte = (byte)alphaTween.Update(Time.deltaTime);
+            loadingDegensText.color = new Color32(255, 255, 0, alphaTweenByte);
+        }
     }
 }
 
