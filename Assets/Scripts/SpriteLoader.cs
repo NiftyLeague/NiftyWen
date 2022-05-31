@@ -65,7 +65,6 @@ public class SpriteLoader : MonoBehaviour
 		Debug.Log("Degen Complete!");
 		degensToLoadMin++;
 		playerSpriteManager.EndLoadingDegensText();
-
 		//StartCoroutine(TestAnimation(sprites));
 	}
 
@@ -129,6 +128,7 @@ public class SpriteLoader : MonoBehaviour
 				{
 					yield return new WaitForEndOfFrame();
 				}
+				playerSpriteManager.LoadingDegenProgressBar(frame, 250);
 			}
 		}
 		onComplete(sprites);

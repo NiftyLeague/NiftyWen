@@ -15,8 +15,8 @@ public class PlayerSpriteManager : MonoBehaviour
     private static List<bool> hasImportedCharacterSpriteBeenDownloaded;
     public List<CharacterSprites> demoCharacterSprites;
     
-
     public TextMeshProUGUI loadingDegensText;
+    public Image loadingDegensProgressBar;
 
     public static bool canChangeCharacters;
     private int currentCharacterSprites;
@@ -236,6 +236,7 @@ public class PlayerSpriteManager : MonoBehaviour
         if (min == 0 || max == 0)
         {
             loadingDegensText.text = "";
+            LoadingDegenProgressBar(0, 0);
         }   
     }
 
@@ -252,6 +253,8 @@ public class PlayerSpriteManager : MonoBehaviour
     {
         loadingDegensText.text = "Degen(s) Loaded!";
 
+        LoadingDegenProgressBar(0, 0);
+
         loadingDegensText.color = new Color32(255, 255, 0, 255);
 
         yield return new WaitForSeconds(2);
@@ -266,6 +269,16 @@ public class PlayerSpriteManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
             byte alphaTweenByte = (byte)alphaTween.Update(Time.deltaTime);
             loadingDegensText.color = new Color32(255, 255, 0, alphaTweenByte);
+        }
+    }
+
+    public void LoadingDegenProgressBar(int current, int max)
+    {
+        loadingDegensProgressBar.gameObject.SetActive(true);
+        loadingDegensProgressBar.fillAmount = (float)current / (float)max;
+        if (current >= max)
+        {
+            loadingDegensProgressBar.gameObject.SetActive(false);
         }
     }
 }
