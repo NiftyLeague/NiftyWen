@@ -35,6 +35,7 @@ public class GameplayManager : MonoBehaviour
     public SimpleAnim ballMachineAnim;
     public Sprite[] ballMachineSpritesIdle;
     public Sprite[] ballMachineSpritesFire;
+    public Sprite[] ballMachineSpritesHitFlash;
     public CameraShake ballMachineShaker;
     [Space]
     public GameObject ballPrefab;
@@ -124,6 +125,16 @@ public class GameplayManager : MonoBehaviour
     {
         ballMachineShaker.Shake(0.2f, 10);
         audioManager.PlaySound(AudioManager.SoundID.ballMachineHit);
+        StartCoroutine(BallMachineHitFlash());
+    }
+
+    IEnumerator BallMachineHitFlash()
+    {
+        ballMachineAnim.Play(ballMachineSpritesHitFlash, false);
+
+        yield return new WaitForSeconds(0.2f);
+
+        ballMachineAnim.Play(ballMachineSpritesIdle, false);
     }
 
     public void Dodge(bool isABomb)

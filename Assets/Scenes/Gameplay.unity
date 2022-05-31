@@ -782,6 +782,11 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 5401e3bce3d8e3c44855011464315a64, type: 3}
   - {fileID: 21300000, guid: a25e6b574a1f2c1498ef1c17f131d5b9, type: 3}
   - {fileID: 21300000, guid: 3d588deeed1acb1479e66bba635ae6c2, type: 3}
+  ballMachineSpritesHitFlash:
+  - {fileID: 21300000, guid: a3cc9e3800cfcb94497bfa1d0e586946, type: 3}
+  - {fileID: 21300000, guid: a3cc9e3800cfcb94497bfa1d0e586946, type: 3}
+  - {fileID: 21300000, guid: a3cc9e3800cfcb94497bfa1d0e586946, type: 3}
+  - {fileID: 21300000, guid: a3cc9e3800cfcb94497bfa1d0e586946, type: 3}
   ballMachineShaker: {fileID: 820037658}
   ballPrefab: {fileID: 2101283796660733822, guid: 2a5fdb9f419afbe4bb747db40b589ef0, type: 3}
   bombPrefab: {fileID: 2101283796660733822, guid: 7574c409fc2e46c4c96bab0c337ebda9, type: 3}
