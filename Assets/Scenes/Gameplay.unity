@@ -661,8 +661,6 @@ MonoBehaviour:
   playerTransform: {fileID: 1489606864}
   wenTextTransform: {fileID: 297390869}
   wenText: {fileID: 297390870}
-  spriteRenderer: {fileID: 0}
-  playerSprites: []
 --- !u!61 &192207256
 BoxCollider2D:
   m_ObjectHideFlags: 0
