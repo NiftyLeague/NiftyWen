@@ -164,9 +164,9 @@ public class PlayerSpriteManager : MonoBehaviour
         }
 
         characterAnimator.idle.Clear();
-        characterAnimator.idle.Add(spritesToUse[0]);
-        characterAnimator.idle.Add(spritesToUse[0]);
-        characterAnimator.idle.Add(spritesToUse[0]);
+        characterAnimator.idle.Add(spritesToUse[2]);
+        characterAnimator.idle.Add(spritesToUse[2]);
+        characterAnimator.idle.Add(spritesToUse[2]);
 
         characterAnimator.run.Clear();
         for (int i = 9; i <= 16; i++)

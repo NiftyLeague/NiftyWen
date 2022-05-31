@@ -7,8 +7,9 @@ public class Projectile : MonoBehaviour
     public bool isABomb;
     public Rigidbody2D rigidBody;
     public float moveSpeed;
-    float arc = 30;
+    float arc = 25;
     public bool gotHit;
+    public bool hitScoreCollider;
 
     private void Start()
     {

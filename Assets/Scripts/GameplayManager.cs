@@ -32,12 +32,10 @@ public class GameplayManager : MonoBehaviour
     public TextMeshProUGUI gameOverLeaderboardNamesText;
     public TextMeshProUGUI gameOverLeaderboardScoresText;
     [Space]
-    public Transform playerTransform;
-    public Transform doublePointLineTransform;
-    [Space]
     public SimpleAnim ballMachineAnim;
     public Sprite[] ballMachineSpritesIdle;
     public Sprite[] ballMachineSpritesFire;
+    public CameraShake ballMachineShaker;
     [Space]
     public GameObject ballPrefab;
     public GameObject bombPrefab;
@@ -89,12 +87,11 @@ public class GameplayManager : MonoBehaviour
         timePlayed += Time.deltaTime;
     }
 
-    public void ScorePoint()
+    public void ScorePoint(bool hitBallMachine)
     {
         nextBallReadyToLaunch = true;
-        cameraShake.Shake(0.2f, 10);
         int scoreGainedAmount = 1;
-        if (playerTransform.position.x >= doublePointLineTransform.position.x)
+        if (hitBallMachine)
         {
             scoreGainedAmount = 2;
         }
@@ -121,6 +118,12 @@ public class GameplayManager : MonoBehaviour
         IncreaseSpeed(true);
         playerCharacter.Lose();
         StartCoroutine(PlayGameOverScreen());
+    }
+
+    public void HitBallMachine()
+    {
+        ballMachineShaker.Shake(0.2f, 10);
+        audioManager.PlaySound(AudioManager.SoundID.ballMachineHit);
     }
 
     public void Dodge(bool isABomb)
@@ -220,7 +223,7 @@ public class GameplayManager : MonoBehaviour
             gameOverStatNumbersText.text += "\n" + bombsDodged.ToString("0");
         }
 
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(3);
 
         gameOverStatNamesText.text = "";
         gameOverStatNumbersText.text = "";

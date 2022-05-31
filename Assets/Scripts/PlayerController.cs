@@ -62,6 +62,7 @@ public class PlayerController : MonoBehaviour
             {
                 return;
             }
+            hitProjectile.hitScoreCollider = true;
             hitProjectile.HitProjectile(0);
             gameplayManager.Lose();
         }

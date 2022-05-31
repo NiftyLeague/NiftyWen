@@ -50,7 +50,7 @@ public class ProjectileHitter : MonoBehaviour
             }
             else
             {
-                gameplayManager.ScorePoint();
+                gameplayManager.cameraShake.Shake(0.2f, 10);
                 audioManager.PlaySound(AudioManager.SoundID.projectileHit);
             }
         }

@@ -353,26 +353,28 @@ public class CharacterAnimator : MonoBehaviour
     {
         var ad = DetermineAttackDirection();
 
+        float chargeSpeedTarget = 0.06f;
+
         if (ad == AttackDirection.Up)
-            RunAnimation(attachChargeUp, Mathf.Lerp(0.2f, 0.03f, character.attackChargeM));
+            RunAnimation(attachChargeUp, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
         else if (ad == AttackDirection.DiagonalUp)
         {
-            RunAnimation(attackChargeDiagUp, Mathf.Lerp(0.2f, 0.03f, character.attackChargeM));
+            RunAnimation(attackChargeDiagUp, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
         }
         else if (ad == AttackDirection.Down)
         {
-            RunAnimation(attackChargeDown, Mathf.Lerp(0.2f, 0.03f, character.attackChargeM));
+            RunAnimation(attackChargeDown, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
         }
         else if (ad == AttackDirection.DownForward)
         {
-            RunAnimation(attackChargeDownForward, Mathf.Lerp(0.2f, 0.03f, character.attackChargeM));
+            RunAnimation(attackChargeDownForward, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
         }
         else
         {
-            RunAnimation(attackCharge, Mathf.Lerp(0.2f, 0.03f, character.attackChargeM));
+            RunAnimation(attackCharge, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
         }
 
-        RunAnimation(attackCharge, Mathf.Lerp(0.2f, 0.03f, character.attackChargeM));
+        RunAnimation(attackCharge, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
     }
     bool wasBurp;
     void AnimateTongue()

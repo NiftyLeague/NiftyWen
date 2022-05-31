@@ -72,5 +72,6 @@ public class AudioManager : MonoBehaviour
         batCharge,
         playerFootstep,
         playerBatSwingVoice,
+        ballMachineHit,
     }
 }
