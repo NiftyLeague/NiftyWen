@@ -1223,16 +1223,17 @@ public class Character : MonoBehaviour
 
             if (attackState == AttackState.Charging)
             {
-                //if (input.right)
-                //{
-                //    facingDir = 1;
-                //}
-                //else if (input.left)
-                //{
-                //    facingDir = -1;
-                //}
+                if (input.right)
+                {
+                    facingDir = 1;
+                }
+                else if (input.left)
+                {
+                    facingDir = -1;
+                }
 
-                facingDir = 1;
+                //ATTACK FACING DIRECTION
+                //facingDir = 1;
             }
         }
 
