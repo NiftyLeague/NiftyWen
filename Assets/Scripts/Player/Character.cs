@@ -221,7 +221,7 @@ public class Character : MonoBehaviour
     }
 
 
-    //public EffectsController.Side WallSlideSide { get; protected set; }
+    public EffectsController.Side WallSlideSide { get; protected set; }
 
     bool onGround;
 
@@ -450,29 +450,32 @@ public class Character : MonoBehaviour
                 audioManager.PlaySound(AudioManager.SoundID.playerBatSwingVoice, 0.4f);
             }
             attackTimeLeft = attackTime;
-            //if (attackChargeM > 0.5f)
-            //{
-            //    if (attackDir == Vector2.left || attackDir == Vector2.right)
-            //    {
-            //        EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 3f + Vector3.up * 0.2f, attackDir);
-            //    }
-            //    else if (attackDir == Vector2.up)
-            //    {
-            //        EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 3.75f, attackDir);
-            //    }
-            //    else if (attackDir == Vector2.down)
-            //    {
-            //        EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 2.75f, attackDir);
-            //    }
-            //    else if (attackDir.y > 0f)
-            //    {
-            //        EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 2.75f, attackDir);
-            //    }
-            //    else
-            //    {
-            //        EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 2.75f, attackDir);
-            //    }
-            //}
+            if (attackChargeM > 0.5f)
+            {
+                attackDir = new Vector2(attackDir.x, 0);
+                EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 3f + Vector3.up * 0.2f, attackDir);
+
+                //if (attackDir == Vector2.left || attackDir == Vector2.right)
+                //{
+                //    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 3f + Vector3.up * 0.2f, attackDir);
+                //}
+                //else if (attackDir == Vector2.up)
+                //{
+                //    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 3.75f, attackDir);
+                //}
+                //else if (attackDir == Vector2.down)
+                //{
+                //    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 2.75f, attackDir);
+                //}
+                //else if (attackDir.y > 0f)
+                //{
+                //    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 2.75f, attackDir);
+                //}
+                //else
+                //{
+                //    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 2.75f, attackDir);
+                //}
+            }
 
         }
         else if (attackState == AttackState.Attacking)
@@ -669,7 +672,7 @@ public class Character : MonoBehaviour
                     if (input.right && !OnGround && velocity.y < 0f)
                     {
                         WallSliding = true;
-                        //WallSlideSide = EffectsController.Side.Right;
+                        WallSlideSide = EffectsController.Side.Right;
                     }
                 }
             }
@@ -709,7 +712,7 @@ public class Character : MonoBehaviour
                     if (input.left && !OnGround && velocity.y < 0f)
                     {
                         WallSliding = true;
-                        //WallSlideSide = EffectsController.Side.Left;
+                        WallSlideSide = EffectsController.Side.Left;
                     }
                 }
             }
@@ -908,6 +911,12 @@ public class Character : MonoBehaviour
         //{
         //    EffectsController.ShakeCamera(hitDir, hitsTaken * 0.75f);
         //}
+    }
+
+    public void HitBall(Transform ballPosition)
+    {
+        //EffectsController.CreateHitEffect(ballPosition.position + Vector3.up * height * 0.5f, timeBumpTimeLeft, attackChargeM >= 1f);
+        EffectsController.CreateHitEffect(ballPosition.position, 0.1f + (attackChargeM / 2), attackChargeM >= 1f);
     }
 
     void ApplyMotionVector()
@@ -1150,7 +1159,7 @@ public class Character : MonoBehaviour
                 {
                     if (velocity.x < maxRunSpeed * 0.9f)
                     {
-                        //EffectsController.CreateTurnAroundPuff(transform.position, 1f);
+                        EffectsController.CreateTurnAroundPuff(transform.position, 1f);
                     }
                     velocity.x = 0f;
 
@@ -1174,7 +1183,7 @@ public class Character : MonoBehaviour
                 {
                     if (velocity.x > -maxRunSpeed * 0.9f)
                     {
-                        //EffectsController.CreateTurnAroundPuff(transform.position, -1f);
+                        EffectsController.CreateTurnAroundPuff(transform.position, -1f);
                     }
                     velocity.x = 0f;
                 }
@@ -1253,23 +1262,23 @@ public class Character : MonoBehaviour
                 velocity.y = jumpVel;
                 gravityGraceTimeLeft = gravityGraceTime;
 
-                //if (WallSliding)
-                //{
-                //    if (WallSlideSide == EffectsController.Side.Left)
-                //        velocity.x = maxRunSpeed;
-                //    else if (WallSlideSide == EffectsController.Side.Right)
-                //        velocity.x = -maxRunSpeed;
-                //}
+                if (WallSliding)
+                {
+                    if (WallSlideSide == EffectsController.Side.Left)
+                        velocity.x = maxRunSpeed;
+                    else if (WallSlideSide == EffectsController.Side.Right)
+                        velocity.x = -maxRunSpeed;
+                }
 
 
 
                 //Debug.Break();
                 //SoundController.PlaySoundEffect("Jump", 0.4f, transform.position);
                 audioManager.PlaySound(AudioManager.SoundID.playerJump);
-                //if (WallSliding)
-                //    EffectsController.CreateJumpPuffStraight(transform.position, WallSlideSide);
-                //else
-                //    EffectsController.CreateJumpPuffStraight(transform.position, EffectsController.Side.Bottom);
+                if (WallSliding)
+                    EffectsController.CreateJumpPuffStraight(transform.position, WallSlideSide);
+                else
+                    EffectsController.CreateJumpPuffStraight(transform.position, EffectsController.Side.Bottom);
 
             }
             else if (jumpGraceTimeLeft > 0f) // && (velocity.y > 0f || !input.wasAButton))
@@ -1539,8 +1548,10 @@ public class Character : MonoBehaviour
 
     public void Lose()
     {
-        transform.position = new Vector2(transform.position.x, -5.3f);
+        transform.position = new Vector2(transform.position.x, -5.2f);
         hasLost = true;
+        velocity.x = 0;
+        onGround = true;
         state = CharacterState.Lost;
         attackState = AttackState.Idle;    
     }

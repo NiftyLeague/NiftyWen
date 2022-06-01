@@ -265,7 +265,7 @@ public class CharacterAnimator : MonoBehaviour
         {
             //SoundController.PlaySoundEffect("Footstep", 0.1f, transform.position);
             character.audioManager.PlaySound(AudioManager.SoundID.playerFootstep, 0.2f);
-            //EffectsController.CreateDustPuff(transform.position, character.FacingDirection);
+            EffectsController.CreateDustPuff(transform.position, character.FacingDirection);
         }
     }
 

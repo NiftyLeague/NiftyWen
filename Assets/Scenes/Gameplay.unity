@@ -799,6 +799,10 @@ MonoBehaviour:
   - serializedVersion: 2
     rgba: 4294901923
   - serializedVersion: 2
+    rgba: 4294967295
+  - serializedVersion: 2
+    rgba: 4278254847
+  - serializedVersion: 2
     rgba: 4278254847
   nextBallReadyToLaunch: 0
   hasGameEnded: 0
@@ -1918,6 +1922,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 841633509}
   m_CullTransparentMesh: 1
+--- !u!1 &946052044
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 946052045}
+  - component: {fileID: 946052046}
+  m_Layer: 0
+  m_Name: EffectsController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &946052045
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946052044}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1996494851}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &946052046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946052044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de92f761eff853d41be33088b638b800, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitEffectPrefab: {fileID: 3240207774534364863, guid: fca57fe7442b6dd49ad9b012314341d6, type: 3}
+  hitStarPrefab: {fileID: 3240207774534364863, guid: c69d8f55eafcfae4faf945bbc1abbc1a, type: 3}
+  hitStarPowerHitPrefab: {fileID: 3240207774534364863, guid: 62ae4ac35eca4194f8e510d145ae4b16, type: 3}
+  jumpPuffStraight: {fileID: 491942287587214735, guid: b275c9f4ea8675e4380a4cfaa196f44b, type: 3}
+  dustPuff: {fileID: 491942287587214735, guid: 07fcee67c2eb46047ba013dbe57aa1ce, type: 3}
+  turnAroundPuff: {fileID: 491942287587214735, guid: ecb41b936336b9e4292638a411a83ca1, type: 3}
+  shingEffect: {fileID: 491942287587214735, guid: cb5f17e99c987e04ab0146c91f000bb7, type: 3}
+  explosion: {fileID: 491942287587214735, guid: 09ef3bbeb0876a940af8c3d28a6a95d9, type: 3}
 --- !u!1 &952505523
 GameObject:
   m_ObjectHideFlags: 0
@@ -6630,6 +6685,7 @@ Transform:
   m_Children:
   - {fileID: 1815226036}
   - {fileID: 203195490}
+  - {fileID: 946052045}
   - {fileID: 2013845588}
   - {fileID: 201607128}
   m_Father: {fileID: 0}
@@ -6664,7 +6720,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1996494851}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2013845589
 MonoBehaviour:
@@ -6944,7 +7000,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2636386230541264305, guid: 320d59aa6cff1b64997d7804572c376a, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2636386230541264305, guid: 320d59aa6cff1b64997d7804572c376a, type: 3}
       propertyPath: m_LocalPosition.x

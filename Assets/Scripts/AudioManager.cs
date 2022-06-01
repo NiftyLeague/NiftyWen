@@ -40,6 +40,7 @@ public class AudioManager : MonoBehaviour
         AudioSource soundEffectSource = audioSourcesInSound[UnityEngine.Random.Range(0, audioSourcesInSound.Count)];
         AudioSource currentEffectSource = soundEffectAudioSources[lastAudioSourceUsed];
         currentEffectSource.clip = soundEffectSource.clip;
+        currentEffectSource.pitch = soundEffectSource.pitch;
         currentEffectSource.volume = volume;
         currentEffectSource.Play();
 
@@ -73,5 +74,7 @@ public class AudioManager : MonoBehaviour
         playerFootstep,
         playerBatSwingVoice,
         ballMachineHit,
+        explosion,
+        projectileChargeHit,
     }
 }

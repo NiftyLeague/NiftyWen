@@ -46,6 +46,7 @@ public class Projectile : MonoBehaviour
         {
             gotHit = true;
             moveSpeed *= (1 + chargePower);
+            transform.localScale = new Vector3(1 + (chargePower / 2), 1 - (chargePower / 2), 1);
         }
     }
 }

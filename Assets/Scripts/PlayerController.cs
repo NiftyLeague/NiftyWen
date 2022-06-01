@@ -62,6 +62,10 @@ public class PlayerController : MonoBehaviour
             }
             hitProjectile.hitScoreCollider = true;
             hitProjectile.HitProjectile(0);
+            if (hitProjectile.isABomb)
+            {
+                gameplayManager.Explosion(collision.transform.position);
+            }
             gameplayManager.Lose();
         }
     }

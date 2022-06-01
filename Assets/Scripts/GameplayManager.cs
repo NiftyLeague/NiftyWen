@@ -121,6 +121,12 @@ public class GameplayManager : MonoBehaviour
         StartCoroutine(PlayGameOverScreen());
     }
 
+    public void Explosion(Vector3 position)
+    {
+        EffectsController.CreateExplosion(position);
+        audioManager.PlaySound(AudioManager.SoundID.explosion);
+    }
+
     public void HitBallMachine()
     {
         ballMachineShaker.Shake(0.2f, 10);
@@ -337,7 +343,7 @@ public class GameplayManager : MonoBehaviour
     void SpawnProjectile()
     {
         GameObject chosenProjectile = ballPrefab;
-        if (score >= 10)
+        if (ballsTotal >= 10)
         {
             if (Random.Range(0, 100 + (int)(score / 2)) >= 50)
             {

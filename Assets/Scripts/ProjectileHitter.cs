@@ -26,6 +26,7 @@ public class ProjectileHitter : MonoBehaviour
     {
         gameObject.SetActive(true);
         audioManager.PlaySound(AudioManager.SoundID.batSwing);
+        Debug.Log(playerCharacter.attackChargeM);
     }
 
     void TurnOff()
@@ -44,14 +45,24 @@ public class ProjectileHitter : MonoBehaviour
                 return;
             }
             hitProjectile.HitProjectile(playerCharacter.attackChargeM);
+            playerCharacter.HitBall(collision.transform);
             if (hitProjectile.isABomb)
             {
                 gameplayManager.Lose();
+                gameplayManager.Explosion(collision.transform.position);
             }
             else
             {
-                gameplayManager.cameraShake.Shake(0.2f, 10);
-                audioManager.PlaySound(AudioManager.SoundID.projectileHit);
+                gameplayManager.cameraShake.Shake(0.2f + (playerCharacter.attackChargeM / 2), 10);
+                if (playerCharacter.attackChargeM >= 0.5f)
+                {
+                    audioManager.PlaySound(AudioManager.SoundID.projectileChargeHit);
+                }
+                else
+                {
+                    audioManager.PlaySound(AudioManager.SoundID.projectileHit);
+                }
+                
             }
         }
     }
