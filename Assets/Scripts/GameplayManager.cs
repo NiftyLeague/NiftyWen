@@ -37,6 +37,7 @@ public class GameplayManager : MonoBehaviour
     public Sprite[] ballMachineSpritesFire;
     public Sprite[] ballMachineSpritesHitFlash;
     public CameraShake ballMachineShaker;
+    public GameObject ballMachinePlayerKiller;
     [Space]
     public GameObject ballPrefab;
     public GameObject bombPrefab;
@@ -92,6 +93,10 @@ public class GameplayManager : MonoBehaviour
 
     public void Lose()
     {
+        if (hasGameEnded)
+        {
+            return;
+        }
         hasGameEnded = true;
         cameraShake.Shake(0.5f, 5);
         if (score > highScore)
@@ -127,6 +132,11 @@ public class GameplayManager : MonoBehaviour
 
     public void Dodge(bool isABomb)
     {
+        if (hasGameEnded)
+        {
+            return;
+        }
+
         if (isABomb)
         {
             bombsDodged++;
@@ -136,6 +146,7 @@ public class GameplayManager : MonoBehaviour
             ballsDodged++;
         }
         IncreaseSpeed();
+
         StartCoroutine(PlayWenMessages());
     }
 
@@ -163,6 +174,8 @@ public class GameplayManager : MonoBehaviour
         gameOverLeaderboardNamesText.gameObject.SetActive(false);
         gameOverLeaderboardPositionsText.gameObject.SetActive(false);
         gameOverLeaderboardScoresText.gameObject.SetActive(false);
+
+        ballMachinePlayerKiller.gameObject.SetActive(false);
 
         bombsFiredInARow = 0;
         hasGameEnded = false;
@@ -284,11 +297,15 @@ public class GameplayManager : MonoBehaviour
 
         ballMachineAnim.Play(ballMachineSpritesFire, false);
 
+        ballMachinePlayerKiller.SetActive(true);
+
         yield return new WaitForSeconds(0.2f);
 
         SpawnProjectile();
 
         yield return new WaitForSeconds(0.3f);
+
+        ballMachinePlayerKiller.SetActive(false);
 
         ballMachineAnim.Play(ballMachineSpritesIdle, false);
     }

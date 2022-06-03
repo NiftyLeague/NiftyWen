@@ -69,5 +69,10 @@ public class PlayerController : MonoBehaviour
             }
             gameplayManager.Lose();
         }
+
+        if (collision.CompareTag("LoseSquare"))
+        {
+            gameplayManager.Lose();
+        }
     }
 }
