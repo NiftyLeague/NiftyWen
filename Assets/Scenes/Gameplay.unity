@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -579,7 +579,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 169972028}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 17.06, y: -8.8, z: 0}
+  m_LocalPosition: {x: 13, y: -8.8, z: 0}
   m_LocalScale: {x: 4, y: 100, z: 1}
   m_Children: []
   m_Father: {fileID: 1589952814}
@@ -804,7 +804,6 @@ MonoBehaviour:
     rgba: 4278254847
   - serializedVersion: 2
     rgba: 4278254847
-  nextBallReadyToLaunch: 0
   hasGameEnded: 0
 --- !u!1 &210668435
 GameObject:
