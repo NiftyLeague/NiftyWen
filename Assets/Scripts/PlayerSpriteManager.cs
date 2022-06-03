@@ -8,283 +8,280 @@ using TMPro;
 
 public class PlayerSpriteManager : MonoBehaviour
 {
-    CharacterAnimator characterAnimator;
-    public SpriteLoader spriteLoader;
+	CharacterAnimator characterAnimator;
+	public SpriteLoader spriteLoader;
 
-    private static List<CharacterSprites> importedCharacterSprites;
-    private static List<bool> hasImportedCharacterSpriteBeenDownloaded;
-    public List<CharacterSprites> demoCharacterSprites;
-    
-    public TextMeshProUGUI loadingDegensText;
-    public Image loadingDegensProgressBar;
+	private static List<CharacterSprites> importedCharacterSprites;
+	private static List<bool> hasImportedCharacterSpriteBeenDownloaded;
+	public List<CharacterSprites> demoCharacterSprites;
 
-    public static bool canChangeCharacters;
-    private int currentCharacterSprites;
-    private static bool hasBeenInitializedAlready;
+	public TextMeshProUGUI loadingDegensText;
+	public Image loadingDegensProgressBar;
 
-    private static bool created;
-    private static Coroutine currentEndLoadingDegensTextRoutine;
-    private static bool isLoadingADegen;
+	public static bool canChangeCharacters;
+	private int currentCharacterSprites;
+	private static bool hasBeenInitializedAlready;
 
-    void Awake()
-    {
-        if (created == false)
-        {
-            created = true;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            DestroyImmediate(gameObject);
-        }
-    }
+	private static bool created;
+	private static Coroutine currentEndLoadingDegensTextRoutine;
+	private static bool isLoadingADegen;
 
-    private void Start()
-    {
-        Scene scene = SceneManager.GetActiveScene();
-        if (scene.buildIndex == 1)
-        {
-            ChangeCharacter();
-        }
-    }
+	void Awake()
+	{
+		if (created == false)
+		{
+			created = true;
+			DontDestroyOnLoad(gameObject);
+		}
+		else
+		{
+			DestroyImmediate(gameObject);
+		}
+	}
 
-    public void GetSprites(List<Sprite> sprites)
-    {
-        InitializeSprites();
-        CharacterSprites newImportedCharacterSprites = new CharacterSprites();
-        newImportedCharacterSprites.sprites = new List<Sprite>();
-        foreach (Sprite sprite in sprites)
-        {
-            newImportedCharacterSprites.sprites.Add(sprite);
-        }
-        importedCharacterSprites.Add(newImportedCharacterSprites);
-        hasImportedCharacterSpriteBeenDownloaded[importedCharacterSprites.Count - 1] = true;
-        canChangeCharacters = true;
-        isLoadingADegen = false;
+	private void Start()
+	{
+		Scene scene = SceneManager.GetActiveScene();
+		if (scene.buildIndex == 1)
+		{
+			ChangeCharacter();
+		}
+	}
 
-        Scene scene = SceneManager.GetActiveScene();
-        if (scene.buildIndex == 1)
-        {
-            currentCharacterSprites = importedCharacterSprites.Count - 1;
+	public void GetSprites(List<Sprite> sprites)
+	{
+		InitializeSprites();
+		CharacterSprites newImportedCharacterSprites = new CharacterSprites();
+		newImportedCharacterSprites.sprites = new List<Sprite>();
+		foreach (Sprite sprite in sprites)
+		{
+			newImportedCharacterSprites.sprites.Add(sprite);
+		}
+		importedCharacterSprites.Add(newImportedCharacterSprites);
+		hasImportedCharacterSpriteBeenDownloaded[importedCharacterSprites.Count - 1] = true;
+		canChangeCharacters = true;
+		isLoadingADegen = false;
 
-            SetCharacterSprites();
-        }
-    }
+		Scene scene = SceneManager.GetActiveScene();
+		if (scene.buildIndex == 1)
+		{
+			currentCharacterSprites = importedCharacterSprites.Count - 1;
 
-    void InitializeSprites()
-    {
-        if (hasBeenInitializedAlready)
-        {
-            return;
-        }
+			SetCharacterSprites();
+		}
+	}
 
-        importedCharacterSprites = new List<CharacterSprites>();
-        hasImportedCharacterSpriteBeenDownloaded = new List<bool>();
-        for (int i = 0; i < spriteLoader.GetTotalDegensOnAccount(); i++)
-        {
-            hasImportedCharacterSpriteBeenDownloaded.Add(false);
-        }
+	void InitializeSprites()
+	{
+		if (hasBeenInitializedAlready)
+		{
+			return;
+		}
 
-        hasBeenInitializedAlready = true;
-    }
+		importedCharacterSprites = new List<CharacterSprites>();
+		hasImportedCharacterSpriteBeenDownloaded = new List<bool>();
+		for (int i = 0; i < spriteLoader.GetTotalDegensOnAccount(); i++)
+		{
+			hasImportedCharacterSpriteBeenDownloaded.Add(false);
+		}
 
-    public void ChangeCharacter()
-    {
-        if (canChangeCharacters)
-        {
-            if (isLoadingADegen)
-            {
-                return;
-            }
+		hasBeenInitializedAlready = true;
+	}
 
-            currentCharacterSprites++;
+	public void ChangeCharacter()
+	{
+		if (canChangeCharacters)
+		{
+			if (isLoadingADegen)
+			{
+				return;
+			}
 
-            if (currentCharacterSprites >= hasImportedCharacterSpriteBeenDownloaded.Count)
-            {
-                currentCharacterSprites = 0;
-            }
+			currentCharacterSprites++;
 
-            if (hasImportedCharacterSpriteBeenDownloaded[currentCharacterSprites])
-            {
-                SetCharacterSprites();
-            }
-            else
-            {
-                isLoadingADegen = true;
-                //spriteLoader.GetNextUnloadedDegen();
-                FindObjectOfType<SpriteLoader>().GetNextUnloadedDegen();
-            }
-        }
-        else
-        {
-            currentCharacterSprites = UnityEngine.Random.Range(0, 6);
-            SetCharacterSprites();
-        }
-    }
+			if (currentCharacterSprites >= hasImportedCharacterSpriteBeenDownloaded.Count)
+			{
+				currentCharacterSprites = 0;
+			}
 
-    public bool CanChangeCharacters()
-    {
-        InitializeSprites();
+			if (hasImportedCharacterSpriteBeenDownloaded[currentCharacterSprites])
+			{
+				SetCharacterSprites();
+			}
+			else
+			{
+				isLoadingADegen = true;
+				//spriteLoader.GetNextUnloadedDegen();
+				FindObjectOfType<SpriteLoader>().GetNextUnloadedDegen();
+			}
+		}
+		else
+		{
+			currentCharacterSprites = UnityEngine.Random.Range(0, 6);
+			SetCharacterSprites();
+		}
+	}
 
-        if (isLoadingADegen)
-        {
-            return false;
-        }
-        
-        if (importedCharacterSprites.Count <= 0)
-        {
-            canChangeCharacters = false;
-        }
+	public bool CanChangeCharacters()
+	{
+		InitializeSprites();
 
-        return canChangeCharacters;
-    }
+		if (isLoadingADegen)
+		{
+			return false;
+		}
 
-    public void SetCharacterSprites()
-    {
-        if (characterAnimator == null)
-        {
-            characterAnimator = FindObjectOfType<CharacterAnimator>();
-        }
+		if (importedCharacterSprites.Count <= 0)
+		{
+			canChangeCharacters = false;
+		}
 
-        List<Sprite> spritesToUse = new List<Sprite>();
+		return canChangeCharacters;
+	}
 
-        if (canChangeCharacters)
-        {
-            foreach (Sprite sprite in importedCharacterSprites[currentCharacterSprites].sprites)
-            {
-                spritesToUse.Add(sprite);
-            }
-        }
-        else
-        {
-            foreach (Sprite sprite in demoCharacterSprites[currentCharacterSprites].sprites)
-            {
-                spritesToUse.Add(sprite);
-            }
-        }
+	public void SetCharacterSprites()
+	{
+		if (characterAnimator == null)
+		{
+			characterAnimator = FindObjectOfType<CharacterAnimator>();
+		}
 
-        characterAnimator.idle.Clear();
-        characterAnimator.idle.Add(spritesToUse[2]);
-        characterAnimator.idle.Add(spritesToUse[2]);
-        characterAnimator.idle.Add(spritesToUse[2]);
+		List<Sprite> spritesToUse = new List<Sprite>();
 
-        characterAnimator.run.Clear();
-        for (int i = 9; i <= 16; i++)
-            characterAnimator.run.Add(spritesToUse[i]);
-        
-        characterAnimator.jumpLaunch.Clear();
-        characterAnimator.jumpLaunch.Add(spritesToUse[59]);
-        characterAnimator.jumpLaunch.Add(spritesToUse[59]);
+		if (canChangeCharacters)
+		{
+			foreach (Sprite sprite in importedCharacterSprites[currentCharacterSprites].sprites)
+			{
+				spritesToUse.Add(sprite);
+			}
+		}
+		else
+		{
+			foreach (Sprite sprite in demoCharacterSprites[currentCharacterSprites].sprites)
+			{
+				spritesToUse.Add(sprite);
+			}
+		}
 
-        characterAnimator.jumpUp.Clear();
-        for (int i = 59; i <= 60; i++)
-            characterAnimator.jumpUp.Add(spritesToUse[i]);
+		characterAnimator.idle.Clear();
+		characterAnimator.idle.Add(spritesToUse[2]);
+		characterAnimator.idle.Add(spritesToUse[2]);
+		characterAnimator.idle.Add(spritesToUse[2]);
 
-        characterAnimator.jumpDown.Clear();
-        for (int i = 64; i <= 65; i++)
-            characterAnimator.jumpDown.Add(spritesToUse[i]);
+		characterAnimator.run.Clear();
+		for (int i = 9; i <= 16; i++)
+			characterAnimator.run.Add(spritesToUse[i]);
 
-        characterAnimator.skidLand = spritesToUse[88];
-        characterAnimator.skid.Clear();
-        for (int i = 89; i <= 90; i++)
-            characterAnimator.skid.Add(spritesToUse[i]);
-        characterAnimator.skidRecover = spritesToUse[91];
+		characterAnimator.jumpLaunch.Clear();
+		characterAnimator.jumpLaunch.Add(spritesToUse[59]);
+		characterAnimator.jumpLaunch.Add(spritesToUse[59]);
 
-        characterAnimator.somersault.Clear();
-        for (int i = 66; i <= 73; i++)
-            characterAnimator.somersault.Add(spritesToUse[i]);
+		characterAnimator.jumpUp.Clear();
+		for (int i = 59; i <= 60; i++)
+			characterAnimator.jumpUp.Add(spritesToUse[i]);
 
-        characterAnimator.attackCharge.Clear();
-        for (int i = 19; i <= 24; i++)
-            characterAnimator.attackCharge.Add(spritesToUse[i]);
+		characterAnimator.jumpDown.Clear();
+		for (int i = 64; i <= 65; i++)
+			characterAnimator.jumpDown.Add(spritesToUse[i]);
 
-        characterAnimator.attack.Clear();
-        for (int i = 25; i <= 28; i++)
-            characterAnimator.attack.Add(spritesToUse[i]);
+		characterAnimator.skidLand = spritesToUse[88];
+		characterAnimator.skid.Clear();
+		for (int i = 89; i <= 90; i++)
+			characterAnimator.skid.Add(spritesToUse[i]);
+		characterAnimator.skidRecover = spritesToUse[91];
 
-        characterAnimator.attackRecover.Clear();
-        for (int i = 27; i <= 28; i++)
-            characterAnimator.attackRecover.Add(spritesToUse[i]);
+		characterAnimator.somersault.Clear();
+		for (int i = 66; i <= 73; i++)
+			characterAnimator.somersault.Add(spritesToUse[i]);
 
-        characterAnimator.wallSlide.Clear();
-        for (int i = 75; i <= 76; i++)
-            characterAnimator.wallSlide.Add(spritesToUse[i]);
+		characterAnimator.attackCharge.Clear();
+		for (int i = 19; i <= 24; i++)
+			characterAnimator.attackCharge.Add(spritesToUse[i]);
 
-        characterAnimator.wallSlideJumpLaunch.Clear();
-        characterAnimator.wallSlideJumpLaunch.Add(spritesToUse[59]);
-        characterAnimator.wallSlideJumpLaunch.Add(spritesToUse[59]);
-    }
+		characterAnimator.attack.Clear();
+		for (int i = 25; i <= 28; i++)
+			characterAnimator.attack.Add(spritesToUse[i]);
 
-    public void LoadingDegensText(int min, int max)
-    {
-        if (currentEndLoadingDegensTextRoutine != null)
-        {
-            StopCoroutine(currentEndLoadingDegensTextRoutine);
-        }
+		characterAnimator.attackRecover.Clear();
+		for (int i = 27; i <= 28; i++)
+			characterAnimator.attackRecover.Add(spritesToUse[i]);
 
-        loadingDegensText.color = new Color32(255, 255, 255, 255);
+		characterAnimator.wallSlide.Clear();
+		for (int i = 75; i <= 76; i++)
+			characterAnimator.wallSlide.Add(spritesToUse[i]);
 
-        loadingDegensText.text = "Loading Degen(s): " + min.ToString("0") + " / " + max.ToString("0");
-        if (min == 1)
-        {
-            loadingDegensText.text = "Loading First Degen...";
-        }
-        if (min > max)
-        {
-            EndLoadingDegensText();
-        }
-        if (min == 0 || max == 0)
-        {
-            loadingDegensText.text = "";
-            LoadingDegenProgressBar(0, 0);
-        }   
-    }
+		characterAnimator.wallSlideJumpLaunch.Clear();
+		characterAnimator.wallSlideJumpLaunch.Add(spritesToUse[59]);
+		characterAnimator.wallSlideJumpLaunch.Add(spritesToUse[59]);
+	}
 
-    public void EndLoadingDegensText()
-    {
-        if (currentEndLoadingDegensTextRoutine != null)
-        {
-            StopCoroutine(currentEndLoadingDegensTextRoutine);
-        }
-        currentEndLoadingDegensTextRoutine = StartCoroutine(EndLoadingDegensTextRoutine());
-    }
+	public void LoadingDegensText(int min, int max)
+	{
+		if (currentEndLoadingDegensTextRoutine != null)
+		{
+			StopCoroutine(currentEndLoadingDegensTextRoutine);
+		}
 
-    IEnumerator EndLoadingDegensTextRoutine()
-    {
-        loadingDegensText.text = "Degen(s) Loaded!";
+		loadingDegensText.color = new Color32(255, 255, 255, 255);
 
-        LoadingDegenProgressBar(0, 0);
+		loadingDegensText.text = $"Loading Degen: {min} / {max}".ToUpper();
+		if (min == 1)
+		{
+			loadingDegensText.text = "Loading Degen...".ToUpper();
+		}
+		if (min > max)
+		{
+			EndLoadingDegensText();
+		}
+		if (min == 0 || max == 0)
+		{
+			loadingDegensText.text = "";
+			LoadingDegenProgressBar(0, 0);
+		}
+	}
 
-        loadingDegensText.color = new Color32(255, 255, 0, 255);
+	public void EndLoadingDegensText()
+	{
+		if (currentEndLoadingDegensTextRoutine != null)
+		{
+			StopCoroutine(currentEndLoadingDegensTextRoutine);
+		}
+		currentEndLoadingDegensTextRoutine = StartCoroutine(EndLoadingDegensTextRoutine());
+	}
 
-        yield return new WaitForSeconds(2);
+	IEnumerator EndLoadingDegensTextRoutine()
+	{
+		loadingDegensText.text = "Degen Loaded!".ToUpper();
 
-        int a = 255;
-        int b = 0;
+		LoadingDegenProgressBar(0, 0);
+		yield return new WaitForSeconds(2f);
 
-        Tween<float> alphaTween = new Tween<float>(a, b, 1f, TweenEaseType.CubicInOut);
+		int a = 255;
+		int b = 0;
 
-        while (!alphaTween.IsEnded())
-        {
-            yield return new WaitForEndOfFrame();
-            byte alphaTweenByte = (byte)alphaTween.Update(Time.deltaTime);
-            loadingDegensText.color = new Color32(255, 255, 0, alphaTweenByte);
-        }
-    }
+		Tween<float> alphaTween = new Tween<float>(a, b, 1f, TweenEaseType.CubicInOut);
 
-    public void LoadingDegenProgressBar(int current, int max)
-    {
-        loadingDegensProgressBar.gameObject.SetActive(true);
-        loadingDegensProgressBar.fillAmount = (float)current / (float)max;
-        if (current >= max)
-        {
-            loadingDegensProgressBar.gameObject.SetActive(false);
-        }
-    }
+		while (!alphaTween.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			byte alphaTweenByte = (byte)alphaTween.Update(Time.deltaTime);
+			loadingDegensText.color = new Color32(255, 255, 255, alphaTweenByte);
+		}
+	}
+
+	public void LoadingDegenProgressBar(int current, int max)
+	{
+		loadingDegensProgressBar.gameObject.SetActive(true);
+		loadingDegensProgressBar.fillAmount = (float)current / (float)max;
+		if (current >= max)
+		{
+			loadingDegensProgressBar.gameObject.SetActive(false);
+		}
+	}
 }
 
 [Serializable]
 public class CharacterSprites
 {
-    public List<Sprite> sprites;
+	public List<Sprite> sprites;
 }

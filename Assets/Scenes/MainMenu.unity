@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -684,7 +684,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1caaa3ec81241d46a98f985efbb358d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animSpeed: 0.1
+  animSpeed: 0.07
   frames:
   - {fileID: 21300000, guid: 4f98a7a1f93715a4396a50b49db2ff85, type: 3}
   - {fileID: 21300000, guid: ee496c3120f202b40ab835ad16994bd2, type: 3}
@@ -936,7 +936,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1caaa3ec81241d46a98f985efbb358d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animSpeed: 0.1
+  animSpeed: 0.07
   frames:
   - {fileID: 21300000, guid: 8d2c2fe4975914c439c0daeb2cf3ecdc, type: 3}
   - {fileID: 21300000, guid: 400887a9c12a571478baa1677e913dbc, type: 3}
@@ -1320,7 +1320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1caaa3ec81241d46a98f985efbb358d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animSpeed: 0.1
+  animSpeed: 0.07
   frames:
   - {fileID: 21300000, guid: 6bac4f7e526454341a9bd8895d31745d, type: 3}
   - {fileID: 21300000, guid: 4bb6bbfba00cff54bb037441a9563d3e, type: 3}
@@ -2215,7 +2215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1caaa3ec81241d46a98f985efbb358d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animSpeed: 0.1
+  animSpeed: 0.07
   frames:
   - {fileID: 21300000, guid: 2d1cfb4e9e5202141ad68174bfbd6ed0, type: 3}
   - {fileID: 21300000, guid: 2d1cfb4e9e5202141ad68174bfbd6ed0, type: 3}
@@ -4268,7 +4268,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.4339623, b: 0.0682246, a: 1}
+  m_Color: {r: 0.07058824, g: 0.30588236, b: 0.5372549, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4662,7 +4662,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1caaa3ec81241d46a98f985efbb358d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animSpeed: 0.1
+  animSpeed: 0.07
   frames:
   - {fileID: 21300000, guid: e264259a652216a478c4183983a121ba, type: 3}
   - {fileID: 21300000, guid: e264259a652216a478c4183983a121ba, type: 3}
@@ -5266,7 +5266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1caaa3ec81241d46a98f985efbb358d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animSpeed: 0.1
+  animSpeed: 0.07
   frames:
   - {fileID: 21300000, guid: e6b066fe6879ffb42bcdcb8a02f97cd8, type: 3}
   - {fileID: 21300000, guid: e6b066fe6879ffb42bcdcb8a02f97cd8, type: 3}

@@ -62,24 +62,23 @@ public class SpriteLoader : MonoBehaviour
 	private void OnComplete(List<Sprite> sprites)
 	{
 		playerSpriteManager.GetSprites(sprites);
-		Debug.Log("Degen Complete!");
 		degensToLoadMin++;
 		playerSpriteManager.EndLoadingDegensText();
 		//StartCoroutine(TestAnimation(sprites));
 	}
 
-    //private IEnumerator TestAnimation(List<Sprite> sprites)
-    //{
-    //    int frame = 0;
-    //    int len = sprites.Count;
-    //    while (true)
-    //    {
-    //        yield return new WaitForSeconds(0.07f);
-    //        sr.sprite = sprites[frame++ % len];
-    //    }
-    //}
+	//private IEnumerator TestAnimation(List<Sprite> sprites)
+	//{
+	//    int frame = 0;
+	//    int len = sprites.Count;
+	//    while (true)
+	//    {
+	//        yield return new WaitForSeconds(0.07f);
+	//        sr.sprite = sprites[frame++ % len];
+	//    }
+	//}
 
-    public void LoadSpritesheet(string url, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete)
+	public void LoadSpritesheet(string url, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete)
 	{
 		//I.StartCoroutine(I._LoadSpritesheet(url, columns, rows, cellWith, cellHeight, onComplete));
 		StartCoroutine(_LoadSpritesheet(url, columns, rows, cellWith, cellHeight, onComplete));
@@ -123,11 +122,7 @@ public class SpriteLoader : MonoBehaviour
 				s.name = frame.ToString();
 				sprites.Add(s);
 				frame++;
-				//if (frame % 4 == 0)
-				if (frame % 2 == 0)
-				{
-					yield return new WaitForEndOfFrame();
-				}
+				yield return new WaitForEndOfFrame();
 				playerSpriteManager.LoadingDegenProgressBar(frame, 250);
 			}
 		}

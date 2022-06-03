@@ -26,7 +26,6 @@ public class ProjectileHitter : MonoBehaviour
     {
         gameObject.SetActive(true);
         audioManager.PlaySound(AudioManager.SoundID.batSwing);
-        Debug.Log(playerCharacter.attackChargeM);
     }
 
     void TurnOff()

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -579,8 +579,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 169972028}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 15.5, y: -8.8, z: 0}
-  m_LocalScale: {x: 1, y: 100, z: 1}
+  m_LocalPosition: {x: 17.06, y: -8.8, z: 0}
+  m_LocalScale: {x: 4, y: 100, z: 1}
   m_Children: []
   m_Father: {fileID: 1589952814}
   m_RootOrder: 5
@@ -977,8 +977,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4287188498
+  m_fontColor: {r: 0.07058824, g: 0.30588236, b: 0.5372549, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2231,8 +2231,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4287188498
+  m_fontColor: {r: 0.07058824, g: 0.30588236, b: 0.5372549, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2545,8 +2545,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1095574565}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 8, z: 0}
-  m_LocalScale: {x: 100, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 12.44, z: 0}
+  m_LocalScale: {x: 100, y: 4, z: 1}
   m_Children: []
   m_Father: {fileID: 1589952814}
   m_RootOrder: 6
@@ -2863,10 +2863,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '(X) Button / [X] Key = Hit the ball in time.
+  m_text: '(X) BUTTON / [X] KEY = HIT THE BALL IN TIME.
 
-    (A) Button/ [SPACE]
-    Key = Jump'
+    (A) BUTTON/ [SPACE]
+    KEY = JUMP
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 33a49843099af0a40985e2abc54485fb, type: 2}
   m_sharedMaterial: {fileID: -939469221498171839, guid: 33a49843099af0a40985e2abc54485fb, type: 2}
@@ -2875,8 +2877,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4292581632
-  m_fontColor: {r: 0, g: 0.6, b: 0.8588236, a: 1}
+    rgba: 4287188498
+  m_fontColor: {r: 0.07058824, g: 0.30588236, b: 0.5372549, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3689,7 +3691,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1489606861}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11, y: -5, z: 0}
+  m_LocalPosition: {x: -11, y: -5.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1791346931}
@@ -3913,7 +3915,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1589952813}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1478721889}
@@ -6778,8 +6780,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2022018594}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -15.5, y: -8.8, z: 0}
-  m_LocalScale: {x: 1, y: 100, z: 1}
+  m_LocalPosition: {x: -17.05, y: -8.8, z: 0}
+  m_LocalScale: {x: 4, y: 100, z: 1}
   m_Children: []
   m_Father: {fileID: 1589952814}
   m_RootOrder: 4
@@ -6898,7 +6900,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2079236526}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1649469987}
