@@ -913,10 +913,10 @@ public class Character : MonoBehaviour
         //}
     }
 
-    public void HitBall(Transform ballPosition)
+    public void HitBall(Vector3 ballHitPosition)
     {
         //EffectsController.CreateHitEffect(ballPosition.position + Vector3.up * height * 0.5f, timeBumpTimeLeft, attackChargeM >= 1f);
-        EffectsController.CreateHitEffect(ballPosition.position, 0.1f + (attackChargeM / 2), attackChargeM >= 1f);
+        EffectsController.CreateHitEffect(ballHitPosition, 0.2f, attackChargeM >= 1f);
     }
 
     void ApplyMotionVector()

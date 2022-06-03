@@ -44,7 +44,7 @@ public class ProjectileHitter : MonoBehaviour
                 return;
             }
             hitProjectile.HitProjectile(playerCharacter.attackChargeM);
-            playerCharacter.HitBall(collision.transform);
+            playerCharacter.HitBall(transform.position + new Vector3(0.4f, 0.4f, 0));
             if (hitProjectile.isABomb)
             {
                 gameplayManager.Lose();

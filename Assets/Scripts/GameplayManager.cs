@@ -159,7 +159,7 @@ public class GameplayManager : MonoBehaviour
 
     public void IncreaseSpeed(bool reset = false)
     {
-        currentSpeedIncrease += 0.5f;
+        currentSpeedIncrease += 0.6f;
         if (reset)
         {
             currentSpeedIncrease = 0;
@@ -258,6 +258,8 @@ public class GameplayManager : MonoBehaviour
         audioManager.PlaySound(AudioManager.SoundID.messagePopup);
         wenMessageText.text = wenManager.GetRandomWenMessage();
 
+        float messageSpeedIncrease = ballsTotal / 50;
+
         float a = 0;
         float b = 0.1f;
 
@@ -269,8 +271,12 @@ public class GameplayManager : MonoBehaviour
             wenMessageText.transform.localScale = new Vector3(0.1f, scaleTween.Update(Time.deltaTime), 0.1f);
         }
 
-        yield return new WaitForSeconds(1.5f);
+        float randomWenTime = 0.1f + (Random.Range(1.0f, 2.0f) - messageSpeedIncrease);
+
+        yield return new WaitForSeconds(randomWenTime);
+
         ResetWenMessageTexts();
+
         audioManager.PlaySound(AudioManager.SoundID.messagePopup);
 
         a = 0;
@@ -284,9 +290,9 @@ public class GameplayManager : MonoBehaviour
             soonMessageText.transform.localScale = new Vector3(0.1f, scaleTween.Update(Time.deltaTime), 0.1f);
         }
 
-        float randomTime = Random.Range(0.5f, 2.0f);
+        float randomSoonTime = 0.1f + (Random.Range(0.5f, 2.0f) - messageSpeedIncrease);
 
-        yield return new WaitForSeconds(randomTime);
+        yield return new WaitForSeconds(randomSoonTime);
 
         ResetWenMessageTexts();
 
