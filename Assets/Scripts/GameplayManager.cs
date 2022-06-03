@@ -44,11 +44,10 @@ public class GameplayManager : MonoBehaviour
     [Space]
     public List<Color32> randomScoreGainedColors;
 
-    float nextBallTimer;
-    [HideInInspector] public bool nextBallReadyToLaunch;
     bool hasLaunchedABomb;
     public bool hasGameEnded;
     int bombsFiredInARow;
+    float minimumStartTime = 0.4f;
 
     private InputState input = new InputState();
 
@@ -59,23 +58,6 @@ public class GameplayManager : MonoBehaviour
         ResetWenMessageTexts();
         menuManager.menuPanel.SetActive(false);
         StartCoroutine(InstructionMessageFade());
-    }
-
-    void Update()
-    {
-        if (hasGameEnded)
-        {
-            return;
-        }
-
-        nextBallTimer += Time.deltaTime;
-
-        if (nextBallTimer >= 4 && nextBallReadyToLaunch)
-        {
-            StartCoroutine(PlayWenMessages());
-            nextBallReadyToLaunch = false;
-            nextBallTimer = 0;
-        }
     }
 
     private void FixedUpdate()
@@ -90,7 +72,6 @@ public class GameplayManager : MonoBehaviour
 
     public void ScorePoint(bool hitBallMachine)
     {
-        nextBallReadyToLaunch = true;
         int scoreGainedAmount = 1;
         if (hitBallMachine)
         {
@@ -101,6 +82,7 @@ public class GameplayManager : MonoBehaviour
         StartCoroutine(AnimateScoreText());
         IncreaseSpeed();
         UpdateScoreText();
+        StartCoroutine(PlayWenMessages());
     }
 
     void UpdateScoreText()
@@ -153,13 +135,13 @@ public class GameplayManager : MonoBehaviour
         {
             ballsDodged++;
         }
-        nextBallReadyToLaunch = true;
         IncreaseSpeed();
+        StartCoroutine(PlayWenMessages());
     }
 
     public void IncreaseSpeed(bool reset = false)
     {
-        currentSpeedIncrease += 0.6f;
+        currentSpeedIncrease += 0.5f;
         if (reset)
         {
             currentSpeedIncrease = 0;
@@ -185,11 +167,11 @@ public class GameplayManager : MonoBehaviour
         bombsFiredInARow = 0;
         hasGameEnded = false;
         hasLaunchedABomb = false;
-        nextBallReadyToLaunch = true;
 
         playerCharacter.UnLose();
 
         UpdateScoreText();
+        StartCoroutine(PlayWenMessages());
     }
 
     void ResetWenMessageTexts()
@@ -254,11 +236,15 @@ public class GameplayManager : MonoBehaviour
 
     IEnumerator PlayWenMessages()
     {
+        float messageSpeedIncrease = ballsTotal / 50;
+
+        float randomStartTime = minimumStartTime + (Random.Range(1.0f, 2.0f) - messageSpeedIncrease);
+
+        yield return new WaitForSeconds(randomStartTime);
+
         ResetWenMessageTexts();
         audioManager.PlaySound(AudioManager.SoundID.messagePopup);
         wenMessageText.text = wenManager.GetRandomWenMessage();
-
-        float messageSpeedIncrease = ballsTotal / 50;
 
         float a = 0;
         float b = 0.1f;
@@ -271,7 +257,7 @@ public class GameplayManager : MonoBehaviour
             wenMessageText.transform.localScale = new Vector3(0.1f, scaleTween.Update(Time.deltaTime), 0.1f);
         }
 
-        float randomWenTime = 0.1f + (Random.Range(1.0f, 2.0f) - messageSpeedIncrease);
+        float randomWenTime = minimumStartTime + (Random.Range(0.5f, 2.5f) - messageSpeedIncrease);
 
         yield return new WaitForSeconds(randomWenTime);
 
@@ -290,7 +276,7 @@ public class GameplayManager : MonoBehaviour
             soonMessageText.transform.localScale = new Vector3(0.1f, scaleTween.Update(Time.deltaTime), 0.1f);
         }
 
-        float randomSoonTime = 0.1f + (Random.Range(0.5f, 2.0f) - messageSpeedIncrease);
+        float randomSoonTime = minimumStartTime + (Random.Range(0.5f, 2.0f) - messageSpeedIncrease);
 
         yield return new WaitForSeconds(randomSoonTime);
 

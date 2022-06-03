@@ -34,6 +34,15 @@ public class Projectile : MonoBehaviour
     public void SetNewSpeed(float amount)
     {
         moveSpeed += amount;
+        if (moveSpeed > 50)
+        {
+            moveSpeed = 50;
+        }
+
+        if (Random.value < 0.01f)
+        {
+            moveSpeed = 20;
+        }
     }
 
     public void HitProjectile(float chargePower)
