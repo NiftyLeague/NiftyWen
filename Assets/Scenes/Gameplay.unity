@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -164,7 +164,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &97347993
 GameObject:
@@ -806,7 +806,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -1}
+  m_Offset: {x: -0.4, y: -1}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -937,6 +937,13 @@ MonoBehaviour:
     rgba: 4278254847
   - serializedVersion: 2
     rgba: 4278254847
+  maxBallSpeed: 20
+  wenSoonTimeRange: {x: 0.1, y: 0.5}
+  startTimeoutRange: {x: 0.25, y: 1}
+  shootRandomTimeoutRange: {x: -0.1, y: 0.5}
+  textTweenType: 7
+  textTweenDuration: 0.2
+  textDisplayTimeRange: {x: 0.4, y: 1}
   hasGameEnded: 0
 --- !u!1 &210668435
 GameObject:
@@ -3765,7 +3772,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1489606861}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 195ffa1fd5416ad4e9120ea3e6578da5, type: 3}
   m_Name: 
@@ -4350,7 +4357,7 @@ Transform:
   - {fileID: 1992968291}
   - {fileID: 1461395145}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1722793760
 MonoBehaviour:
@@ -6252,7 +6259,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -1.2, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -6263,7 +6270,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 3.5, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &1825532306
 MonoBehaviour:
@@ -6646,7 +6653,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1980257944}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11, y: -5, z: 0}
+  m_LocalPosition: {x: -11, y: 8.66, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -6824,7 +6831,7 @@ Transform:
   - {fileID: 2013845588}
   - {fileID: 201607128}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2013845587
 GameObject:
