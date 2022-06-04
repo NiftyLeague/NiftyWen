@@ -912,13 +912,60 @@ MonoBehaviour:
   audioManager: {fileID: 201607129}
   wenManager: {fileID: 45762931}
   playerCharacter: {fileID: 1489606863}
-  score: 0
-  highScore: 0
-  timePlayed: 0
-  ballsTotal: 0
-  ballsDodged: 0
-  bombsDodged: 0
-  currentSpeedIncrease: 0
+  score:
+    currentCryptoKey: 1395131236
+    hiddenValue: 1395131236
+    inited: 1
+    fakeValue: 0
+    fakeValueActive: 0
+  highScore:
+    currentCryptoKey: 2018999137
+    hiddenValue: 2018999137
+    inited: 1
+    fakeValue: 0
+    fakeValueActive: 0
+  timePlayed:
+    migratedVersion: 
+    currentCryptoKey: 1747097129
+    hiddenValue: 1754669609
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    inited: 1
+    fakeValue: 0
+    fakeValueActive: 0
+  ballsTotal:
+    currentCryptoKey: 1179597981
+    hiddenValue: 1179597981
+    inited: 1
+    fakeValue: 0
+    fakeValueActive: 0
+  ballsDodged:
+    currentCryptoKey: 2099529974
+    hiddenValue: 2099529974
+    inited: 1
+    fakeValue: 0
+    fakeValueActive: 0
+  bombsDodged:
+    currentCryptoKey: 1788418911
+    hiddenValue: 1788418911
+    inited: 1
+    fakeValue: 0
+    fakeValueActive: 0
+  currentSpeedIncrease:
+    migratedVersion: 
+    currentCryptoKey: 1393871567
+    hiddenValue: 1405752527
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    inited: 1
+    fakeValue: 0
+    fakeValueActive: 0
   cameraShake: {fileID: 963194229}
   scoreText: {fileID: 1649469988}
   wenMessageText: {fileID: 297390870}
@@ -969,16 +1016,48 @@ MonoBehaviour:
     rgba: 4278254847
   - serializedVersion: 2
     rgba: 4278254847
-  maxBallSpeed: 27.5
+  maxBallSpeed:
+    migratedVersion: 
+    currentCryptoKey: 1556443166
+    hiddenValue: 493885726
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    inited: 1
+    fakeValue: 27.5
+    fakeValueActive: 1
   wenSoonTimeRange: {x: 0.1, y: 0.5}
   startTimeoutRange: {x: 0.25, y: 1}
   shootRandomTimeoutRange: {x: -0.1, y: 0.5}
   textTweenType: 7
-  textTweenDuration: 0.2
+  textTweenDuration:
+    migratedVersion: 
+    currentCryptoKey: 1545135820
+    hiddenValue: 1646941185
+    hiddenValueOldByte4:
+      b1: 0
+      b2: 0
+      b3: 0
+      b4: 0
+    inited: 1
+    fakeValue: 0.2
+    fakeValueActive: 1
   textDisplayTimeRange: {x: 0.4, y: 1}
   bombSpawnProbabilityRange: {x: 0.1, y: 0.5}
-  minScoreForBomb: 20
-  hasGameEnded: 0
+  minScoreForBomb:
+    currentCryptoKey: 1919472356
+    hiddenValue: 1919472368
+    inited: 1
+    fakeValue: 20
+    fakeValueActive: 1
+  hasGameEnded:
+    currentCryptoKey: 154
+    hiddenValue: 47
+    inited: 1
+    fakeValue: 0
+    fakeValueActive: 0
 --- !u!1 &210668435
 GameObject:
   m_ObjectHideFlags: 0

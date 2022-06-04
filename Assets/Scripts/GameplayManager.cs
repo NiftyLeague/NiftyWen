@@ -15,7 +15,6 @@ public class GameplayManager : MonoBehaviour
 	public Character playerCharacter;
 	[Space]
 	public ObscuredInt score;
-	public ObscuredInt highScore;
 	public ObscuredFloat timePlayed;
 	public ObscuredInt ballsTotal;
 	public ObscuredInt ballsDodged;
@@ -123,10 +122,6 @@ public class GameplayManager : MonoBehaviour
 		}
 		hasGameEnded = true;
 		cameraShake.Shake(0.5f, 5);
-		if (score > highScore)
-		{
-			highScore = score;
-		}
 		IncreaseSpeed(true);
 		playerCharacter.Lose();
 		StartCoroutine(PlayGameOverScreen());
@@ -244,12 +239,12 @@ public class GameplayManager : MonoBehaviour
 
 		scoreText.text = "";
 
-		gameOverStatNamesText.text = "SCORE\nHIGH SCORE\nTIME PLAYED\nTOTAL BALLS\nBALLS DODGED";
+		gameOverStatNamesText.text = "SCORE\nTIME PLAYED\nTOTAL BALLS\nBALLS DODGED";
 
 		float secondsPlayed = timePlayed % 60;
 		float minutesPlayed = timePlayed / 60;
 		float hoursPlayed = timePlayed / 60 / 60;
-		gameOverStatNumbersText.text = score.ToString("0") + "\n" + highScore.ToString("0") + "\n" + hoursPlayed.ToString("0") + ":" + minutesPlayed.ToString("00") + ":" + secondsPlayed.ToString("00") + "\n" + ballsTotal.ToString("0") + "\n" + ballsDodged.ToString("0");
+		gameOverStatNumbersText.text = score.ToString("0") + "\n" + hoursPlayed.ToString("0") + ":" + minutesPlayed.ToString("00") + ":" + secondsPlayed.ToString("00") + "\n" + ballsTotal.ToString("0") + "\n" + ballsDodged.ToString("0");
 
 		if (hasLaunchedABomb)
 		{
