@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using CodeStage.AntiCheat.ObscuredTypes;
 
 public class GameplayManager : MonoBehaviour
 {
@@ -13,14 +14,14 @@ public class GameplayManager : MonoBehaviour
 	public WenManager wenManager;
 	public Character playerCharacter;
 	[Space]
-	public int score;
-	public int highScore;
-	public float timePlayed;
-	public int ballsTotal;
-	public int ballsDodged;
-	public int bombsDodged;
+	public ObscuredInt score;
+	public ObscuredInt highScore;
+	public ObscuredFloat timePlayed;
+	public ObscuredInt ballsTotal;
+	public ObscuredInt ballsDodged;
+	public ObscuredInt bombsDodged;
 	[Space]
-	public float currentSpeedIncrease;
+	public ObscuredFloat currentSpeedIncrease;
 	public CameraShake cameraShake;
 	[Space]
 	public TextMeshProUGUI scoreText;
@@ -49,21 +50,20 @@ public class GameplayManager : MonoBehaviour
 	[Space]
 	public List<Color32> randomScoreGainedColors;
 
-	public float maxBallSpeed;
+	public ObscuredFloat maxBallSpeed;
 	public Vector2 wenSoonTimeRange;
 	public Vector2 startTimeoutRange;
 	public Vector2 shootRandomTimeoutRange;
 	public TweenEaseType textTweenType;
-	public float textTweenDuration;
+	public ObscuredFloat textTweenDuration;
 	public Vector2 textDisplayTimeRange;
 	public Vector2 bombSpawnProbabilityRange;
-	public int minScoreForBomb;
+	public ObscuredInt minScoreForBomb;
+	public ObscuredBool hasGameEnded;
 
-
-	bool hasLaunchedABomb;
-	public bool hasGameEnded;
-	int bombsFiredInARow;
-	bool pitching = false;
+	ObscuredBool hasLaunchedABomb;
+	ObscuredInt bombsFiredInARow;
+	ObscuredBool pitching = false;
 
 	private InputState input = new InputState();
 	private Projectile currentProjectile = null;
