@@ -6,6 +6,8 @@ using TMPro;
 
 public class GameplayManager : MonoBehaviour
 {
+	public static GameplayManager I;
+
 	public MenuManager menuManager;
 	public AudioManager audioManager;
 	public WenManager wenManager;
@@ -42,6 +44,8 @@ public class GameplayManager : MonoBehaviour
 	public GameObject ballPrefab;
 	public GameObject bombPrefab;
 	public Transform ballStartLocation;
+	public Transform worldLeftLimit;
+	public Transform worldRightLimit;
 	[Space]
 	public List<Color32> randomScoreGainedColors;
 
@@ -52,13 +56,22 @@ public class GameplayManager : MonoBehaviour
 	public TweenEaseType textTweenType;
 	public float textTweenDuration;
 	public Vector2 textDisplayTimeRange;
+	public Vector2 bombSpawnProbabilityRange;
+	public int minScoreForBomb;
 
 
 	bool hasLaunchedABomb;
 	public bool hasGameEnded;
 	int bombsFiredInARow;
+	bool pitching = false;
 
 	private InputState input = new InputState();
+	private Projectile currentProjectile = null;
+
+	private void Awake()
+	{
+		I = this;
+	}
 
 	void Start()
 	{
@@ -77,6 +90,10 @@ public class GameplayManager : MonoBehaviour
 		}
 
 		timePlayed += Time.deltaTime;
+		if (currentProjectile == null && !pitching)
+		{
+			StartCoroutine(PitchNextProjectile());
+		}
 	}
 
 	public void ScorePoint(bool hitBallMachine)
@@ -91,7 +108,6 @@ public class GameplayManager : MonoBehaviour
 		StartCoroutine(AnimateScoreText());
 		IncreaseSpeed();
 		UpdateScoreText();
-		StartCoroutine(PlayWenMessages());
 	}
 
 	void UpdateScoreText()
@@ -154,8 +170,6 @@ public class GameplayManager : MonoBehaviour
 			ballsDodged++;
 		}
 		IncreaseSpeed();
-
-		StartCoroutine(PlayWenMessages());
 	}
 
 	public void IncreaseSpeed(bool reset = false)
@@ -190,9 +204,9 @@ public class GameplayManager : MonoBehaviour
 		hasLaunchedABomb = false;
 
 		playerCharacter.UnLose();
+		currentProjectile = null;
 
 		UpdateScoreText();
-		StartCoroutine(PlayWenMessages());
 	}
 
 	void ResetWenMessageTexts()
@@ -255,8 +269,13 @@ public class GameplayManager : MonoBehaviour
 		menuManager.TurnOnMenu();
 	}
 
-	IEnumerator PlayWenMessages()
+	IEnumerator PitchNextProjectile()
 	{
+		if (pitching)
+		{
+			yield break;
+		}
+		pitching = true;
 		float timeout = Mathf.Lerp(startTimeoutRange.y, startTimeoutRange.x, ballsTotal / 50f);
 
 		yield return new WaitForSeconds(timeout);
@@ -280,6 +299,7 @@ public class GameplayManager : MonoBehaviour
 
 		ballMachinePlayerKiller.SetActive(false);
 		ballMachineAnim.Play(ballMachineSpritesIdle, false);
+		pitching = false;
 	}
 
 
@@ -360,30 +380,28 @@ public class GameplayManager : MonoBehaviour
 	void SpawnProjectile()
 	{
 		GameObject chosenProjectile = ballPrefab;
-		if (ballsTotal >= 10)
+		float currentBombSpawnProbablity = Mathf.Lerp(bombSpawnProbabilityRange.x, bombSpawnProbabilityRange.y, score - minScoreForBomb / 20);
+		if (score >= minScoreForBomb && XRandom.NextFloat() >= currentBombSpawnProbablity)
 		{
-			if (Random.Range(0, 100 + (int)(score / 2)) >= 50)
-			{
-				chosenProjectile = bombPrefab;
-				hasLaunchedABomb = true;
-				bombsFiredInARow++;
+			chosenProjectile = bombPrefab;
+			hasLaunchedABomb = true;
+			bombsFiredInARow++;
 
-				if (bombsFiredInARow >= 10)
-				{
-					chosenProjectile = ballPrefab;
-				}
-			}
-			else
+			if (bombsFiredInARow >= 5)
 			{
-				bombsFiredInARow = 0;
+				chosenProjectile = ballPrefab;
 			}
+		}
+		else
+		{
+			bombsFiredInARow = 0;
 		}
 
 		var newProjectile = Instantiate(chosenProjectile, ballStartLocation);
 		newProjectile.transform.localPosition = new Vector3(0, 0, 0);
-		var spawnedProjectile = newProjectile.GetComponent<Projectile>();
-		spawnedProjectile.SetNewSpeed(Mathf.Min(maxBallSpeed, currentSpeedIncrease));
-		if (!spawnedProjectile.isABomb)
+		currentProjectile = newProjectile.GetComponent<Projectile>();
+		currentProjectile.SetNewSpeed(Mathf.Min(maxBallSpeed, currentSpeedIncrease));
+		if (!currentProjectile.isABomb)
 		{
 			ballsTotal++;
 		}
