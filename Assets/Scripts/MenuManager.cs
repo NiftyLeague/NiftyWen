@@ -89,6 +89,16 @@ public class MenuManager : MonoBehaviour
 		SetSelectedMenuOption();
 	}
 
+	internal void SetStatus(string text)
+	{
+		throw new NotImplementedException();
+	}
+
+	internal void SetVersion(string version)
+	{
+		throw new NotImplementedException();
+	}
+
 	void SetSelectedMenuOption()
 	{
 		menuCursor.anchoredPosition = new Vector2(menuCursor.anchoredPosition.x, menuOptions[selectedMenuOption].menuOptionText.rectTransform.anchoredPosition.y);
