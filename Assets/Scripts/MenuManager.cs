@@ -16,6 +16,7 @@ public class MenuManager : MonoBehaviour
 	public RectTransform menuCursor;
 	public GameObject menuPanel;
 	public GameObject whiteFlash;
+	public float menuCursorYOffset;
 	[Space]
 	public Color32 optionColorDefault;
 	public Color32 optionColorPressed;
@@ -91,17 +92,12 @@ public class MenuManager : MonoBehaviour
 
 	internal void SetStatus(string text)
 	{
-		throw new NotImplementedException();
-	}
-
-	internal void SetVersion(string version)
-	{
-		throw new NotImplementedException();
+		print(text);
 	}
 
 	void SetSelectedMenuOption()
 	{
-		menuCursor.anchoredPosition = new Vector2(menuCursor.anchoredPosition.x, menuOptions[selectedMenuOption].menuOptionText.rectTransform.anchoredPosition.y);
+		menuCursor.anchoredPosition = new Vector2(menuCursor.anchoredPosition.x, menuOptions[selectedMenuOption].menuOptionText.rectTransform.anchoredPosition.y + menuCursorYOffset);
 
 		//Debug.Log("Currently Selected Option: " + menuOptions[selectedMenuOption].menuOptionString);
 	}

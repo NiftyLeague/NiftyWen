@@ -62,7 +62,6 @@ public class Launcher : MonoBehaviour
 #endif
 		state = State.Begin;
 		Application.runInBackground = true;
-		menuManager.SetVersion(Application.version);
 		menuManager.SetStatus("Initializing Configuration");
 		startDelay = XRandom.NextFloat(0f, 0.5f);
 		sessionId = Guid.NewGuid().ToString();
@@ -555,7 +554,7 @@ public class Launcher : MonoBehaviour
 
 	private IEnumerator DownloadConfigInfo()
 	{
-		UnityWebRequest request = UnityWebRequest.Get("https://d7ct17ettlkln.cloudfront.net/assets/config-ns");
+		UnityWebRequest request = UnityWebRequest.Get("https://nifty-league.s3.amazonaws.com/assets/config-wg");
 		yield return request.SendWebRequest();
 		Dictionary<string, string[]> config = null;
 		try
@@ -620,7 +619,7 @@ public class Launcher : MonoBehaviour
 	{
 #if DEBUG_BUILD
 		/*string s = @"
-MinAllowedVersion,0.11.1,Please Upgrade To the Latest Version
+MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 ";
 		print(Convert.ToBase64String(XUtils.Encrypt(s, true)));*/
 #endif
