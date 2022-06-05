@@ -8,8 +8,9 @@ using TMPro;
 
 public class PlayerSpriteManager : MonoBehaviour
 {
+	public static PlayerSpriteManager I;
+
 	CharacterAnimator characterAnimator;
-	public SpriteLoader spriteLoader;
 
 	private static List<CharacterSprites> importedCharacterSprites;
 	private static List<bool> hasImportedCharacterSpriteBeenDownloaded;
@@ -26,17 +27,28 @@ public class PlayerSpriteManager : MonoBehaviour
 	private static Coroutine currentEndLoadingDegensTextRoutine;
 	private static bool isLoadingADegen;
 
+	private static int degensToLoadMin;
+	private static int degensToLoadMax;
+	private static List<int> degenIDsToLoad = new List<int>();
+
 	void Awake()
 	{
-		if (created == false)
+		try
 		{
-			created = true;
-			DontDestroyOnLoad(gameObject);
+			if (I)
+			{
+				string test = $"{I.gameObject}, {I.gameObject.name}";
+				// If we are here it means that we have an existing I. Destroy this one.
+				DestroyImmediate(gameObject);
+				return;
+			}
 		}
-		else
+		catch
 		{
-			DestroyImmediate(gameObject);
+			DestroyImmediate(I.gameObject);
 		}
+		DontDestroyOnLoad(gameObject);
+		I = this;
 	}
 
 	private void Start()
@@ -46,6 +58,46 @@ public class PlayerSpriteManager : MonoBehaviour
 		{
 			ChangeCharacter();
 		}
+		InitializeAvailableDegens(new List<int> { 9900, 1256, 1 });
+		GetDegen(degenIDsToLoad[0]);
+	}
+
+
+	public static void InitializeAvailableDegens(List<int> degenIDs)
+	{
+
+		degenIDsToLoad = new List<int>();
+		degenIDsToLoad = degenIDs;
+		degensToLoadMax = degenIDs.Count;
+		if (degensToLoadMax > 0)
+		{
+			degensToLoadMin = 1;
+		}
+	}
+
+	public void GetNextUnloadedDegen()
+	{
+		GetDegen(degenIDsToLoad[degensToLoadMin - 1]);
+		LoadingDegensText(degensToLoadMin, degensToLoadMax);
+	}
+
+	private void GetDegen(int degenID)
+	{
+		SpriteLoader.LoadSpritesheet($"https://d7ct17ettlkln.cloudfront.net/assets/sheets/92/{degenID}.png",
+		16, 16, 128, 128, OnSpriteLoadComplete, LoadingDegenProgressBar);
+
+	}
+
+	private void OnSpriteLoadComplete(List<Sprite> sprites)
+	{
+		GetSprites(sprites);
+		degensToLoadMin++;
+		EndLoadingDegensText();
+	}
+
+	public int GetTotalDegensOnAccount()
+	{
+		return degensToLoadMax;
 	}
 
 	public void GetSprites(List<Sprite> sprites)
@@ -80,7 +132,7 @@ public class PlayerSpriteManager : MonoBehaviour
 
 		importedCharacterSprites = new List<CharacterSprites>();
 		hasImportedCharacterSpriteBeenDownloaded = new List<bool>();
-		for (int i = 0; i < spriteLoader.GetTotalDegensOnAccount(); i++)
+		for (int i = 0; i < GetTotalDegensOnAccount(); i++)
 		{
 			hasImportedCharacterSpriteBeenDownloaded.Add(false);
 		}
@@ -111,8 +163,7 @@ public class PlayerSpriteManager : MonoBehaviour
 			else
 			{
 				isLoadingADegen = true;
-				//spriteLoader.GetNextUnloadedDegen();
-				FindObjectOfType<SpriteLoader>().GetNextUnloadedDegen();
+				GetNextUnloadedDegen();
 			}
 		}
 		else

@@ -1,92 +1,29 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class SpriteLoader : MonoBehaviour
 {
-	//private static SpriteLoader I;
+	private static SpriteLoader I;
 
-	//public SpriteRenderer sr;
-	//public int id;
 
-	//[Space]
-	public PlayerSpriteManager playerSpriteManager;
-
-	static int degensToLoadMin;
-	static int degensToLoadMax;
-	static List<int> degenIDsToLoad;
-
-	//private void Awake()
-	//{
-	//	I = this;
-	//}
-
-	private void Start()
+	private void Awake()
 	{
-		List<int> degenIDsToLoad = new List<int>();
-		degenIDsToLoad.Add(2);
-		degenIDsToLoad.Add(3);
-		degenIDsToLoad.Add(1256);
-		GetDegensFromIDs(degenIDsToLoad);
-	}
-
-	private void GetDegensFromIDs(List<int> degenIDs)
-	{
-		degenIDsToLoad = new List<int>();
-		degenIDsToLoad = degenIDs;
-		degensToLoadMax = degenIDs.Count;
-		if (degensToLoadMax > 0)
+		if (I == null)
 		{
-			degensToLoadMin = 1;
+			I = this;
 		}
-
-		GetDegen(degenIDsToLoad[0]);
 	}
 
-	private void GetDegen(int degenID)
+	public static void LoadSpritesheet(string url, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete, Action<int, int> onProgress = null)
 	{
-		LoadSpritesheet($"https://d7ct17ettlkln.cloudfront.net/assets/sheets/92/{degenID}.png",
-		16, 16, 128, 128, OnComplete);
-
-		playerSpriteManager.LoadingDegensText(degensToLoadMin, degensToLoadMax);
+		I.StartCoroutine(I._LoadSpritesheet(url, columns, rows, cellWith, cellHeight, onComplete, onProgress));
 	}
 
-	public void GetNextUnloadedDegen()
+	private IEnumerator _LoadSpritesheet(string url, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete, Action<int, int> onProgress)
 	{
-		GetDegen(degenIDsToLoad[degensToLoadMin - 1]);
-	}
-
-	private void OnComplete(List<Sprite> sprites)
-	{
-		playerSpriteManager.GetSprites(sprites);
-		degensToLoadMin++;
-		playerSpriteManager.EndLoadingDegensText();
-		//StartCoroutine(TestAnimation(sprites));
-	}
-
-	//private IEnumerator TestAnimation(List<Sprite> sprites)
-	//{
-	//    int frame = 0;
-	//    int len = sprites.Count;
-	//    while (true)
-	//    {
-	//        yield return new WaitForSeconds(0.07f);
-	//        sr.sprite = sprites[frame++ % len];
-	//    }
-	//}
-
-	public void LoadSpritesheet(string url, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete)
-	{
-		//I.StartCoroutine(I._LoadSpritesheet(url, columns, rows, cellWith, cellHeight, onComplete));
-		StartCoroutine(_LoadSpritesheet(url, columns, rows, cellWith, cellHeight, onComplete));
-	}
-
-	private IEnumerator _LoadSpritesheet(string url, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete)
-	{
-		//yield return new WaitForSecondsRealtime(4f);
 		UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
 		yield return www.SendWebRequest();
 
@@ -98,12 +35,13 @@ public class SpriteLoader : MonoBehaviour
 		{
 			Texture2D texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
 			texture.filterMode = FilterMode.Point;
-			yield return GetSprites(texture, columns, rows, cellWith, cellHeight, onComplete);
+			yield return GetSprites(texture, columns, rows, cellWith, cellHeight, onComplete, onProgress);
+			yield break;
 		}
-		//onComplete(null);
+		onComplete(null);
 	}
 
-	private IEnumerator GetSprites(Texture2D texture, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete)
+	private IEnumerator GetSprites(Texture2D texture, int columns, int rows, int cellWith, int cellHeight, Action<List<Sprite>> onComplete, Action<int, int> onProgress)
 	{
 		if (texture.width != columns * cellWith || texture.width != rows * cellHeight)
 		{
@@ -123,14 +61,12 @@ public class SpriteLoader : MonoBehaviour
 				sprites.Add(s);
 				frame++;
 				yield return new WaitForEndOfFrame();
-				playerSpriteManager.LoadingDegenProgressBar(frame, 250);
+				if (onProgress != null)
+				{
+					onProgress(frame, 250);
+				}
 			}
 		}
 		onComplete(sprites);
-	}
-
-	public int GetTotalDegensOnAccount()
-	{
-		return degensToLoadMax;
 	}
 }
