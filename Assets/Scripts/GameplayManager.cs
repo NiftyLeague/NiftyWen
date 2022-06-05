@@ -27,7 +27,6 @@ public class GameplayManager : MonoBehaviour
 	public TextMeshProUGUI wenMessageText;
 	public TextMeshProUGUI soonMessageText;
 	public TextMeshProUGUI scoreGainedText;
-	public TextMeshProUGUI instructionMessageText;
 	public TextMeshProUGUI gameOverStatNamesText;
 	public TextMeshProUGUI gameOverStatNumbersText;
 	public TextMeshProUGUI gameOverLeaderboardPositionsText;
@@ -78,7 +77,6 @@ public class GameplayManager : MonoBehaviour
 		ResetEverythingForANewGame();
 		ResetWenMessageTexts();
 		menuManager.menuPanel.SetActive(false);
-		StartCoroutine(InstructionMessageFade());
 	}
 
 	private void FixedUpdate()
@@ -208,23 +206,6 @@ public class GameplayManager : MonoBehaviour
 	{
 		wenMessageText.transform.localScale = Vector3.zero;
 		soonMessageText.transform.localScale = Vector3.zero;
-	}
-
-	IEnumerator InstructionMessageFade()
-	{
-		yield return new WaitForSeconds(8);
-
-		int a = 255;
-		int b = 0;
-
-		Tween<float> alphaTween = new Tween<float>(a, b, 0.5f, TweenEaseType.CubicInOut);
-
-		while (!alphaTween.IsEnded())
-		{
-			yield return new WaitForEndOfFrame();
-			byte alphaTweenByte = (byte)alphaTween.Update(Time.deltaTime);
-			instructionMessageText.color = new Color32(0, 153, 219, alphaTweenByte);
-		}
 	}
 
 	IEnumerator PlayGameOverScreen()
