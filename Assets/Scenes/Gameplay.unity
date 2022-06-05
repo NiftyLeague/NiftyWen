@@ -6888,7 +6888,7 @@ MonoBehaviour:
   menuCursor: {fileID: 1736995004}
   menuPanel: {fileID: 1986840136}
   whiteFlash: {fileID: 1095486046}
-  menuCursorYOffset: 0
+  menuCursorYOffset: -0.1
   optionColorDefault:
     serializedVersion: 2
     rgba: 4285743889

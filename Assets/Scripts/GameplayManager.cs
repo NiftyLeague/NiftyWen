@@ -123,6 +123,8 @@ public class GameplayManager : MonoBehaviour
 		IncreaseSpeed(true);
 		playerCharacter.Lose();
 		StartCoroutine(PlayGameOverScreen());
+
+		Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
 	}
 
 	public void Explosion(Vector3 position)
@@ -200,6 +202,7 @@ public class GameplayManager : MonoBehaviour
 		currentProjectile = null;
 
 		UpdateScoreText();
+		Analytics.SendPlayerEvent("StartMatch");
 	}
 
 	void ResetWenMessageTexts()

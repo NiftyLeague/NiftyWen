@@ -98,8 +98,6 @@ public class MenuManager : MonoBehaviour
 	void SetSelectedMenuOption()
 	{
 		menuCursor.anchoredPosition = new Vector2(menuCursor.anchoredPosition.x, menuOptions[selectedMenuOption].menuOptionText.rectTransform.anchoredPosition.y + menuCursorYOffset);
-
-		//Debug.Log("Currently Selected Option: " + menuOptions[selectedMenuOption].menuOptionString);
 	}
 
 	void ResetMenuOptions()
