@@ -39,12 +39,12 @@ public class MenuManager : MonoBehaviour
 		if (isInSecondaryMainMenu && input.PressedB)
 		{
 			mainMenuManager.GoBack();
-			TurnOnMenu();
+			SetMenuEnabled(true);
 			ResetMenuOptions();
 			return;
 		}
 
-		if (!canSelectMenuOptions)
+		if (!canSelectMenuOptions || !menuPanel.gameObject.activeSelf)
 		{
 			return;
 		}
@@ -59,17 +59,18 @@ public class MenuManager : MonoBehaviour
 			ChangeMenuOption(1);
 		}
 
-		if (input.PressedA || input.PressedB || input.PressedX || input.PressedY || input.PressedStart)
+		if (input.PressedA || input.PressedStart)
 		{
 			StartCoroutine(SelectOption());
 		}
 	}
 
-	public void TurnOnMenu()
+	public void SetMenuEnabled(bool enabled)
 	{
-		canSelectMenuOptions = true;
-		menuPanel.SetActive(true);
+		canSelectMenuOptions = enabled;
+		menuPanel.SetActive(enabled);
 	}
+
 
 	void ChangeMenuOption(int menuOptionChange)
 	{
@@ -88,11 +89,6 @@ public class MenuManager : MonoBehaviour
 		}
 
 		SetSelectedMenuOption();
-	}
-
-	internal void SetStatus(string text)
-	{
-		print(text);
 	}
 
 	void SetSelectedMenuOption()

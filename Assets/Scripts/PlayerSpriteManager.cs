@@ -58,40 +58,53 @@ public class PlayerSpriteManager : MonoBehaviour
 		{
 			ChangeCharacter();
 		}
-		InitializeAvailableDegens(new List<int> { 9900, 1256, 1 });
-		GetDegen(degenIDsToLoad[0]);
 	}
 
 
 	public static void InitializeAvailableDegens(List<int> degenIDs)
 	{
-
-		degenIDsToLoad = new List<int>();
+		if (degenIDs == null || degenIDs.Count == 0)
+		{
+			return;
+		}
 		degenIDsToLoad = degenIDs;
+		degenIDsToLoad.Sort();
 		degensToLoadMax = degenIDs.Count;
 		if (degensToLoadMax > 0)
 		{
-			degensToLoadMin = 1;
+			degensToLoadMin = 0;
+		}
+		int lastDegenUsed = PlayerPrefs.GetInt("last-degen-used", -1);
+		int degenIndex = degenIDsToLoad.IndexOf(lastDegenUsed);
+		if (lastDegenUsed > 0 && degenIndex > 0)
+		{
+			I.GetDegen(lastDegenUsed);
+			degensToLoadMin = degenIndex;
+		}
+		else
+		{
+			I.GetDegen(degenIDsToLoad[0]);
 		}
 	}
 
 	public void GetNextUnloadedDegen()
 	{
-		GetDegen(degenIDsToLoad[degensToLoadMin - 1]);
-		LoadingDegensText(degensToLoadMin, degensToLoadMax);
+		degensToLoadMin = (degensToLoadMin + 1) % degenIDsToLoad.Count;
+		GetDegen(degenIDsToLoad[degensToLoadMin]);
 	}
 
 	private void GetDegen(int degenID)
 	{
 		SpriteLoader.LoadSpritesheet($"https://d7ct17ettlkln.cloudfront.net/assets/sheets/92/{degenID}.png",
 		16, 16, 128, 128, OnSpriteLoadComplete, LoadingDegenProgressBar);
-
+		PlayerPrefs.SetInt("last-degen-used", degenID);
+		PlayerPrefs.Save();
+		SetLoadingDegensText(degensToLoadMin, degensToLoadMax);
 	}
 
 	private void OnSpriteLoadComplete(List<Sprite> sprites)
 	{
 		GetSprites(sprites);
-		degensToLoadMin++;
 		EndLoadingDegensText();
 	}
 
@@ -266,7 +279,7 @@ public class PlayerSpriteManager : MonoBehaviour
 		characterAnimator.wallSlideJumpLaunch.Add(spritesToUse[59]);
 	}
 
-	public void LoadingDegensText(int min, int max)
+	public void SetLoadingDegensText(int min, int max)
 	{
 		if (currentEndLoadingDegensTextRoutine != null)
 		{
@@ -275,16 +288,13 @@ public class PlayerSpriteManager : MonoBehaviour
 
 		loadingDegensText.color = new Color32(255, 255, 255, 255);
 
-		loadingDegensText.text = $"Loading Degen: {min} / {max}".ToUpper();
-		if (min == 1)
-		{
-			loadingDegensText.text = "Loading Degen...".ToUpper();
-		}
+		loadingDegensText.text = $"Loading Degen: {min + 1} / {max}".ToUpper();
+
 		if (min > max)
 		{
 			EndLoadingDegensText();
 		}
-		if (min == 0 || max == 0)
+		if (max == 0)
 		{
 			loadingDegensText.text = "";
 			LoadingDegenProgressBar(0, 0);

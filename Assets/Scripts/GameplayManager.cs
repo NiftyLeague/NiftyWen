@@ -245,7 +245,7 @@ public class GameplayManager : MonoBehaviour
 		gameOverLeaderboardPositionsText.gameObject.SetActive(true);
 		gameOverLeaderboardScoresText.gameObject.SetActive(true);
 
-		menuManager.TurnOnMenu();
+		menuManager.SetMenuEnabled(true);
 	}
 
 	IEnumerator PitchNextProjectile()
@@ -359,8 +359,8 @@ public class GameplayManager : MonoBehaviour
 	void SpawnProjectile()
 	{
 		GameObject chosenProjectile = ballPrefab;
-		float currentBombSpawnProbablity = Mathf.Lerp(bombSpawnProbabilityRange.x, bombSpawnProbabilityRange.y, score - minScoreForBomb / 20);
-		if (score >= minScoreForBomb && XRandom.NextFloat() >= currentBombSpawnProbablity)
+		float currentBombSpawnProbablity = Mathf.Lerp(bombSpawnProbabilityRange.x, bombSpawnProbabilityRange.y, (score - minScoreForBomb) / 20);
+		if (score >= minScoreForBomb && XRandom.NextFloat() <= currentBombSpawnProbablity)
 		{
 			chosenProjectile = bombPrefab;
 			hasLaunchedABomb = true;

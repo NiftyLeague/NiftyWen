@@ -13,7 +13,6 @@ public class Launcher : MonoBehaviour
 {
 	public static Launcher I;
 
-	public MenuManager menuManager;
 	public int verificationRetries;
 	public int verificationPollTimeout;
 
@@ -36,6 +35,7 @@ public class Launcher : MonoBehaviour
 	internal static string shortSessionId;
 	internal static string verificationToken;
 	internal static bool ranked;
+	private HashSet<int> degens = new HashSet<int>();
 
 
 #if UNITY_STANDALONE && !UNITY_EDITOR
@@ -62,11 +62,15 @@ public class Launcher : MonoBehaviour
 #endif
 		state = State.Begin;
 		Application.runInBackground = true;
-		menuManager.SetStatus("Initializing Configuration");
 		startDelay = XRandom.NextFloat(0f, 0.5f);
 		sessionId = Guid.NewGuid().ToString();
 		shortSessionId = XUtils.GetInt32HashCode(sessionId).ToString("X6");
 		//shortSessionId = shortSessionId.Substring(shortSessionId.Length - 6);
+	}
+
+	private void Start()
+	{
+		MainMenuManager.SetStatus("Initializing Configuration");
 	}
 
 	private bool IsTicketValid(string ticket)
@@ -109,7 +113,7 @@ public class Launcher : MonoBehaviour
 	private void StartAuthentication()
 	{
 		state = State.Authentication;
-		menuManager.SetStatus("Authenticating");
+		MainMenuManager.SetStatus("Authenticating");
 #if UNITY_WEBGL || UNITY_EDITOR
 		JSWrapper.StartAuthentication(gameObject.name, nameof(OnAuthencationResponse));
 #else
@@ -121,7 +125,7 @@ public class Launcher : MonoBehaviour
 	{
 		lastVerificationTokenCheck = Time.realtimeSinceStartup + 5f;
 		state = State.Verification;
-		menuManager.SetStatus("Verifying Account");
+		MainMenuManager.SetStatus("Verifying Account");
 		string cachedVerification = GetCachedVerification();
 		if (!string.IsNullOrEmpty(cachedVerification))
 		{
@@ -133,7 +137,7 @@ public class Launcher : MonoBehaviour
 #if UNITY_WEBGL
 			StartCoroutine(VerifyWebGlAuthTokenAndLogin(address, interimAuthToken));
 #else
-			ui.SetStatus("Please Verify your Account on your Browser");
+			MainMenuManager.SetStatus("Please Verify your Account on your Browser");
 			string hexFormat = "X";
 			string sess = sessionId.Replace("-", "");
 			string guid3 = $"{Guid.NewGuid()}-{Guid.NewGuid()}-{Guid.NewGuid()}".Replace("-", "");
@@ -386,7 +390,7 @@ public class Launcher : MonoBehaviour
 	private void InitializeProfile()
 	{
 		state = State.Initialization;
-		menuManager.SetStatus("Initializing Profile");
+		MainMenuManager.SetStatus("Initializing Profile");
 
 		StartCoroutine(_InitializeProfile(user.address));
 
@@ -395,7 +399,10 @@ public class Launcher : MonoBehaviour
 
 	private void ProfileDegensReady()
 	{
-		menuManager.SetStatus("Loading Your Degens");
+		user.SetDegens(degens.ToList());
+		PlayerSpriteManager.InitializeAvailableDegens(degens.ToList());
+		MainMenuManager.Initialize();
+		MainMenuManager.SetTokenBalance(user.arcadeTokenBalance);
 	}
 
 	[Beebyte.Obfuscator.SkipRename]
@@ -485,7 +492,7 @@ public class Launcher : MonoBehaviour
 
 	private void Fail(string message)
 	{
-		menuManager.SetStatus(message);
+		MainMenuManager.SetStatus(message);
 		state = State.Failure;
 	}
 
@@ -523,33 +530,6 @@ public class Launcher : MonoBehaviour
 			return;
 		}
 		StartCoroutine(DownloadConfigInfo());
-	}
-
-	private string GetSubgraphUrl()
-	{
-#if UNITY_EDITOR
-		// not domain restricted
-		string apiKey = $"961da5e9d7ac5450c9a683a5afc4fb60";
-#else
-		string apiKey = $"8779fc248f3377d1dca1d8f40f69ec26";
-#endif // #if UNITY_EDITOR
-
-		if (apiNetwork == "mainnet" && apiVersion == "0")
-		{
-			return $"https://gateway.thegraph.com/api/{apiKey}/subgraphs/id/0x87e1237074760f57b424121edca06f082700dbc2-0";
-		}
-
-		Dictionary<string, string> subgraphNetworkMap = new Dictionary<string, string> {
-			{ "mainnet", "https://api.studio.thegraph.com/query/7093/nifty-league" },
-			{ "rinkeby", "https://api.studio.thegraph.com/query/7093/nifty-league-rinkeby" },
-		};
-
-		string subgraphUrl = subgraphNetworkMap[apiNetwork];
-		if (!string.IsNullOrEmpty(apiVersion))
-		{
-			return $"{subgraphUrl}/{apiVersion}";
-		}
-		return subgraphUrl;
 	}
 
 	private IEnumerator DownloadConfigInfo()
@@ -653,6 +633,8 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 		www = null;
 		bool isValidSession = false;
 		bool isBanned = false;
+		uint balance = 0;
+		uint arcadeTokenBalance = 0;
 		yield return Utils.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/accounts/account", (w) => www = w, headers);
 		if (www.result != UnityWebRequest.Result.Success)
 		{
@@ -666,6 +648,9 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 				JObject account = JObject.Parse(www.downloadHandler.text);
 				isBanned = account["is_banned"] != null && account["is_banned"].Value<bool>();
 				isValidSession = account["session_key"].Value<string>() == sessionId;
+				balance = account["balance"] != null ? (uint)account["balance"] : 0;
+				arcadeTokenBalance = account["arcade_token_balance"] != null ? (uint)account["arcade_token_balance"] : 0;
+
 			}
 			catch
 			{
@@ -704,29 +689,28 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 				isValidSession = false;
 			}
 		}*/
-		yield return GetRentals();
+
+		user.SetBalances(balance, arcadeTokenBalance);
+		yield return GetDegens();
 
 		ProfileDegensReady();
 	}
 
-	private IEnumerator GetRentals()
+	private IEnumerator GetDegens()
 	{
 		string result = null;
-		yield return WebRequestHelper.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/rentals/my-rentals",
+		yield return WebRequestHelper.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/profiles/profile/avatars",
 			"", true, false, resp => result = resp);
-
+		degens = new HashSet<int>();
 		try
 		{
-			JArray rentals = JArray.Parse(result);
-			foreach (JObject rental in rentals)
+			JObject avatars = JObject.Parse(result);
+			foreach (JObject avatar in avatars["avatars"])
 			{
 				try
 				{
-					int tokenId = rental["degen_id"].Value<int>();
-					string name = (string)rental["name_cased"];
-					int timestamp = rental["created_at"].Value<int>();
-					string[] traits = rental["degen"]["traits"].Value<string>().Split(',');
-					//user.AddDegen(traits.Select(t => int.Parse(t)).ToArray(), tokenId, name, timestamp, true);
+					int tokenId = avatar["id"].Value<int>();
+					degens.Add(tokenId);
 				}
 				catch (Exception ex)
 				{

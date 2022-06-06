@@ -10,7 +10,11 @@ public class DiscordController : MonoBehaviour
 	void Awake()
 	{
 		I = this;
-		discord = new Discord.Discord(982801162648563723, (UInt64)Discord.CreateFlags.NoRequireDiscord);
+		try
+		{
+			discord = new Discord.Discord(982801162648563723, (UInt64)Discord.CreateFlags.NoRequireDiscord);
+		}
+		catch { }
 	}
 
 	void Update()

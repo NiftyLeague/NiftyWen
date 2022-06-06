@@ -34,10 +34,13 @@ public class NiftyUser
 {
 	public string id { get; }
 	public string address { get; }
+	public ObscuredUInt balance { get; private set; }
+	public ObscuredUInt arcadeTokenBalance { get; private set; }
 
 	public Timeout timeout = null;
 	public List<int> degens;
 	internal string authorization;
+
 
 	public NiftyUser(string verification)
 	{
@@ -57,6 +60,12 @@ public class NiftyUser
 	public void SetDegens(List<int> degens)
 	{
 		this.degens = degens;
+	}
+
+	public void SetBalances(uint balance, uint arcadeTokenBalance)
+	{
+		this.balance = balance;
+		this.arcadeTokenBalance = arcadeTokenBalance;
 	}
 }
 
