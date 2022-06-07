@@ -18,12 +18,16 @@ public class MenuManager : MonoBehaviour
 	public GameObject whiteFlash;
 	public float menuCursorYOffset;
 	[Space]
+	public TextMeshProUGUI tokenAmountText;
+	public Color32 tokenAmountDefaultColor;
+	[Space]
 	public Color32 optionColorDefault;
 	public Color32 optionColorPressed;
 
 	private int selectedMenuOption;
 	private bool canSelectMenuOptions;
 	private bool isInSecondaryMainMenu;
+	private bool notEnoughTokensToPlay;
 	private InputState input = new InputState();
 
 	void Start()
@@ -102,6 +106,27 @@ public class MenuManager : MonoBehaviour
 		{
 			option.menuOptionText.text = option.menuOptionString;
 		}
+
+		if (notEnoughTokensToPlay)
+		{
+			menuOptions[0].menuOptionString = "PURCHASE TOKENS";
+		}
+	}
+
+	public void UpdateTokenAmount(int tokensHeld)
+	{
+		notEnoughTokensToPlay = false;
+		tokenAmountText.color = tokenAmountDefaultColor;
+
+		if (tokensHeld <= 0)
+		{
+			notEnoughTokensToPlay = true;
+			tokenAmountText.color = Color.red;
+		}
+
+		tokenAmountText.text = tokensHeld.ToString("0");
+
+		ResetMenuOptions();
 	}
 
 	IEnumerator SelectOption()
@@ -111,7 +136,8 @@ public class MenuManager : MonoBehaviour
 		audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
 		if (menu.menuOptionType == MenuType.MainMenuPlay || menu.menuOptionType == MenuType.GameplayTryAgain)
 		{
-			audioManager.PlaySound(AudioManager.SoundID.insertCoin);
+			if (!notEnoughTokensToPlay)
+				audioManager.PlaySound(AudioManager.SoundID.insertCoin);
 		}
 
 		foreach (MenuOption option in menuOptions)
@@ -173,9 +199,20 @@ public class MenuManager : MonoBehaviour
 			Application.Quit();
 			break;
 		case MenuType.GameplayTryAgain:
-			menuPanel.SetActive(false);
-			ResetMenuOptions();
-			gameplayManager.ResetEverythingForANewGame();
+				if (notEnoughTokensToPlay)
+				{
+					//PUCHASE TOKEN WEBPAGE HERE -------------------------------------------------------------
+					Debug.Log("PURCHASING TOKENS");
+					ResetMenuOptions();
+					SetMenuEnabled(true);
+				}
+				else
+				{
+					menuPanel.SetActive(false);
+					ResetMenuOptions();
+					gameplayManager.ResetEverythingForANewGame();
+				}
+
 			break;
 		case MenuType.GameplayQuit:
 			SceneManager.LoadScene(0);
