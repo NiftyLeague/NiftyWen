@@ -73,6 +73,7 @@ public class MenuManager : MonoBehaviour
 	{
 		canSelectMenuOptions = enabled;
 		menuPanel.SetActive(enabled);
+		ResetMenuOptions();
 	}
 
 
@@ -203,7 +204,6 @@ public class MenuManager : MonoBehaviour
 				{
 					//PUCHASE TOKEN WEBPAGE HERE -------------------------------------------------------------
 					Debug.Log("PURCHASING TOKENS");
-					ResetMenuOptions();
 					SetMenuEnabled(true);
 				}
 				else
@@ -214,6 +214,10 @@ public class MenuManager : MonoBehaviour
 				}
 
 			break;
+		case MenuType.GameplayLeaderboard:
+				gameplayManager.ChangeCurrentLeaderboard();
+				SetMenuEnabled(true);
+				break;
 		case MenuType.GameplayQuit:
 			SceneManager.LoadScene(0);
 			break;
@@ -239,4 +243,5 @@ public enum MenuType
 	MainMenuQuit,
 	GameplayTryAgain,
 	GameplayQuit,
+	GameplayLeaderboard,
 }
