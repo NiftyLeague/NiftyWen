@@ -7,7 +7,7 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using CodeStage.AntiCheat.ObscuredTypes;
 
-public class MenuManager : MonoBehaviour
+public class MenuManager : Singleton<MenuManager>
 {
 	public MainMenuManager mainMenuManager;
 	public GameplayManager gameplayManager;
@@ -16,11 +16,20 @@ public class MenuManager : MonoBehaviour
 	public List<MenuOption> menuOptions;
 	public RectTransform menuCursor;
 	public GameObject menuPanel;
+	public GameObject tokensPanel;
+	public GameObject purchaseTokensPanel;
 	public GameObject whiteFlash;
 	public float menuCursorYOffset;
 	[Space]
 	public TextMeshProUGUI tokenAmountText;
 	public Color32 tokenAmountDefaultColor;
+	public TextMeshProUGUI tokenCurrentPriceText;
+	public TextMeshProUGUI nftlCurrentOwnedText;
+	public RectTransform tokensPanelRect;
+	public float tokenPurchaseAnimSpeed;
+	public TweenEaseType tokenPurchaseAnimTweenEaseType;
+	private Coroutine currentTokenPurchaseAnimationCoroutine;
+	private Vector2 tokenPanelStartPosition;
 	[Space]
 	public Color32 optionColorDefault;
 	public Color32 optionColorPressed;
@@ -29,6 +38,9 @@ public class MenuManager : MonoBehaviour
 	public TextMeshProUGUI leaderboardPositionsText;
 	public TextMeshProUGUI leaderboardNamesText;
 	public TextMeshProUGUI leaderboardScoresText;
+	[Space]
+	public TextMeshProUGUI errorMessageText;
+	private Coroutine currentErrorMessageCoroutine;
 
 	[HideInInspector] public ObscuredInt leaderboardToShow;
 
@@ -45,14 +57,24 @@ public class MenuManager : MonoBehaviour
 	private int selectedMenuOption;
 	private bool canSelectMenuOptions;
 	private bool isInSecondaryMainMenu;
-	private bool notEnoughTokensToPlay;
+	private float nftlOwned;
+	private float currentTokenPrice;
+	private uint tokensOwned;
 	private InputState input = new InputState();
 
 	void Start()
 	{
+		//TESTING, DELETE LATER
+		nftlOwned = 56.54f;
+		currentTokenPrice = 12.23f;
+		//tokensOwned = 50;
+
+		UpdateTokenAmount();
 		ResetMenuOptions();
 		SetSelectedMenuOption();
 		UpdateLeaderboards();
+		
+		tokenPanelStartPosition = tokensPanelRect.anchoredPosition;
 	}
 
 	void Update()
@@ -64,7 +86,12 @@ public class MenuManager : MonoBehaviour
 			if (input.PressedB)
 			{
 				audioManager.PlaySound(AudioManager.SoundID.batSwing);
-				mainMenuManager.GoBack();
+				if (mainMenuManager != null)
+				{
+					mainMenuManager.GoBack();
+				}
+				purchaseTokensPanel.SetActive(false);
+				UpdateLeaderboardDisplay();
 				SetMenuEnabled(true);
 				ResetMenuOptions();
 				return;
@@ -76,12 +103,15 @@ public class MenuManager : MonoBehaviour
 				{
 					ChangeCurrentLeaderboard();
 				}
+
+				if (lastSelectedMenuOption == MenuType.GameplayTryAgain || lastSelectedMenuOption == MenuType.MainMenuPlay)
+				{
+					PurchaseToken();
+				}
 				return;
 			}
-			
-		}
 
-		Debug.Log(canSelectMenuOptions);
+		}
 
 		if (!canSelectMenuOptions || !menuPanel.gameObject.activeSelf)
 		{
@@ -106,6 +136,7 @@ public class MenuManager : MonoBehaviour
 
 	public void SetMenuEnabled(bool enabled)
 	{
+		tokensPanel.SetActive(enabled);
 		isInSecondaryMainMenu = !enabled;
 		canSelectMenuOptions = enabled;
 		menuPanel.SetActive(enabled);
@@ -144,24 +175,43 @@ public class MenuManager : MonoBehaviour
 			option.menuOptionText.text = option.menuOptionString;
 		}
 
-		if (notEnoughTokensToPlay)
+		if (tokensOwned <= 0)
 		{
-			menuOptions[0].menuOptionString = "PURCHASE TOKENS";
+			menuOptions[0].menuOptionText.text = "PURCHASE TOKENS";
 		}
+
+		errorMessageText.text = "";
 	}
 
-	public void UpdateTokenAmount(int tokensHeld)
+	public void GainToken()
 	{
-		notEnoughTokensToPlay = false;
+		tokensOwned += 1;
+		UpdateTokenAmount();
+		audioManager.PlaySound(AudioManager.SoundID.gainPoint);
+	}
+
+	public void SpendToken()
+	{
+		tokensOwned -= 1;
+		UpdateTokenAmount();
+	}
+
+	public void SetTokenBalance(uint balance)
+	{
+		tokensOwned = balance;
+		UpdateTokenAmount();
+	}
+
+	public void UpdateTokenAmount()
+	{
 		tokenAmountText.color = tokenAmountDefaultColor;
 
-		if (tokensHeld <= 0)
+		if (tokensOwned <= 0)
 		{
-			notEnoughTokensToPlay = true;
 			tokenAmountText.color = Color.red;
 		}
 
-		tokenAmountText.text = tokensHeld.ToString("0");
+		tokenAmountText.text = tokensOwned.ToString("000");
 
 		ResetMenuOptions();
 	}
@@ -172,11 +222,6 @@ public class MenuManager : MonoBehaviour
 		var menu = menuOptions[selectedMenuOption];
 		lastSelectedMenuOption = menu.menuOptionType;
 		audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
-		if (menu.menuOptionType == MenuType.MainMenuPlay || menu.menuOptionType == MenuType.GameplayTryAgain)
-		{
-			if (!notEnoughTokensToPlay)
-				audioManager.PlaySound(AudioManager.SoundID.insertCoin);
-		}
 
 		foreach (MenuOption option in menuOptions)
 		{
@@ -184,6 +229,19 @@ public class MenuManager : MonoBehaviour
 		}
 
 		menu.menuOptionText.text = menu.menuOptionString;
+
+		if (menu.menuOptionType == MenuType.MainMenuPlay || menu.menuOptionType == MenuType.GameplayTryAgain)
+		{
+			if (tokensOwned > 0)
+			{
+				audioManager.PlaySound(AudioManager.SoundID.insertCoin);
+				SpendToken();
+			}
+			else
+			{
+				menu.menuOptionText.text = "PURCHASE TOKENS";
+			}
+		}
 
 		whiteFlash.gameObject.SetActive(true);
 
@@ -211,53 +269,62 @@ public class MenuManager : MonoBehaviour
 
 		switch (menu.menuOptionType)
 		{
-		case MenuType.MainMenuPlay:
-			audioManager.PlaySound(AudioManager.SoundID.insertCoin);
-			SceneManager.LoadScene(1);
-			break;
-		case MenuType.MainMenuHowToPlay:
-			mainMenuManager.GoToHowToPlayScreen();
-			menuPanel.SetActive(false);
-			isInSecondaryMainMenu = true;
-			ResetMenuOptions();
-			break;
-		case MenuType.MainMenuLeaderboard:
-			mainMenuManager.GoToLeaderboardsScreen();
-			menuPanel.SetActive(false);
-			isInSecondaryMainMenu = true;
-			ResetMenuOptions();
-			break;
-		case MenuType.MainMenuAbout:
-			mainMenuManager.GoToAboutScreen();
-			menuPanel.SetActive(false);
-			isInSecondaryMainMenu = true;
-			ResetMenuOptions();
-			break;
-		case MenuType.MainMenuQuit:
-			Application.Quit();
-			break;
-		case MenuType.GameplayTryAgain:
-				if (notEnoughTokensToPlay)
+			case MenuType.MainMenuPlay:
+				if (tokensOwned <= 0)
 				{
-					//PUCHASE TOKEN WEBPAGE HERE -------------------------------------------------------------
-					Debug.Log("PURCHASING TOKENS");
-					SetMenuEnabled(true);
+					GoToTokenPurchasingScreen();
+					menuPanel.SetActive(false);
+					isInSecondaryMainMenu = true;
+					ResetMenuOptions();
 				}
 				else
 				{
-					menuPanel.SetActive(false);
+					audioManager.PlaySound(AudioManager.SoundID.insertCoin);
+					SceneManager.LoadScene(1);
+				}
+				break;
+			case MenuType.MainMenuHowToPlay:
+				mainMenuManager.GoToHowToPlayScreen();
+				menuPanel.SetActive(false);
+				isInSecondaryMainMenu = true;
+				ResetMenuOptions();
+				break;
+			case MenuType.MainMenuLeaderboard:
+				mainMenuManager.GoToLeaderboardsScreen();
+				menuPanel.SetActive(false);
+				isInSecondaryMainMenu = true;
+				ResetMenuOptions();
+				break;
+			case MenuType.MainMenuAbout:
+				mainMenuManager.GoToAboutScreen();
+				menuPanel.SetActive(false);
+				isInSecondaryMainMenu = true;
+				ResetMenuOptions();
+				break;
+			case MenuType.MainMenuQuit:
+				Application.Quit();
+				break;
+			case MenuType.GameplayTryAgain:
+				menuPanel.SetActive(false);
+				if (tokensOwned <= 0)
+				{
+					GoToTokenPurchasingScreen();
+					isInSecondaryMainMenu = true;
+				}
+				else
+				{
 					ResetMenuOptions();
+					tokensPanel.SetActive(false);
 					gameplayManager.ResetEverythingForANewGame();
 				}
-
-			break;
-		case MenuType.GameplayLeaderboard:
+				break;
+			case MenuType.GameplayLeaderboard:
 				ChangeCurrentLeaderboard();
 				SetMenuEnabled(true);
 				break;
-		case MenuType.GameplayQuit:
-			SceneManager.LoadScene(0);
-			break;
+			case MenuType.GameplayQuit:
+				SceneManager.LoadScene(0);
+				break;
 		}
 	}
 
@@ -396,6 +463,95 @@ public class MenuManager : MonoBehaviour
 		}
 	}
 
+	void GoToTokenPurchasingScreen()
+	{
+		if (mainMenuManager != null)
+		{
+			mainMenuManager.wenTitle.SetActive(false);
+		}
+		ResetLeaderboardDisplay();
+		purchaseTokensPanel.SetActive(true);
+		tokensPanel.SetActive(true);
+		tokenCurrentPriceText.text = currentTokenPrice.ToString("0.0") + " NFTL";
+		nftlCurrentOwnedText.text = nftlOwned.ToString("0.0") + " NFTL";
+	}
+
+	void PurchaseToken()
+	{
+		if (nftlOwned >= currentTokenPrice)
+		{
+			nftlOwned -= currentTokenPrice;
+			GainToken();
+			GoToTokenPurchasingScreen();
+			TokenPurchaseAnim();
+		}
+		else
+		{
+			ErrorMessage("Not Enough NFTL!");
+		}
+	}
+
+	void ErrorMessage(string message)
+	{
+		audioManager.PlaySound(AudioManager.SoundID.projectileHit);
+
+		StopErrorMessage();
+
+		errorMessageText.text = message;
+
+		currentErrorMessageCoroutine = StartCoroutine(PlayErrorMessage());
+	}
+
+	IEnumerator PlayErrorMessage()
+	{
+		yield return new WaitForSeconds(3);
+
+		errorMessageText.text = "";
+	}
+
+	void StopErrorMessage()
+	{
+		errorMessageText.text = "";
+
+		if (currentErrorMessageCoroutine != null)
+		{
+			StopCoroutine(currentErrorMessageCoroutine);
+		}
+	}
+
+	void TokenPurchaseAnim()
+	{
+		if (currentTokenPurchaseAnimationCoroutine != null)
+		{
+			StopCoroutine(currentTokenPurchaseAnimationCoroutine);
+		}
+
+		currentTokenPurchaseAnimationCoroutine = StartCoroutine(PlayTokenPurchaseAnim());
+	}
+
+	IEnumerator PlayTokenPurchaseAnim()
+	{
+		tokensPanelRect.anchoredPosition = tokenPanelStartPosition;
+
+		float yStart = tokenPanelStartPosition.y;
+		float yFinish = tokenPanelStartPosition.y + 0.2f;
+
+		Tween<float> moveTween = new Tween<float>(yStart, yFinish, tokenPurchaseAnimSpeed, tokenPurchaseAnimTweenEaseType);
+		while (!moveTween.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			tokensPanelRect.anchoredPosition = new Vector2(tokensPanelRect.anchoredPosition.x, moveTween.Update(Time.deltaTime));
+		}
+
+		moveTween = new Tween<float>(yFinish, yStart, tokenPurchaseAnimSpeed, tokenPurchaseAnimTweenEaseType);
+		while (!moveTween.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			tokensPanelRect.anchoredPosition = new Vector2(tokensPanelRect.anchoredPosition.x, moveTween.Update(Time.deltaTime));
+		}
+
+		tokensPanelRect.anchoredPosition = tokenPanelStartPosition;
+	}
 }
 
 [Serializable]

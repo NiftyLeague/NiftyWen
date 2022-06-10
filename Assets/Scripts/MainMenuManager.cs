@@ -12,7 +12,6 @@ public class MainMenuManager : MonoBehaviour
 	public GameObject leaderboardsPanel;
 	public GameObject aboutPanel;
 	public TextMeshProUGUI statusText;
-	public TextMeshProUGUI balanceText;
 
 	private void Awake()
 	{
@@ -58,10 +57,5 @@ public class MainMenuManager : MonoBehaviour
 	public static void SetStatus(string text)
 	{
 		I.statusText.text = text.ToUpper();
-	}
-
-	public static void SetTokenBalance(uint balance)
-	{
-		I.balanceText.text = balance.ToString("000");
 	}
 }

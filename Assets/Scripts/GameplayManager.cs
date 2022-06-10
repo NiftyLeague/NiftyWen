@@ -120,7 +120,6 @@ public class GameplayManager : MonoBehaviour
 		IncreaseSpeed(true);
 		playerCharacter.Lose();
 		StartCoroutine(PlayGameOverScreen());
-		menuManager.UpdateTokenAmount(0);
 		menuManager.UpdateLeaderboards();
 		Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
 	}

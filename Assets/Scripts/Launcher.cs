@@ -402,7 +402,7 @@ public class Launcher : MonoBehaviour
 		user.SetDegens(degens.ToList());
 		PlayerSpriteManager.InitializeAvailableDegens(degens.ToList());
 		MainMenuManager.Initialize();
-		MainMenuManager.SetTokenBalance(user.arcadeTokenBalance);
+		MenuManager.Instance.SetTokenBalance(user.arcadeTokenBalance);
 	}
 
 	[Beebyte.Obfuscator.SkipRename]
