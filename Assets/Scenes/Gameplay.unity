@@ -966,10 +966,6 @@ MonoBehaviour:
   scoreGainedText: {fileID: 1470250034}
   gameOverStatNamesText: {fileID: 1887381373}
   gameOverStatNumbersText: {fileID: 1924318883}
-  gameOverLeaderboardTitleText: {fileID: 1029790823}
-  gameOverLeaderboardPositionsText: {fileID: 1569165439}
-  gameOverLeaderboardNamesText: {fileID: 125059040}
-  gameOverLeaderboardScoresText: {fileID: 1156837587}
   ballMachineAnim: {fileID: 820037656}
   ballMachineSpritesIdle:
   - {fileID: 21300000, guid: 9913a7ebe2c995c4488c8eb903e71b01, type: 3}
@@ -3415,15 +3411,15 @@ RectTransform:
   m_GameObject: {fileID: 1293896545}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.018, y: 0.018, z: 0.1}
+  m_LocalScale: {x: 0.13, y: 0.13, z: 0.1}
   m_Children: []
   m_Father: {fileID: 1181043052}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3.5, y: 0}
-  m_SizeDelta: {x: 68.75, y: 68.75}
+  m_AnchoredPosition: {x: 3.26, y: 0.06}
+  m_SizeDelta: {x: 14, y: 15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1293896547
 MonoBehaviour:
@@ -3445,7 +3441,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 25bfb5e934a0240499e822ca98854304, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1a073990efa460d47aaa0ef158cebe19, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7418,6 +7414,16 @@ MonoBehaviour:
   optionColorPressed:
     serializedVersion: 2
     rgba: 4294967295
+  leaderboardTitleText: {fileID: 1029790823}
+  leaderboardPositionsText: {fileID: 1569165439}
+  leaderboardNamesText: {fileID: 125059040}
+  leaderboardScoresText: {fileID: 1156837587}
+  leaderboardToShow:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    inited: 0
+    fakeValue: 0
+    fakeValueActive: 0
 --- !u!1 &2016445180
 GameObject:
   m_ObjectHideFlags: 0

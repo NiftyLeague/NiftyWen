@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System;
 using TMPro;
 using UnityEngine.SceneManagement;
+using CodeStage.AntiCheat.ObscuredTypes;
 
 public class MenuManager : MonoBehaviour
 {
@@ -23,7 +24,24 @@ public class MenuManager : MonoBehaviour
 	[Space]
 	public Color32 optionColorDefault;
 	public Color32 optionColorPressed;
+	[Space]
+	public TextMeshProUGUI leaderboardTitleText;
+	public TextMeshProUGUI leaderboardPositionsText;
+	public TextMeshProUGUI leaderboardNamesText;
+	public TextMeshProUGUI leaderboardScoresText;
 
+	[HideInInspector] public ObscuredInt leaderboardToShow;
+
+	List<ObscuredString> leaderboardAllTimeNames;
+	List<ObscuredInt> leaderboardAllTimeScores;
+
+	List<ObscuredString> leaderboardMonthlyNames;
+	List<ObscuredInt> leaderboardMonthlyScores;
+
+	List<ObscuredString> leaderboardWeeklyNames;
+	List<ObscuredInt> leaderboardWeeklyScores;
+
+	private MenuType lastSelectedMenuOption;
 	private int selectedMenuOption;
 	private bool canSelectMenuOptions;
 	private bool isInSecondaryMainMenu;
@@ -34,19 +52,36 @@ public class MenuManager : MonoBehaviour
 	{
 		ResetMenuOptions();
 		SetSelectedMenuOption();
+		UpdateLeaderboards();
 	}
 
 	void Update()
 	{
 		InputReader.GetInput(input);
 
-		if (isInSecondaryMainMenu && input.PressedB)
+		if (isInSecondaryMainMenu)
 		{
-			mainMenuManager.GoBack();
-			SetMenuEnabled(true);
-			ResetMenuOptions();
-			return;
+			if (input.PressedB)
+			{
+				audioManager.PlaySound(AudioManager.SoundID.batSwing);
+				mainMenuManager.GoBack();
+				SetMenuEnabled(true);
+				ResetMenuOptions();
+				return;
+			}
+
+			if (input.PressedA)
+			{
+				if (lastSelectedMenuOption == MenuType.MainMenuLeaderboard)
+				{
+					ChangeCurrentLeaderboard();
+				}
+				return;
+			}
+			
 		}
+
+		Debug.Log(canSelectMenuOptions);
 
 		if (!canSelectMenuOptions || !menuPanel.gameObject.activeSelf)
 		{
@@ -71,6 +106,7 @@ public class MenuManager : MonoBehaviour
 
 	public void SetMenuEnabled(bool enabled)
 	{
+		isInSecondaryMainMenu = !enabled;
 		canSelectMenuOptions = enabled;
 		menuPanel.SetActive(enabled);
 		ResetMenuOptions();
@@ -134,6 +170,7 @@ public class MenuManager : MonoBehaviour
 	{
 		canSelectMenuOptions = false;
 		var menu = menuOptions[selectedMenuOption];
+		lastSelectedMenuOption = menu.menuOptionType;
 		audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
 		if (menu.menuOptionType == MenuType.MainMenuPlay || menu.menuOptionType == MenuType.GameplayTryAgain)
 		{
@@ -215,7 +252,7 @@ public class MenuManager : MonoBehaviour
 
 			break;
 		case MenuType.GameplayLeaderboard:
-				gameplayManager.ChangeCurrentLeaderboard();
+				ChangeCurrentLeaderboard();
 				SetMenuEnabled(true);
 				break;
 		case MenuType.GameplayQuit:
@@ -223,6 +260,142 @@ public class MenuManager : MonoBehaviour
 			break;
 		}
 	}
+
+	public void UpdateLeaderboards()
+	{
+		leaderboardAllTimeNames = new List<ObscuredString>();
+		leaderboardAllTimeScores = new List<ObscuredInt>();
+
+		//TEST LIST DELETE LATER
+		leaderboardAllTimeNames.Add("JOE");
+		leaderboardAllTimeNames.Add("MAC");
+		leaderboardAllTimeNames.Add("ROX");
+		leaderboardAllTimeNames.Add("DAN");
+		leaderboardAllTimeNames.Add("BOB");
+		leaderboardAllTimeNames.Add("JIL");
+		leaderboardAllTimeNames.Add("NED");
+		leaderboardAllTimeNames.Add("REN");
+		leaderboardAllTimeNames.Add("LIL");
+		leaderboardAllTimeNames.Add("BEN");
+
+		leaderboardAllTimeScores.Add(321);
+		leaderboardAllTimeScores.Add(310);
+		leaderboardAllTimeScores.Add(254);
+		leaderboardAllTimeScores.Add(210);
+		leaderboardAllTimeScores.Add(130);
+		leaderboardAllTimeScores.Add(93);
+		leaderboardAllTimeScores.Add(83);
+		leaderboardAllTimeScores.Add(66);
+		leaderboardAllTimeScores.Add(8);
+		leaderboardAllTimeScores.Add(2);
+
+		leaderboardMonthlyNames = new List<ObscuredString>();
+		leaderboardMonthlyScores = new List<ObscuredInt>();
+
+		//TEST LIST DELETE LATER
+		leaderboardMonthlyNames.Add("BOI");
+		leaderboardMonthlyNames.Add("TOM");
+		leaderboardMonthlyNames.Add("NED");
+		leaderboardMonthlyNames.Add("DAN");
+		leaderboardMonthlyNames.Add("LAE");
+		leaderboardMonthlyNames.Add("BAE");
+		leaderboardMonthlyNames.Add("POP");
+		leaderboardMonthlyNames.Add("QWO");
+		leaderboardMonthlyNames.Add("JIO");
+		leaderboardMonthlyNames.Add("ASD");
+
+		leaderboardMonthlyScores.Add(143);
+		leaderboardMonthlyScores.Add(142);
+		leaderboardMonthlyScores.Add(140);
+		leaderboardMonthlyScores.Add(138);
+		leaderboardMonthlyScores.Add(134);
+		leaderboardMonthlyScores.Add(131);
+		leaderboardMonthlyScores.Add(130);
+		leaderboardMonthlyScores.Add(123);
+		leaderboardMonthlyScores.Add(112);
+		leaderboardMonthlyScores.Add(101);
+
+		leaderboardWeeklyNames = new List<ObscuredString>();
+		leaderboardWeeklyScores = new List<ObscuredInt>();
+
+		//TEST LIST DELETE LATER
+		leaderboardWeeklyNames.Add("LOI");
+		leaderboardWeeklyNames.Add("ANA");
+		leaderboardWeeklyNames.Add("REI");
+		leaderboardWeeklyNames.Add("JON");
+		leaderboardWeeklyNames.Add("LUI");
+		leaderboardWeeklyNames.Add("VIV");
+		leaderboardWeeklyNames.Add("REO");
+		leaderboardWeeklyNames.Add("FIO");
+		leaderboardWeeklyNames.Add("DAN");
+		leaderboardWeeklyNames.Add("POT");
+
+		leaderboardWeeklyScores.Add(43);
+		leaderboardWeeklyScores.Add(42);
+		leaderboardWeeklyScores.Add(40);
+		leaderboardWeeklyScores.Add(38);
+		leaderboardWeeklyScores.Add(34);
+		leaderboardWeeklyScores.Add(31);
+		leaderboardWeeklyScores.Add(30);
+		leaderboardWeeklyScores.Add(23);
+		leaderboardWeeklyScores.Add(12);
+		leaderboardWeeklyScores.Add(5);
+	}
+
+	public void ChangeCurrentLeaderboard()
+	{
+		audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
+		leaderboardToShow++;
+		if (leaderboardToShow >= 3)
+		{
+			leaderboardToShow = 0;
+		}
+		UpdateLeaderboardDisplay();
+	}
+
+	public void ResetLeaderboardDisplay()
+	{
+		leaderboardTitleText.text = "";
+		leaderboardNamesText.text = "";
+		leaderboardPositionsText.gameObject.SetActive(false);
+		leaderboardScoresText.text = "";
+	}
+
+	public void UpdateLeaderboardDisplay()
+	{
+		List<ObscuredString> leaderboardNames = new List<ObscuredString>();
+		List<ObscuredInt> leaderboardScores = new List<ObscuredInt>();
+
+		switch (leaderboardToShow)
+		{
+			case 0:
+				leaderboardTitleText.text = "WEEKLY";
+				leaderboardNames = leaderboardWeeklyNames;
+				leaderboardScores = leaderboardWeeklyScores;
+				break;
+			case 1:
+				leaderboardTitleText.text = "MONTHLY";
+				leaderboardNames = leaderboardMonthlyNames;
+				leaderboardScores = leaderboardMonthlyScores;
+				break;
+			case 2:
+				leaderboardTitleText.text = "ALL TIME";
+				leaderboardNames = leaderboardAllTimeNames;
+				leaderboardScores = leaderboardAllTimeScores;
+				break;
+		}
+
+		leaderboardPositionsText.gameObject.SetActive(true);
+		leaderboardNamesText.text = "";
+		leaderboardScoresText.text = "";
+
+		for (int i = 0; i < 10; i++)
+		{
+			leaderboardNamesText.text += leaderboardNames[i] + "\n";
+			leaderboardScoresText.text += leaderboardScores[i] + "\n";
+		}
+	}
+
 }
 
 [Serializable]

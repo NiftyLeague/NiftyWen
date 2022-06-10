@@ -29,10 +29,6 @@ public class GameplayManager : MonoBehaviour
 	public TextMeshProUGUI scoreGainedText;
 	public TextMeshProUGUI gameOverStatNamesText;
 	public TextMeshProUGUI gameOverStatNumbersText;
-	public TextMeshProUGUI gameOverLeaderboardTitleText;
-	public TextMeshProUGUI gameOverLeaderboardPositionsText;
-	public TextMeshProUGUI gameOverLeaderboardNamesText;
-	public TextMeshProUGUI gameOverLeaderboardScoresText;
 	[Space]
 	public SimpleAnim ballMachineAnim;
 	public Sprite[] ballMachineSpritesIdle;
@@ -63,17 +59,6 @@ public class GameplayManager : MonoBehaviour
 	ObscuredBool hasLaunchedABomb;
 	ObscuredInt bombsFiredInARow;
 	ObscuredBool pitching = false;
-
-	ObscuredInt leaderboardToShow;
-
-	List<ObscuredString> leaderboardAllTimeNames;
-	List<ObscuredInt> leaderboardAllTimeScores;
-
-	List<ObscuredString> leaderboardMonthlyNames;
-	List<ObscuredInt> leaderboardMonthlyScores;
-
-	List<ObscuredString> leaderboardWeeklyNames;
-	List<ObscuredInt> leaderboardWeeklyScores;
 
 	private InputState input = new InputState();
 	private Projectile currentProjectile = null;
@@ -136,7 +121,7 @@ public class GameplayManager : MonoBehaviour
 		playerCharacter.Lose();
 		StartCoroutine(PlayGameOverScreen());
 		menuManager.UpdateTokenAmount(0);
-		UpdateLeaderboards();
+		menuManager.UpdateLeaderboards();
 		Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
 	}
 
@@ -201,10 +186,7 @@ public class GameplayManager : MonoBehaviour
 		gameOverStatNumbersText.text = "";
 		scoreGainedText.transform.localScale = new Vector3(0, 0, 0);
 
-		gameOverLeaderboardTitleText.text = "";
-		gameOverLeaderboardNamesText.text = "";
-		gameOverLeaderboardPositionsText.gameObject.SetActive(false);
-		gameOverLeaderboardScoresText.text = "";
+		menuManager.ResetLeaderboardDisplay();
 
 		ballMachinePlayerKiller.gameObject.SetActive(false);
 
@@ -217,132 +199,6 @@ public class GameplayManager : MonoBehaviour
 
 		UpdateScoreText();
 		Analytics.SendPlayerEvent("StartMatch");
-	}
-
-	public void UpdateLeaderboards()
-	{
-		leaderboardAllTimeNames = new List<ObscuredString>();
-		leaderboardAllTimeScores = new List<ObscuredInt>();
-
-		//TEST LIST DELETE LATER
-		leaderboardAllTimeNames.Add("JOE");
-		leaderboardAllTimeNames.Add("MAC");
-		leaderboardAllTimeNames.Add("ROX");
-		leaderboardAllTimeNames.Add("DAN");
-		leaderboardAllTimeNames.Add("BOB");
-		leaderboardAllTimeNames.Add("JIL");
-		leaderboardAllTimeNames.Add("NED");
-		leaderboardAllTimeNames.Add("REN");
-		leaderboardAllTimeNames.Add("LIL");
-		leaderboardAllTimeNames.Add("BEN");
-
-		leaderboardAllTimeScores.Add(321);
-		leaderboardAllTimeScores.Add(310);
-		leaderboardAllTimeScores.Add(254);
-		leaderboardAllTimeScores.Add(210);
-		leaderboardAllTimeScores.Add(130);
-		leaderboardAllTimeScores.Add(93);
-		leaderboardAllTimeScores.Add(83);
-		leaderboardAllTimeScores.Add(66);
-		leaderboardAllTimeScores.Add(8);
-		leaderboardAllTimeScores.Add(2);
-
-		leaderboardMonthlyNames = new List<ObscuredString>();
-		leaderboardMonthlyScores = new List<ObscuredInt>();
-
-		//TEST LIST DELETE LATER
-		leaderboardMonthlyNames.Add("BOI");
-		leaderboardMonthlyNames.Add("TOM");
-		leaderboardMonthlyNames.Add("NED");
-		leaderboardMonthlyNames.Add("DAN");
-		leaderboardMonthlyNames.Add("LAE");
-		leaderboardMonthlyNames.Add("BAE");
-		leaderboardMonthlyNames.Add("POP");
-		leaderboardMonthlyNames.Add("QWO");
-		leaderboardMonthlyNames.Add("JIO");
-		leaderboardMonthlyNames.Add("ASD");
-
-		leaderboardMonthlyScores.Add(143);
-		leaderboardMonthlyScores.Add(142);
-		leaderboardMonthlyScores.Add(140);
-		leaderboardMonthlyScores.Add(138);
-		leaderboardMonthlyScores.Add(134);
-		leaderboardMonthlyScores.Add(131);
-		leaderboardMonthlyScores.Add(130);
-		leaderboardMonthlyScores.Add(123);
-		leaderboardMonthlyScores.Add(112);
-		leaderboardMonthlyScores.Add(101);
-
-		leaderboardWeeklyNames = new List<ObscuredString>();
-		leaderboardWeeklyScores = new List<ObscuredInt>();
-
-		//TEST LIST DELETE LATER
-		leaderboardWeeklyNames.Add("LOI");
-		leaderboardWeeklyNames.Add("ANA");
-		leaderboardWeeklyNames.Add("REI");
-		leaderboardWeeklyNames.Add("JON");
-		leaderboardWeeklyNames.Add("LUI");
-		leaderboardWeeklyNames.Add("VIV");
-		leaderboardWeeklyNames.Add("REO");
-		leaderboardWeeklyNames.Add("FIO");
-		leaderboardWeeklyNames.Add("DAN");
-		leaderboardWeeklyNames.Add("POT");
-
-		leaderboardWeeklyScores.Add(43);
-		leaderboardWeeklyScores.Add(42);
-		leaderboardWeeklyScores.Add(40);
-		leaderboardWeeklyScores.Add(38);
-		leaderboardWeeklyScores.Add(34);
-		leaderboardWeeklyScores.Add(31);
-		leaderboardWeeklyScores.Add(30);
-		leaderboardWeeklyScores.Add(23);
-		leaderboardWeeklyScores.Add(12);
-		leaderboardWeeklyScores.Add(5);
-	}
-
-	public void ChangeCurrentLeaderboard()
-	{
-		leaderboardToShow++;
-		if (leaderboardToShow >= 3)
-		{
-			leaderboardToShow = 0;
-		}
-		UpdateLeaderboardDisplay();
-	}
-
-	void UpdateLeaderboardDisplay() 
-	{
-		List<ObscuredString> leaderboardNames = new List<ObscuredString>();
-		List<ObscuredInt> leaderboardScores = new List<ObscuredInt>();
-
-		switch (leaderboardToShow)
-		{
-			case 0:
-				gameOverLeaderboardTitleText.text = "WEEKLY";
-				leaderboardNames = leaderboardWeeklyNames;
-				leaderboardScores = leaderboardWeeklyScores;
-				break;
-			case 1:
-				gameOverLeaderboardTitleText.text = "MONTHLY";
-				leaderboardNames = leaderboardMonthlyNames;
-				leaderboardScores = leaderboardMonthlyScores;
-				break;
-			case 2:
-				gameOverLeaderboardTitleText.text = "ALL TIME";
-				leaderboardNames = leaderboardAllTimeNames;
-				leaderboardScores = leaderboardAllTimeScores;
-				break;
-		}
-
-		gameOverLeaderboardPositionsText.gameObject.SetActive(true);
-		gameOverLeaderboardNamesText.text = "";
-		gameOverLeaderboardScoresText.text = "";
-
-		for (int i = 0; i < 10; i++)
-		{
-			gameOverLeaderboardNamesText.text += leaderboardNames[i] + "\n";
-			gameOverLeaderboardScoresText.text += leaderboardScores[i] + "\n";
-		}
 	}
 
 	void ResetWenMessageTexts()
@@ -381,8 +237,8 @@ public class GameplayManager : MonoBehaviour
 		gameOverStatNamesText.text = "";
 		gameOverStatNumbersText.text = "";
 
-		leaderboardToShow = 0;
-		UpdateLeaderboardDisplay();
+		menuManager.leaderboardToShow = 0;
+		menuManager.UpdateLeaderboardDisplay();
 
 		menuManager.SetMenuEnabled(true);
 	}
