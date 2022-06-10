@@ -648,8 +648,6 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 				JObject account = JObject.Parse(www.downloadHandler.text);
 				isBanned = account["is_banned"] != null && account["is_banned"].Value<bool>();
 				isValidSession = account["session_key"].Value<string>() == sessionId;
-				balance = account["balance"] != null ? (uint)account["balance"] : 0;
-				arcadeTokenBalance = account["arcade_token_balance"] != null ? (uint)account["arcade_token_balance"] : 0;
 
 			}
 			catch
@@ -670,25 +668,24 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 			yield break;
 		}
 
-		/*yield return Utils.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/stats/profile", (w) => www = w, headers);
+		yield return Utils.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/accounts/account/inventory?id=arcade-token", (w) => www = w, headers);
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			Fail("Failed to fetch game profile");
+			Fail("Failed to fetch inventory");
 			yield break;
 		}
 		else
 		{
 			try
 			{
-				print(www.downloadHandler.text);
 				JObject account = JObject.Parse(www.downloadHandler.text);
-				isValidSession = account["session_key"].Value<string>() == sessionId;
+				arcadeTokenBalance = account["balance"] != null ? (uint)account["balance"] : 0;
 			}
 			catch
 			{
-				isValidSession = false;
+				arcadeTokenBalance = 0;
 			}
-		}*/
+		}
 
 		user.SetBalances(balance, arcadeTokenBalance);
 		yield return GetDegens();
