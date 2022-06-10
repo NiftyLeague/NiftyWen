@@ -24,6 +24,7 @@ public class ProjectileHitter : MonoBehaviour
 
 	public void TurnOn()
 	{
+		hitterTimer = 0;
 		gameObject.SetActive(true);
 		audioManager.PlaySound(AudioManager.SoundID.batSwing);
 	}
