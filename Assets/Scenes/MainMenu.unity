@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311918, g: 0.3807398, b: 0.35872716, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1265,15 +1265,15 @@ RectTransform:
   m_GameObject: {fileID: 831695156}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.13, y: 0.13, z: 0.1}
+  m_LocalScale: {x: 0.0155, y: 0.0155, z: 0.1}
   m_Children: []
   m_Father: {fileID: 919620607}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3.26, y: 0.06}
-  m_SizeDelta: {x: 14, y: 15}
+  m_AnchoredPosition: {x: 4, y: 0.06}
+  m_SizeDelta: {x: 68.75, y: 68.75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &831695159
 MonoBehaviour:
@@ -1295,7 +1295,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1a073990efa460d47aaa0ef158cebe19, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 25bfb5e934a0240499e822ca98854304, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4574,7 +4574,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1620099381
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4809,17 +4809,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1630729026 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4292875206550182419, guid: 10c9406157c9a884e9c84db362d03b6a, type: 3}
-  m_PrefabInstance: {fileID: 4292875204926089553}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1644784883
 GameObject:
   m_ObjectHideFlags: 0
@@ -4907,7 +4896,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 14.5, y: 0.1}
+  m_AnchoredPosition: {x: 15, y: 0.1}
   m_SizeDelta: {x: 200, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1663613626
@@ -5651,7 +5640,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4.5, y: 0.1}
+  m_AnchoredPosition: {x: 1.85, y: 0.1}
   m_SizeDelta: {x: 200, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1830486749
@@ -5674,7 +5663,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: TOKENS
+  m_text: ARCADE TOKENS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9bd42e7fbaac2ca4db7719637fe546d2, type: 2}
   m_sharedMaterial: {fileID: -1443269923121478399, guid: 9bd42e7fbaac2ca4db7719637fe546d2, type: 2}
@@ -6168,7 +6157,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1986840137
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6296,8 +6285,8 @@ MonoBehaviour:
   tokenAmountDefaultColor:
     serializedVersion: 2
     rgba: 4288311622
-  tokenCurrentPriceText: {fileID: 1630729026}
-  nftlCurrentOwnedText: {fileID: 2039120811}
+  tokenCurrentPriceText: {fileID: 0}
+  nftlCurrentOwnedText: {fileID: 0}
   tokensPanelRect: {fileID: 919620607}
   tokenPurchaseAnimSpeed: 0.05
   tokenPurchaseAnimTweenEaseType: 4
@@ -6318,17 +6307,6 @@ MonoBehaviour:
     inited: 0
     fakeValue: 0
     fakeValueActive: 0
---- !u!114 &2039120811 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4292875206411234042, guid: 10c9406157c9a884e9c84db362d03b6a, type: 3}
-  m_PrefabInstance: {fileID: 4292875204926089553}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2071644025
 GameObject:
   m_ObjectHideFlags: 0
@@ -6825,6 +6803,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2079236530}
     m_Modifications:
+    - target: {fileID: 595267767372515341, guid: 10c9406157c9a884e9c84db362d03b6a, type: 3}
+      propertyPath: m_text
+      value: PURCHASE
+      objectReference: {fileID: 0}
     - target: {fileID: 4292875206651765330, guid: 10c9406157c9a884e9c84db362d03b6a, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

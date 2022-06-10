@@ -62,10 +62,14 @@ public class NiftyUser
 		this.degens = degens;
 	}
 
-	public void SetBalances(uint balance, uint arcadeTokenBalance)
+	public void SetBalance(uint balance)
 	{
 		this.balance = balance;
-		this.arcadeTokenBalance = arcadeTokenBalance;
+	}
+
+	internal void SetArcadeBalance(uint arcadeBalance)
+	{
+		arcadeTokenBalance = arcadeBalance;
 	}
 }
 

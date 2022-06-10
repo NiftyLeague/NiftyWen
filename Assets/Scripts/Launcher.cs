@@ -668,7 +668,24 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 			yield break;
 		}
 
+		user.SetBalance(balance);
+
+		yield return RefreshArcadeBalance();
+		yield return GetDegens();
+
+		ProfileDegensReady();
+	}
+
+	public IEnumerator RefreshArcadeBalance()
+	{
+		UnityWebRequest www = null;
+		Dictionary<string, string> headers = new Dictionary<string, string>
+		{
+			{ "authorizationToken", NiftyUsers.GetMyAuthorization() },
+		};
 		yield return Utils.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/accounts/account/inventory?id=arcade-token", (w) => www = w, headers);
+
+		uint arcadeBalance = 0;
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			Fail("Failed to fetch inventory");
@@ -678,20 +695,48 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 		{
 			try
 			{
-				JObject account = JObject.Parse(www.downloadHandler.text);
-				arcadeTokenBalance = account["balance"] != null ? (uint)account["balance"] : 0;
+				JObject inventory = JObject.Parse(www.downloadHandler.text);
+				arcadeBalance = inventory["balance"] != null ? (uint)inventory["balance"] : 0;
+				user.SetArcadeBalance(arcadeBalance);
 			}
 			catch
 			{
-				arcadeTokenBalance = 0;
+				Debug.Log("Failed to update Arcade Token balance");
 			}
 		}
-
-		user.SetBalances(balance, arcadeTokenBalance);
-		yield return GetDegens();
-
-		ProfileDegensReady();
 	}
+
+
+	public IEnumerator StartNewMatch()
+	{
+		UnityWebRequest www = null;
+		Dictionary<string, string> headers = new Dictionary<string, string>
+		{
+			{ "authorizationToken", NiftyUsers.GetMyAuthorization() },
+		};
+		yield return Utils.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/wen-game/start", (w) => www = w, headers);
+
+		uint arcadeBalance = 0;
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			Fail("Failed to fetch inventory");
+			yield break;
+		}
+		else
+		{
+			try
+			{
+				JObject inventory = JObject.Parse(www.downloadHandler.text);
+				arcadeBalance = inventory["balance"] != null ? (uint)inventory["balance"] : 0;
+				user.SetArcadeBalance(arcadeBalance);
+			}
+			catch
+			{
+				Debug.Log("Failed to update Arcade Token balance");
+			}
+		}
+	}
+
 
 	private IEnumerator GetDegens()
 	{
