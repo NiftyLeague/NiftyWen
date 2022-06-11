@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 97347996}
   - component: {fileID: 97347995}
   m_Layer: 5
-  m_Name: Insert Token Menu
+  m_Name: Menu (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -196,7 +196,7 @@ RectTransform:
   m_LocalScale: {x: 0.1, y: 0.09, z: 0.1}
   m_Children: []
   m_Father: {fileID: 1986840137}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -315,7 +315,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &109273823
 RectTransform:
   m_ObjectHideFlags: 0
@@ -330,12 +330,12 @@ RectTransform:
   - {fileID: 1391457480}
   - {fileID: 737019804}
   - {fileID: 215926947}
-  m_Father: {fileID: 2079236530}
-  m_RootOrder: 4
+  m_Father: {fileID: 1986840137}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.22}
+  m_AnchoredPosition: {x: 0, y: 0.78}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &125059038
@@ -2348,7 +2348,7 @@ GameObject:
   - component: {fileID: 841633512}
   - component: {fileID: 841633511}
   m_Layer: 5
-  m_Name: Quit Menu
+  m_Name: Menu (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2366,7 +2366,7 @@ RectTransform:
   m_LocalScale: {x: 0.1, y: 0.09, z: 0.1}
   m_Children: []
   m_Father: {fileID: 1986840137}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3225,7 +3225,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2079236530}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4369,7 +4369,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6403682268031268964, guid: d5c9846156683664e86726d8868cc53b, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6403682268031268964, guid: d5c9846156683664e86726d8868cc53b, type: 3}
       propertyPath: m_AnchorMax.x
@@ -4429,7 +4429,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6403682268031268964, guid: d5c9846156683664e86726d8868cc53b, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -1.5
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6403682268031268964, guid: d5c9846156683664e86726d8868cc53b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -6516,7 +6516,7 @@ RectTransform:
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 1986840137}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6999,7 +6999,7 @@ GameObject:
   - component: {fileID: 1829794946}
   - component: {fileID: 1829794945}
   m_Layer: 5
-  m_Name: Leaderboard Menu
+  m_Name: Menu (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7017,7 +7017,7 @@ RectTransform:
   m_LocalScale: {x: 0.1, y: 0.09, z: 0.1}
   m_Children: []
   m_Father: {fileID: 1986840137}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -7446,12 +7446,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 109273823}
   - {fileID: 1736995004}
   - {fileID: 97347994}
   - {fileID: 1829794944}
   - {fileID: 841633510}
   m_Father: {fileID: 2079236530}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -7640,16 +7641,27 @@ MonoBehaviour:
   mainMenuManager: {fileID: 0}
   gameplayManager: {fileID: 203195491}
   audioManager: {fileID: 201607129}
-  menuOptions:
-  - menuOptionString: INSERT TOKEN
-    menuOptionText: {fileID: 97347995}
-    menuOptionType: 6
-  - menuOptionString: NEXT LEADERBOARD
-    menuOptionText: {fileID: 1829794945}
-    menuOptionType: 8
-  - menuOptionString: QUIT
-    menuOptionText: {fileID: 841633511}
-    menuOptionType: 7
+  menus:
+  - menuID: Main Gameplay Menu
+    menuOptions:
+    - menuNameString: INSERT TOKEN
+      subMenuID: GameplayTryAgain
+    - menuNameString: NEXT LEADERBOARD
+      subMenuID: GameplayLeaderboard
+    - menuNameString: QUIT
+      subMenuID: GameplayQuit
+  - menuID: Token Menu
+    menuOptions:
+    - menuNameString: PURCHASE TOKENS
+      subMenuID: GameplayTokenPurchase
+    - menuNameString: BACK
+      subMenuID: GameplayTokenBack
+  currentMenu: 0
+  currentMenuOption: 0
+  menuTexts:
+  - {fileID: 97347995}
+  - {fileID: 1829794945}
+  - {fileID: 841633511}
   menuCursor: {fileID: 1736995004}
   menuPanel: {fileID: 1986840136}
   tokensPanel: {fileID: 109273822}
@@ -7660,9 +7672,7 @@ MonoBehaviour:
   tokenAmountDefaultColor:
     serializedVersion: 2
     rgba: 4288311622
-  tokenCurrentPriceText: {fileID: 1196504198242342219}
-  nftlCurrentOwnedText: {fileID: 1196504198242342218}
-  tokensPanelRect: {fileID: 0}
+  tokensPanelRect: {fileID: 109273823}
   tokenPurchaseAnimSpeed: 0.05
   tokenPurchaseAnimTweenEaseType: 4
   optionColorDefault:
@@ -7834,7 +7844,6 @@ RectTransform:
   - {fileID: 1644784884}
   - {fileID: 466106456}
   - {fileID: 1050368159}
-  - {fileID: 109273823}
   - {fileID: 1986840137}
   - {fileID: 1095486049}
   - {fileID: 1196504198242342217}
@@ -7939,7 +7948,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4292875206651765330, guid: 10c9406157c9a884e9c84db362d03b6a, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4292875206651765330, guid: 10c9406157c9a884e9c84db362d03b6a, type: 3}
       propertyPath: m_AnchorMax.x
@@ -7999,7 +8008,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4292875206651765330, guid: 10c9406157c9a884e9c84db362d03b6a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4292875206651765330, guid: 10c9406157c9a884e9c84db362d03b6a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -8028,28 +8037,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4292875206651765330, guid: 10c9406157c9a884e9c84db362d03b6a, type: 3}
   m_PrefabInstance: {fileID: 1196504198242342216}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1196504198242342218 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4292875206411234042, guid: 10c9406157c9a884e9c84db362d03b6a, type: 3}
-  m_PrefabInstance: {fileID: 1196504198242342216}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1196504198242342219 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4292875206550182419, guid: 10c9406157c9a884e9c84db362d03b6a, type: 3}
-  m_PrefabInstance: {fileID: 1196504198242342216}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1196504198242342220 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4292875206651765331, guid: 10c9406157c9a884e9c84db362d03b6a, type: 3}

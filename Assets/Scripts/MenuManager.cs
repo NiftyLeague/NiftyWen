@@ -13,7 +13,11 @@ public class MenuManager : Singleton<MenuManager>
 	public GameplayManager gameplayManager;
 	public AudioManager audioManager;
 	[Space]
-	public List<MenuOption> menuOptions;
+	public List<Menu> menus;
+	public int currentMenu;
+	public int currentMenuOption;
+	public List<TextMeshProUGUI> menuTexts;
+	[Space]
 	public RectTransform menuCursor;
 	public GameObject menuPanel;
 	public GameObject tokensPanel;
@@ -23,8 +27,6 @@ public class MenuManager : Singleton<MenuManager>
 	[Space]
 	public TextMeshProUGUI tokenAmountText;
 	public Color32 tokenAmountDefaultColor;
-	public TextMeshProUGUI tokenCurrentPriceText;
-	public TextMeshProUGUI nftlCurrentOwnedText;
 	public RectTransform tokensPanelRect;
 	public float tokenPurchaseAnimSpeed;
 	public TweenEaseType tokenPurchaseAnimTweenEaseType;
@@ -53,22 +55,15 @@ public class MenuManager : Singleton<MenuManager>
 	List<ObscuredString> leaderboardWeeklyNames;
 	List<ObscuredInt> leaderboardWeeklyScores;
 
-	private MenuType lastSelectedMenuOption;
-	private int selectedMenuOption;
+	private MenuOption lastSelectedMenuOption;
 	private bool canSelectMenuOptions;
-	private bool isInSecondaryMainMenu;
-	private float nftlOwned;
-	private float currentTokenPrice;
+	private float nftlOwned = 2000;
+	private float currentTokenPrice = 1000;
 	private uint tokensOwned;
 	private InputState input = new InputState();
 
 	void Start()
 	{
-		//TESTING, DELETE LATER
-		nftlOwned = 56.54f;
-		currentTokenPrice = 12.23f;
-		//tokensOwned = 50;
-
 		UpdateTokenAmount();
 		ResetMenuOptions();
 		SetSelectedMenuOption();
@@ -81,36 +76,18 @@ public class MenuManager : Singleton<MenuManager>
 	{
 		InputReader.GetInput(input);
 
-		if (isInSecondaryMainMenu)
+		if (currentMenu > 0 && input.PressedB)
 		{
-			if (input.PressedB)
+			audioManager.PlaySound(AudioManager.SoundID.batSwing);
+			if (mainMenuManager != null)
 			{
-				audioManager.PlaySound(AudioManager.SoundID.batSwing);
-				if (mainMenuManager != null)
-				{
-					mainMenuManager.GoBack();
-				}
-				purchaseTokensPanel.SetActive(false);
-				UpdateLeaderboardDisplay();
-				SetMenuEnabled(true);
-				ResetMenuOptions();
-				return;
+				mainMenuManager.GoBack();
 			}
-
-			if (input.PressedA)
-			{
-				if (lastSelectedMenuOption == MenuType.MainMenuLeaderboard)
-				{
-					ChangeCurrentLeaderboard();
-				}
-
-				if (lastSelectedMenuOption == MenuType.GameplayTryAgain || lastSelectedMenuOption == MenuType.MainMenuPlay)
-				{
-					PurchaseToken();
-				}
-				return;
-			}
-
+			purchaseTokensPanel.SetActive(false);
+			UpdateLeaderboardDisplay();
+			SetMenuEnabled(true);
+			ChangeMenu(0);
+			return;
 		}
 
 		if (!canSelectMenuOptions || !menuPanel.gameObject.activeSelf)
@@ -136,28 +113,34 @@ public class MenuManager : Singleton<MenuManager>
 
 	public void SetMenuEnabled(bool enabled)
 	{
-		tokensPanel.SetActive(enabled);
-		isInSecondaryMainMenu = !enabled;
 		canSelectMenuOptions = enabled;
 		menuPanel.SetActive(enabled);
 		ResetMenuOptions();
 	}
 
+	void ChangeMenu(int menuToChangeTo)
+	{
+		currentMenu = menuToChangeTo;
+		currentMenuOption = 0;
+		canSelectMenuOptions = true;
+		ResetMenuOptions();
+		SetSelectedMenuOption();
+	}
 
 	void ChangeMenuOption(int menuOptionChange)
 	{
 		audioManager.PlaySound(AudioManager.SoundID.messagePopup);
 
-		selectedMenuOption = selectedMenuOption + menuOptionChange;
+		currentMenuOption = currentMenuOption + menuOptionChange;
 
-		if (selectedMenuOption > menuOptions.Count - 1)
+		if (currentMenuOption > menus[currentMenu].menuOptions.Count - 1)
 		{
-			selectedMenuOption = 0;
+			currentMenuOption = 0;
 		}
 
-		if (selectedMenuOption < 0)
+		if (currentMenuOption < 0)
 		{
-			selectedMenuOption = menuOptions.Count - 1;
+			currentMenuOption = menus[currentMenu].menuOptions.Count - 1;
 		}
 
 		SetSelectedMenuOption();
@@ -165,27 +148,32 @@ public class MenuManager : Singleton<MenuManager>
 
 	void SetSelectedMenuOption()
 	{
-		menuCursor.anchoredPosition = new Vector2(menuCursor.anchoredPosition.x, menuOptions[selectedMenuOption].menuOptionText.rectTransform.anchoredPosition.y + menuCursorYOffset);
+		menuCursor.anchoredPosition = new Vector2(menuCursor.anchoredPosition.x, menuTexts[currentMenuOption].rectTransform.anchoredPosition.y + menuCursorYOffset);
 	}
 
 	void ResetMenuOptions()
 	{
-		foreach (MenuOption option in menuOptions)
+		foreach (TextMeshProUGUI menuText in menuTexts) 
 		{
-			option.menuOptionText.text = option.menuOptionString;
+			menuText.text = "";
 		}
 
-		if (tokensOwned <= 0)
+		for (int i = 0; i < menus[currentMenu].menuOptions.Count; i++)
 		{
-			menuOptions[0].menuOptionText.text = "PURCHASE TOKENS";
+			menuTexts[i].text = menus[currentMenu].menuOptions[i].menuNameString;
+		}
+
+		if (tokensOwned <= 0 && currentMenu == 0)
+		{
+			menuTexts[0].text = "PURCHASE TOKENS";
 		}
 
 		errorMessageText.text = "";
 	}
 
-	public void GainToken()
+	public void GainTokens()
 	{
-		tokensOwned += 1;
+		tokensOwned += 4;
 		UpdateTokenAmount();
 		audioManager.PlaySound(AudioManager.SoundID.gainPoint);
 	}
@@ -200,6 +188,11 @@ public class MenuManager : Singleton<MenuManager>
 	{
 		tokensOwned = balance;
 		UpdateTokenAmount();
+	}
+
+	public void ShowTokenBalance(bool show)
+	{
+		tokensPanel.SetActive(show);
 	}
 
 	public void UpdateTokenAmount()
@@ -219,63 +212,66 @@ public class MenuManager : Singleton<MenuManager>
 	IEnumerator SelectOption()
 	{
 		canSelectMenuOptions = false;
-		var menu = menuOptions[selectedMenuOption];
-		lastSelectedMenuOption = menu.menuOptionType;
+		MenuOption menuOption = menus[currentMenu].menuOptions[currentMenuOption];
+		lastSelectedMenuOption = menuOption;
 		audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
 
-		foreach (MenuOption option in menuOptions)
+		if (currentMenu == 0)
 		{
-			option.menuOptionText.text = "";
+			foreach (TextMeshProUGUI menuText in menuTexts)
+			{
+				menuText.text = "";
+			}
+
+			menuTexts[currentMenuOption].text = menuOption.menuNameString;
+
+			if (menuOption.subMenuID == "MainMenuPlay" || menuOption.subMenuID == "GameplayTryAgain")
+			{
+				if (tokensOwned > 0)
+				{
+					audioManager.PlaySound(AudioManager.SoundID.insertCoin);
+					SpendToken();
+				}
+				else
+				{
+					menuTexts[0].text = "PURCHASE TOKENS";
+				}
+			}
+
+			whiteFlash.gameObject.SetActive(true);
+
+			yield return new WaitForSeconds(0.05f);
+
+			whiteFlash.gameObject.SetActive(false);
+
+			yield return new WaitForSeconds(0.1f);
+
+			menuTexts[currentMenuOption].color = optionColorPressed;
+
+			yield return new WaitForSeconds(0.05f);
+
+			menuTexts[currentMenuOption].color = optionColorDefault;
+
+			yield return new WaitForSeconds(0.05f);
+
+			menuTexts[currentMenuOption].color = optionColorPressed;
+
+			yield return new WaitForSeconds(0.05f);
+
+			menuTexts[currentMenuOption].color = optionColorDefault;
+
+			yield return new WaitForSeconds(1f);
+
 		}
 
-		menu.menuOptionText.text = menu.menuOptionString;
-
-		if (menu.menuOptionType == MenuType.MainMenuPlay || menu.menuOptionType == MenuType.GameplayTryAgain)
+		switch (menuOption.subMenuID)
 		{
-			if (tokensOwned > 0)
-			{
-				audioManager.PlaySound(AudioManager.SoundID.insertCoin);
-				SpendToken();
-			}
-			else
-			{
-				menu.menuOptionText.text = "PURCHASE TOKENS";
-			}
-		}
-
-		whiteFlash.gameObject.SetActive(true);
-
-		yield return new WaitForSeconds(0.05f);
-
-		whiteFlash.gameObject.SetActive(false);
-
-		yield return new WaitForSeconds(0.1f);
-
-		menu.menuOptionText.color = optionColorPressed;
-
-		yield return new WaitForSeconds(0.05f);
-
-		menu.menuOptionText.color = optionColorDefault;
-
-		yield return new WaitForSeconds(0.05f);
-
-		menu.menuOptionText.color = optionColorPressed;
-
-		yield return new WaitForSeconds(0.05f);
-
-		menu.menuOptionText.color = optionColorDefault;
-
-		yield return new WaitForSeconds(1f);
-
-		switch (menu.menuOptionType)
-		{
-			case MenuType.MainMenuPlay:
+			case "MainMenuPlay":
 				if (tokensOwned <= 0)
 				{
 					GoToTokenPurchasingScreen();
-					menuPanel.SetActive(false);
-					isInSecondaryMainMenu = true;
-					ResetMenuOptions();
+					ChangeMenu(1);
+					ShowTokenBalance(true);
 				}
 				else
 				{
@@ -283,47 +279,76 @@ public class MenuManager : Singleton<MenuManager>
 					SceneManager.LoadScene(1);
 				}
 				break;
-			case MenuType.MainMenuHowToPlay:
+			case "MainMenuHowToPlay":
 				mainMenuManager.GoToHowToPlayScreen();
-				menuPanel.SetActive(false);
-				isInSecondaryMainMenu = true;
-				ResetMenuOptions();
+				ShowTokenBalance(false);
+				ChangeMenu(2);
 				break;
-			case MenuType.MainMenuLeaderboard:
+			case "MainMenuLeaderboards":
 				mainMenuManager.GoToLeaderboardsScreen();
-				menuPanel.SetActive(false);
-				isInSecondaryMainMenu = true;
-				ResetMenuOptions();
+				ShowTokenBalance(false);
+				ChangeMenu(3);
 				break;
-			case MenuType.MainMenuAbout:
-				mainMenuManager.GoToAboutScreen();
-				menuPanel.SetActive(false);
-				isInSecondaryMainMenu = true;
-				ResetMenuOptions();
-				break;
-			case MenuType.MainMenuQuit:
+			case "MainMenuQuit":
 				Application.Quit();
 				break;
-			case MenuType.GameplayTryAgain:
-				menuPanel.SetActive(false);
+
+			case "TokenMenuPurchase":
+				PurchaseToken();
+				ShowTokenBalance(true);
+				break;
+			case "TokenMenuBack":
+				mainMenuManager.GoBack();
+				ShowTokenBalance(true);
+				purchaseTokensPanel.SetActive(false);
+				ChangeMenu(0);
+				break;
+
+			case "HowToPlayMenuBack":
+				mainMenuManager.GoBack();
+				ShowTokenBalance(true);
+				ChangeMenu(0);
+				break;
+
+			case "MainMenuLeaderboardMenuChange":
+				ChangeCurrentLeaderboard();
+				break;
+			case "MainMenuLeaderboardMenuBack":
+				mainMenuManager.GoBack();
+				ShowTokenBalance(true);
+				ChangeMenu(0);
+				break;
+
+			case "GameplayTryAgain":
 				if (tokensOwned <= 0)
 				{
 					GoToTokenPurchasingScreen();
-					isInSecondaryMainMenu = true;
+					ChangeMenu(1);
+					ShowTokenBalance(true);
 				}
 				else
 				{
 					ResetMenuOptions();
 					tokensPanel.SetActive(false);
 					gameplayManager.ResetEverythingForANewGame();
+					menuPanel.SetActive(false);
 				}
 				break;
-			case MenuType.GameplayLeaderboard:
+			case "GameplayLeaderboard":
 				ChangeCurrentLeaderboard();
 				SetMenuEnabled(true);
 				break;
-			case MenuType.GameplayQuit:
+			case "GameplayQuit":
 				SceneManager.LoadScene(0);
+				break;
+
+			case "GameplayTokenPurchase":
+				PurchaseToken();
+				break;
+			case "GameplayTokenBack":
+				purchaseTokensPanel.SetActive(false);
+				UpdateLeaderboardDisplay();
+				ChangeMenu(0);
 				break;
 		}
 	}
@@ -411,12 +436,12 @@ public class MenuManager : Singleton<MenuManager>
 
 	public void ChangeCurrentLeaderboard()
 	{
-		audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
 		leaderboardToShow++;
 		if (leaderboardToShow >= 3)
 		{
 			leaderboardToShow = 0;
 		}
+		canSelectMenuOptions = true;
 		UpdateLeaderboardDisplay();
 	}
 
@@ -472,8 +497,6 @@ public class MenuManager : Singleton<MenuManager>
 		ResetLeaderboardDisplay();
 		purchaseTokensPanel.SetActive(true);
 		tokensPanel.SetActive(true);
-		tokenCurrentPriceText.text = currentTokenPrice.ToString("0.0") + " NFTL";
-		nftlCurrentOwnedText.text = nftlOwned.ToString("0.0") + " NFTL";
 	}
 
 	void PurchaseToken()
@@ -481,7 +504,7 @@ public class MenuManager : Singleton<MenuManager>
 		if (nftlOwned >= currentTokenPrice)
 		{
 			nftlOwned -= currentTokenPrice;
-			GainToken();
+			GainTokens();
 			GoToTokenPurchasingScreen();
 			TokenPurchaseAnim();
 		}
@@ -489,6 +512,8 @@ public class MenuManager : Singleton<MenuManager>
 		{
 			ErrorMessage("Not Enough NFTL!");
 		}
+
+		canSelectMenuOptions = true;
 	}
 
 	void ErrorMessage(string message)
@@ -555,22 +580,15 @@ public class MenuManager : Singleton<MenuManager>
 }
 
 [Serializable]
-public class MenuOption
+public class Menu
 {
-	public string menuOptionString;
-	public TextMeshProUGUI menuOptionText;
-	public MenuType menuOptionType;
+	public string menuID;
+	public List<MenuOption> menuOptions;
 }
 
-public enum MenuType
+[Serializable]
+public class MenuOption
 {
-	None,
-	MainMenuPlay,
-	MainMenuHowToPlay,
-	MainMenuLeaderboard,
-	MainMenuAbout,
-	MainMenuQuit,
-	GameplayTryAgain,
-	GameplayQuit,
-	GameplayLeaderboard,
+	public string menuNameString;
+	public string subMenuID;
 }
