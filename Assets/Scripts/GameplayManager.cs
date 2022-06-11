@@ -102,6 +102,7 @@ public class GameplayManager : MonoBehaviour
 		StartCoroutine(AnimateScoreText());
 		IncreaseSpeed();
 		UpdateScoreText();
+		EventController.AddScore(scoreGainedAmount);
 	}
 
 	void UpdateScoreText()
@@ -121,6 +122,7 @@ public class GameplayManager : MonoBehaviour
 		playerCharacter.Lose();
 		StartCoroutine(PlayGameOverScreen());
 		menuManager.UpdateLeaderboards();
+		EventController.AddMatchEnd(PlayerSpriteManager.lastDegenIdUsed);
 		Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
 	}
 
@@ -156,10 +158,12 @@ public class GameplayManager : MonoBehaviour
 		if (isABomb)
 		{
 			bombsDodged++;
+			EventController.AddDodgeBomb();
 		}
 		else
 		{
 			ballsDodged++;
+			EventController.AddDodgeBall();
 		}
 		IncreaseSpeed();
 	}

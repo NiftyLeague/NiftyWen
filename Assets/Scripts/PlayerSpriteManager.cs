@@ -30,6 +30,8 @@ public class PlayerSpriteManager : MonoBehaviour
 	private static int degensToLoadMin;
 	private static int degensToLoadMax;
 	private static List<int> degenIDsToLoad = new List<int>();
+	public static int lastDegenIdUsed = -1;
+
 
 	void Awake()
 	{
@@ -65,6 +67,7 @@ public class PlayerSpriteManager : MonoBehaviour
 	{
 		if (degenIDs == null || degenIDs.Count == 0)
 		{
+			lastDegenIdUsed = -1;
 			return;
 		}
 		degenIDsToLoad = degenIDs;
@@ -95,6 +98,7 @@ public class PlayerSpriteManager : MonoBehaviour
 
 	private void GetDegen(int degenID)
 	{
+		lastDegenIdUsed = degenID;
 		SpriteLoader.LoadSpritesheet($"https://d7ct17ettlkln.cloudfront.net/assets/sheets/92/{degenID}.png",
 		16, 16, 128, 128, OnSpriteLoadComplete, LoadingDegenProgressBar);
 		PlayerPrefs.SetInt("last-degen-used", degenID);

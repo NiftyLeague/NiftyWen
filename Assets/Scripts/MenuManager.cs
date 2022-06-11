@@ -6,6 +6,8 @@ using System;
 using TMPro;
 using UnityEngine.SceneManagement;
 using CodeStage.AntiCheat.ObscuredTypes;
+using UnityEngine.Networking;
+using Newtonsoft.Json.Linq;
 
 public class MenuManager : Singleton<MenuManager>
 {
@@ -27,6 +29,7 @@ public class MenuManager : Singleton<MenuManager>
 	[Space]
 	public TextMeshProUGUI tokenAmountText;
 	public Color32 tokenAmountDefaultColor;
+	public Color32 tokenAmountEmptyColor;
 	public RectTransform tokensPanelRect;
 	public float tokenPurchaseAnimSpeed;
 	public TweenEaseType tokenPurchaseAnimTweenEaseType;
@@ -68,7 +71,7 @@ public class MenuManager : Singleton<MenuManager>
 		ResetMenuOptions();
 		SetSelectedMenuOption();
 		UpdateLeaderboards();
-		
+
 		tokenPanelStartPosition = tokensPanelRect.anchoredPosition;
 	}
 
@@ -153,7 +156,7 @@ public class MenuManager : Singleton<MenuManager>
 
 	void ResetMenuOptions()
 	{
-		foreach (TextMeshProUGUI menuText in menuTexts) 
+		foreach (TextMeshProUGUI menuText in menuTexts)
 		{
 			menuText.text = "";
 		}
@@ -188,6 +191,7 @@ public class MenuManager : Singleton<MenuManager>
 	{
 		tokensOwned = balance;
 		UpdateTokenAmount();
+		ShowTokenBalance(true);
 	}
 
 	public void ShowTokenBalance(bool show)
@@ -201,7 +205,7 @@ public class MenuManager : Singleton<MenuManager>
 
 		if (tokensOwned <= 0)
 		{
-			tokenAmountText.color = Color.red;
+			tokenAmountText.color = tokenAmountEmptyColor;
 		}
 
 		tokenAmountText.text = tokensOwned.ToString("000");
@@ -266,90 +270,133 @@ public class MenuManager : Singleton<MenuManager>
 
 		switch (menuOption.subMenuID)
 		{
-			case "MainMenuPlay":
-				if (tokensOwned <= 0)
-				{
-					GoToTokenPurchasingScreen();
-					ChangeMenu(1);
-					ShowTokenBalance(true);
-				}
-				else
-				{
-					audioManager.PlaySound(AudioManager.SoundID.insertCoin);
-					SceneManager.LoadScene(1);
-				}
-				break;
-			case "MainMenuHowToPlay":
-				mainMenuManager.GoToHowToPlayScreen();
-				ShowTokenBalance(false);
-				ChangeMenu(2);
-				break;
-			case "MainMenuLeaderboards":
-				mainMenuManager.GoToLeaderboardsScreen();
-				ShowTokenBalance(false);
-				ChangeMenu(3);
-				break;
-			case "MainMenuQuit":
-				Application.Quit();
-				break;
-
-			case "TokenMenuPurchase":
-				PurchaseToken();
+		case "MainMenuPlay":
+			if (tokensOwned <= 0)
+			{
+				GoToTokenPurchasingScreen();
+				ChangeMenu(1);
 				ShowTokenBalance(true);
-				break;
-			case "TokenMenuBack":
-				mainMenuManager.GoBack();
+			}
+			else
+			{
+				yield return StartGame();
+			}
+			break;
+		case "MainMenuHowToPlay":
+			mainMenuManager.GoToHowToPlayScreen();
+			ShowTokenBalance(false);
+			ChangeMenu(2);
+			break;
+		case "MainMenuLeaderboards":
+			mainMenuManager.GoToLeaderboardsScreen();
+			ShowTokenBalance(false);
+			ChangeMenu(3);
+			break;
+		case "MainMenuQuit":
+			Application.Quit();
+			break;
+
+		case "TokenMenuPurchase":
+			PurchaseToken();
+			ShowTokenBalance(true);
+			break;
+		case "TokenMenuBack":
+			mainMenuManager.GoBack();
+			ShowTokenBalance(true);
+			purchaseTokensPanel.SetActive(false);
+			ChangeMenu(0);
+			break;
+
+		case "HowToPlayMenuBack":
+			mainMenuManager.GoBack();
+			ShowTokenBalance(true);
+			ChangeMenu(0);
+			break;
+
+		case "MainMenuLeaderboardMenuChange":
+			ChangeCurrentLeaderboard();
+			break;
+		case "MainMenuLeaderboardMenuBack":
+			mainMenuManager.GoBack();
+			ShowTokenBalance(true);
+			ChangeMenu(0);
+			break;
+
+		case "GameplayTryAgain":
+			if (tokensOwned <= 0)
+			{
+				GoToTokenPurchasingScreen();
+				ChangeMenu(1);
 				ShowTokenBalance(true);
-				purchaseTokensPanel.SetActive(false);
-				ChangeMenu(0);
-				break;
+			}
+			else
+			{
+				ResetMenuOptions();
+				tokensPanel.SetActive(false);
+				gameplayManager.ResetEverythingForANewGame();
+				menuPanel.SetActive(false);
+			}
+			break;
+		case "GameplayLeaderboard":
+			ChangeCurrentLeaderboard();
+			SetMenuEnabled(true);
+			break;
+		case "GameplayQuit":
+			SceneManager.LoadScene(0);
+			break;
 
-			case "HowToPlayMenuBack":
-				mainMenuManager.GoBack();
-				ShowTokenBalance(true);
-				ChangeMenu(0);
-				break;
+		case "GameplayTokenPurchase":
+			PurchaseToken();
+			break;
+		case "GameplayTokenBack":
+			purchaseTokensPanel.SetActive(false);
+			UpdateLeaderboardDisplay();
+			ChangeMenu(0);
+			break;
+		}
+	}
 
-			case "MainMenuLeaderboardMenuChange":
-				ChangeCurrentLeaderboard();
-				break;
-			case "MainMenuLeaderboardMenuBack":
-				mainMenuManager.GoBack();
-				ShowTokenBalance(true);
-				ChangeMenu(0);
-				break;
 
-			case "GameplayTryAgain":
-				if (tokensOwned <= 0)
-				{
-					GoToTokenPurchasingScreen();
-					ChangeMenu(1);
-					ShowTokenBalance(true);
-				}
-				else
-				{
-					ResetMenuOptions();
-					tokensPanel.SetActive(false);
-					gameplayManager.ResetEverythingForANewGame();
-					menuPanel.SetActive(false);
-				}
-				break;
-			case "GameplayLeaderboard":
-				ChangeCurrentLeaderboard();
-				SetMenuEnabled(true);
-				break;
-			case "GameplayQuit":
-				SceneManager.LoadScene(0);
-				break;
+	private IEnumerator StartGame()
+	{
+		audioManager.PlaySound(AudioManager.SoundID.insertCoin);
+		UnityWebRequest www = null;
+		Dictionary<string, string> headers = new Dictionary<string, string>
+		{
+			{ "authorizationToken", NiftyUsers.GetMyAuthorization() },
+		};
+		yield return Utils.PostRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/wen-game/start", null, (w) => www = w, headers);
 
-			case "GameplayTokenPurchase":
-				PurchaseToken();
-				break;
-			case "GameplayTokenBack":
-				purchaseTokensPanel.SetActive(false);
-				UpdateLeaderboardDisplay();
-				ChangeMenu(0);
-				break;
+		string matchId = null;
+		int updateTicket = 0;
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			print("Failed to Insert Token");
+		}
+		else
+		{
+			try
+			{
+				JObject info = JObject.Parse(www.downloadHandler.text);
+				matchId = info["id"] != null ? (string)info["id"] : null;
+				updateTicket = info["ticket"] != null ? (int)info["ticket"] : 0;
+			}
+			catch
+			{
+				Debug.Log("Failed to update Arcade Token balance");
+			}
+		}
+
+		if (matchId != null && updateTicket != 0)
+		{
+			EventController.AddMatchStart(matchId, updateTicket);
+			UIVersion.SetSession(EventController.GetMatchShortId());
+			yield return new WaitForSeconds(0.25f);
+			SceneManager.LoadScene(1);
+		}
+		else
+		{
+			SetMenuEnabled(true);
 		}
 	}
 
@@ -460,21 +507,21 @@ public class MenuManager : Singleton<MenuManager>
 
 		switch (leaderboardToShow)
 		{
-			case 0:
-				leaderboardTitleText.text = "WEEKLY";
-				leaderboardNames = leaderboardWeeklyNames;
-				leaderboardScores = leaderboardWeeklyScores;
-				break;
-			case 1:
-				leaderboardTitleText.text = "MONTHLY";
-				leaderboardNames = leaderboardMonthlyNames;
-				leaderboardScores = leaderboardMonthlyScores;
-				break;
-			case 2:
-				leaderboardTitleText.text = "ALL TIME";
-				leaderboardNames = leaderboardAllTimeNames;
-				leaderboardScores = leaderboardAllTimeScores;
-				break;
+		case 0:
+			leaderboardTitleText.text = "WEEKLY";
+			leaderboardNames = leaderboardWeeklyNames;
+			leaderboardScores = leaderboardWeeklyScores;
+			break;
+		case 1:
+			leaderboardTitleText.text = "MONTHLY";
+			leaderboardNames = leaderboardMonthlyNames;
+			leaderboardScores = leaderboardMonthlyScores;
+			break;
+		case 2:
+			leaderboardTitleText.text = "ALL TIME";
+			leaderboardNames = leaderboardAllTimeNames;
+			leaderboardScores = leaderboardAllTimeScores;
+			break;
 		}
 
 		leaderboardPositionsText.gameObject.SetActive(true);
@@ -490,10 +537,6 @@ public class MenuManager : Singleton<MenuManager>
 
 	void GoToTokenPurchasingScreen()
 	{
-		if (mainMenuManager != null)
-		{
-			mainMenuManager.wenTitle.SetActive(false);
-		}
 		ResetLeaderboardDisplay();
 		purchaseTokensPanel.SetActive(true);
 		tokensPanel.SetActive(true);

@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 public class EventController : MonoBehaviour
 {
 	private static EventController I;
-	private static string url = "https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/wen-game";
+	private static string url = "https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/wen-game/update";
 
 	public float updateInterval;
 
@@ -65,9 +65,9 @@ public class EventController : MonoBehaviour
 			Debug.Log(www.error);
 			yield break;
 		}
-		else
+		else if (match != null)
 		{
-			//print(www.downloadHandler.text);
+			match.SetUpdateTicket(int.Parse(www.downloadHandler.text));
 		}
 	}
 
@@ -76,11 +76,11 @@ public class EventController : MonoBehaviour
 		return match != null;
 	}
 
-	public static string AddMatchStart(string matchId)
+	public static string AddMatchStart(string matchId, int updateTicket)
 	{
 		try
 		{
-			match = new Match(matchId);
+			match = new Match(matchId, updateTicket);
 			AddEvent(new Event(EventTypes.MatchStart, null));
 			print($"{match.shortId} - {match.id}");
 		}
@@ -91,11 +91,11 @@ public class EventController : MonoBehaviour
 		return matchId;
 	}
 
-	public static void AddMatchEnd(Player winner, List<Player> players)
+	public static void AddMatchEnd(int degenId)
 	{
 		try
 		{
-			AddEvent(new Event(EventTypes.MatchEnd, null));
+			AddEvent(new Event(EventTypes.MatchEnd, degenId.ToString()));
 		}
 		catch (Exception e)
 		{
@@ -103,6 +103,41 @@ public class EventController : MonoBehaviour
 		}
 	}
 
+	public static void AddScore(int score)
+	{
+		try
+		{
+			AddEvent(new Event(EventTypes.Score, score.ToString()));
+		}
+		catch (Exception e)
+		{
+			Debug.LogWarning($"Failed to add ({EventTypes.Score}) event {e}");
+		}
+	}
+
+	public static void AddDodgeBall()
+	{
+		try
+		{
+			AddEvent(new Event(EventTypes.DodgeBall, null));
+		}
+		catch (Exception e)
+		{
+			Debug.LogWarning($"Failed to add ({EventTypes.DodgeBall}) event {e}");
+		}
+	}
+
+	public static void AddDodgeBomb()
+	{
+		try
+		{
+			AddEvent(new Event(EventTypes.DodgeBomb, null));
+		}
+		catch (Exception e)
+		{
+			Debug.LogWarning($"Failed to add ({EventTypes.DodgeBomb}) event {e}");
+		}
+	}
 
 	private static void CleanUpMatch()
 	{
@@ -134,16 +169,27 @@ public class EventController : MonoBehaviour
 		}
 	}
 
+	public static string GetMatchShortId()
+	{
+		if (match != null)
+		{
+			return match.shortId;
+		}
+		return null;
+	}
+
 	[Serializable]
 	private class Match
 	{
 		public string id;
 		public string shortId;
 		public List<Event> events;
+		public int updateTicket;
 
-		public Match(string id)
+		public Match(string id, int updateTicket)
 		{
 			this.id = id;
+			this.updateTicket = updateTicket;
 			shortId = XUtils.GetInt32HashCode(id).ToString("X6");
 			events = new List<Event>();
 		}
@@ -157,6 +203,11 @@ public class EventController : MonoBehaviour
 		{
 			events.Clear();
 		}
+
+		internal void SetUpdateTicket(int updateTicket)
+		{
+			this.updateTicket = updateTicket;
+		}
 	}
 
 
@@ -164,7 +215,7 @@ public class EventController : MonoBehaviour
 	private class Event
 	{
 		public string id;
-		public ObscuredString type;
+		public string type;
 		public int ts;
 		public string value;
 
@@ -185,10 +236,10 @@ public class EventController : MonoBehaviour
 
 	private static class EventTypes
 	{
-		public static ObscuredString MatchStart = "match-start";
-		public static ObscuredString MatchEnd = "match-end";
-		public static ObscuredString Score = "score";
-		public static ObscuredString DodgeBall = "dodge-ball";
-		public static ObscuredString DodgeBomb = "dodge-bomb";
+		public static ObscuredString MatchStart = "start";
+		public static ObscuredString MatchEnd = "end";
+		public static ObscuredString Score = "hit";
+		public static ObscuredString DodgeBall = "miss";
+		public static ObscuredString DodgeBomb = "dodge";
 	}
 }

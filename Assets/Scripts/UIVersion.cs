@@ -12,6 +12,20 @@ public class UIVersion : MonoBehaviour
 	void Start()
 	{
 		version.text = $"v{Application.version}";
-		session.text = Launcher.shortSessionId;
+		var sesstionId = EventController.GetMatchShortId();
+		session.text = string.IsNullOrEmpty(sesstionId) ? Launcher.shortSessionId : sesstionId;
+	}
+
+	public static void SetSession(string session)
+	{
+		if (string.IsNullOrEmpty(session))
+		{
+			return;
+		}
+		var ui = FindObjectOfType<UIVersion>();
+		if (ui)
+		{
+			ui.session.text = session;
+		}
 	}
 }

@@ -634,7 +634,6 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 		bool isValidSession = false;
 		bool isBanned = false;
 		uint balance = 0;
-		uint arcadeTokenBalance = 0;
 		yield return Utils.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/accounts/account", (w) => www = w, headers);
 		if (www.result != UnityWebRequest.Result.Success)
 		{
@@ -719,13 +718,14 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 		uint arcadeBalance = 0;
 		if (www.result != UnityWebRequest.Result.Success)
 		{
-			Fail("Failed to fetch inventory");
+			Fail("Failed to Insert Token");
 			yield break;
 		}
 		else
 		{
 			try
 			{
+				print(www.downloadHandler.text);
 				JObject inventory = JObject.Parse(www.downloadHandler.text);
 				arcadeBalance = inventory["balance"] != null ? (uint)inventory["balance"] : 0;
 				user.SetArcadeBalance(arcadeBalance);
@@ -744,6 +744,7 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 		yield return WebRequestHelper.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/profiles/profile/avatars",
 			"", true, false, resp => result = resp);
 		degens = new HashSet<int>();
+		yield break;
 		try
 		{
 			JObject avatars = JObject.Parse(result);
@@ -763,6 +764,7 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 		}
 		catch (Exception e)
 		{
+			print(result);
 			print(e);
 		}
 	}
