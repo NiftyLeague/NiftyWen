@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using CodeStage.AntiCheat.ObscuredTypes;
+using Newtonsoft.Json.Linq;
 
 public class GameplayManager : MonoBehaviour
 {
@@ -16,9 +16,12 @@ public class GameplayManager : MonoBehaviour
 	[Space]
 	public ObscuredInt score;
 	public ObscuredFloat timePlayed;
-	public ObscuredInt ballsTotal;
-	public ObscuredInt ballsDodged;
-	public ObscuredInt bombsDodged;
+	public ObscuredInt totalBalls;
+	public ObscuredInt hits;
+	public ObscuredInt misses;
+	public ObscuredInt dodges;
+	public ObscuredInt machineHits;
+	public ObscuredInt xp;
 	[Space]
 	public ObscuredFloat currentSpeedIncrease;
 	public CameraShake cameraShake;
@@ -98,6 +101,7 @@ public class GameplayManager : MonoBehaviour
 			scoreGainedAmount = 2;
 		}
 		score += scoreGainedAmount;
+		hits++;
 		scoreGainedText.text = "+" + scoreGainedAmount.ToString("0");
 		StartCoroutine(AnimateScoreText());
 		IncreaseSpeed();
@@ -120,10 +124,13 @@ public class GameplayManager : MonoBehaviour
 		cameraShake.Shake(0.5f, 5);
 		IncreaseSpeed(true);
 		playerCharacter.Lose();
-		StartCoroutine(PlayGameOverScreen());
 		menuManager.UpdateLeaderboards();
 		EventController.AddMatchEnd(PlayerSpriteManager.lastDegenIdUsed);
+
+		StartCoroutine(PlayGameOverScreen());
+
 		Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
+
 	}
 
 	public void Explosion(Vector3 position)
@@ -157,12 +164,12 @@ public class GameplayManager : MonoBehaviour
 
 		if (isABomb)
 		{
-			bombsDodged++;
+			dodges++;
 			EventController.AddDodgeBomb();
 		}
 		else
 		{
-			ballsDodged++;
+			misses++;
 			EventController.AddDodgeBall();
 		}
 		IncreaseSpeed();
@@ -179,11 +186,13 @@ public class GameplayManager : MonoBehaviour
 
 	public void ResetEverythingForANewGame()
 	{
+		hits = 0;
+		misses = 0;
+		dodges = 0;
 		score = 0;
-		ballsTotal = 0;
-		ballsDodged = 0;
+		machineHits = 0;
+		xp = 0;
 		timePlayed = 0;
-		bombsDodged = 0;
 
 		gameOverStatNamesText.text = "";
 		gameOverStatNumbersText.text = "";
@@ -216,25 +225,41 @@ public class GameplayManager : MonoBehaviour
 
 		scoreText.text = "GAME OVER";
 
-		yield return new WaitForSeconds(3);
+		yield return new WaitForSeconds(3f);
+		yield return GetMatchResults();
 
 		playerCharacter.StandBackUp();
 
 		scoreText.text = "";
 
-		gameOverStatNamesText.text = "SCORE\nTIME PLAYED\nTOTAL BALLS\nBALLS DODGED";
-
 		float secondsPlayed = timePlayed % 60;
 		float minutesPlayed = timePlayed / 60;
 		float hoursPlayed = timePlayed / 60 / 60;
-		gameOverStatNumbersText.text = score.ToString("0") + "\n" + hoursPlayed.ToString("0") + ":" + minutesPlayed.ToString("00") + ":" + secondsPlayed.ToString("00") + "\n" + ballsTotal.ToString("0") + "\n" + ballsDodged.ToString("0");
+
+		string statNames = "SCORE\nTIME PLAYED\nTOTAL BALLs\nHITS\nMISSES";
+		string statValeues = score.ToString("0") + "\n" + hoursPlayed.ToString("0") + ":" + minutesPlayed.ToString("00") + ":" + secondsPlayed.ToString("00") + "\n";
+		statValeues += totalBalls.ToString("0") + "\n" + hits.ToString("0") + "\n" + misses.ToString("0");
+
+		if (machineHits > 0)
+		{
+			statNames += "\nMachine Hits";
+			statValeues += "\n" + machineHits.ToString("0");
+		}
 
 		if (hasLaunchedABomb)
 		{
-			gameOverStatNamesText.text += "\nBOMBS DODGED";
-			gameOverStatNumbersText.text += "\n" + bombsDodged.ToString("0");
+			statNames += "\nBOMBS DODGED";
+			statValeues += "\n" + dodges.ToString("0");
 		}
 
+		if (xp > 0)
+		{
+			statNames += "\nXP";
+			statValeues += "\n+" + xp.ToString("0");
+		}
+
+		gameOverStatNamesText.text = statNames.ToUpper();
+		gameOverStatNumbersText.text = statValeues.ToUpper();
 		yield return new WaitForSeconds(3);
 
 		gameOverStatNamesText.text = "";
@@ -246,6 +271,39 @@ public class GameplayManager : MonoBehaviour
 		menuManager.SetMenuEnabled(true);
 	}
 
+	private IEnumerator GetMatchResults()
+	{
+		print(EventController.GetLastestMatchId());
+		string result = null;
+		yield return WebRequestHelper.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/wen-game/results",
+			$"id={EventController.GetLastestMatchId()}", true, false, resp => result = resp);
+		try
+		{
+			JObject stats = JObject.Parse(result);
+			int hits = stats["hits"] != null ? (int)stats["hits"] : 0;
+			int misses = stats["misses"] != null ? (int)stats["misses"] : 0;
+			int dodges = stats["dodges"] != null ? (int)stats["dodges"] : 0;
+			int score = stats["score"] != null ? (int)stats["score"] : 0;
+			int machineHits = stats["machine_hits"] != null ? (int)stats["machine_hits"] : 0;
+			int xp = stats["xp"] != null ? (int)stats["xp"] : 0;
+			int timePlayed = stats["time_played"] != null ? (int)stats["time_played"] : 0;
+
+			this.hits = hits;
+			this.misses = misses;
+			this.dodges = dodges;
+			this.score = score;
+			this.machineHits = machineHits;
+			this.xp = xp;
+			this.timePlayed = timePlayed;
+
+
+		}
+		catch (System.Exception e)
+		{
+			print(e);
+		}
+	}
+
 	IEnumerator PitchNextProjectile()
 	{
 		if (pitching)
@@ -253,13 +311,13 @@ public class GameplayManager : MonoBehaviour
 			yield break;
 		}
 		pitching = true;
-		float timeout = Mathf.Lerp(startTimeoutRange.y, startTimeoutRange.x, ballsTotal / 50f);
+		float timeout = Mathf.Lerp(startTimeoutRange.y, startTimeoutRange.x, totalBalls / 50f);
 
 		yield return new WaitForSeconds(timeout);
 
 		StartCoroutine(PlayWenMessage());
 
-		yield return new WaitForSeconds(Mathf.Lerp(wenSoonTimeRange.y, wenSoonTimeRange.x, ballsTotal / 50f));
+		yield return new WaitForSeconds(Mathf.Lerp(wenSoonTimeRange.y, wenSoonTimeRange.x, totalBalls / 50f));
 
 		StartCoroutine(PlaySoonMessage());
 
@@ -293,7 +351,7 @@ public class GameplayManager : MonoBehaviour
 			yield return new WaitForEndOfFrame();
 			wenMessageText.transform.localScale = new Vector3(0.1f, scaleTween.Update(Time.deltaTime), 0.1f);
 		}
-		yield return new WaitForSeconds(Mathf.Lerp(textDisplayTimeRange.y, textDisplayTimeRange.x, ballsTotal / 50f));
+		yield return new WaitForSeconds(Mathf.Lerp(textDisplayTimeRange.y, textDisplayTimeRange.x, totalBalls / 50f));
 		wenMessageText.transform.localScale = Vector3.zero;
 	}
 
@@ -310,7 +368,7 @@ public class GameplayManager : MonoBehaviour
 			yield return new WaitForEndOfFrame();
 			soonMessageText.transform.localScale = new Vector3(0.1f, scaleTween.Update(Time.deltaTime), 0.1f);
 		}
-		yield return new WaitForSeconds(Mathf.Lerp(textDisplayTimeRange.y, textDisplayTimeRange.x, ballsTotal / 50f));
+		yield return new WaitForSeconds(Mathf.Lerp(textDisplayTimeRange.y, textDisplayTimeRange.x, totalBalls / 50f));
 		soonMessageText.transform.localScale = Vector3.zero;
 	}
 
@@ -380,7 +438,7 @@ public class GameplayManager : MonoBehaviour
 		currentProjectile.SetNewSpeed(Mathf.Min(maxBallSpeed, currentSpeedIncrease));
 		if (!currentProjectile.isABomb)
 		{
-			ballsTotal++;
+			totalBalls++;
 		}
 
 		audioManager.PlaySound(AudioManager.SoundID.projectileShoot);

@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEngine.Networking;
 using Newtonsoft.Json.Linq;
+using System.Text;
 
 public class MenuManager : Singleton<MenuManager>
 {
@@ -60,10 +61,9 @@ public class MenuManager : Singleton<MenuManager>
 
 	private MenuOption lastSelectedMenuOption;
 	private bool canSelectMenuOptions;
-	private float nftlOwned = 2000;
-	private float currentTokenPrice = 1000;
-	private uint tokensOwned;
 	private InputState input = new InputState();
+
+	uint ArcadeTokens { get { return NiftyUsers.me != null ? NiftyUsers.me.arcadeTokenBalance : 0; } }
 
 	void Start()
 	{
@@ -166,7 +166,7 @@ public class MenuManager : Singleton<MenuManager>
 			menuTexts[i].text = menus[currentMenu].menuOptions[i].menuNameString;
 		}
 
-		if (tokensOwned <= 0 && currentMenu == 0)
+		if (ArcadeTokens <= 0 && currentMenu == 0)
 		{
 			menuTexts[0].text = "PURCHASE TOKENS";
 		}
@@ -174,22 +174,38 @@ public class MenuManager : Singleton<MenuManager>
 		errorMessageText.text = "";
 	}
 
-	public void GainTokens()
+	public IEnumerator GainTokens()
 	{
-		tokensOwned += 4;
+		yield return SubmitTokenPurchase();
+
+		yield return RefreshArcadeBalance();
+
 		UpdateTokenAmount();
 		audioManager.PlaySound(AudioManager.SoundID.gainPoint);
+		TokenPurchaseAnim();
+
+		canSelectMenuOptions = true;
+		if (mainMenuManager != null)
+		{
+			mainMenuManager.GoBack();
+		}
+		else
+		{
+			UpdateLeaderboardDisplay();
+		}
+		ShowTokenBalance(true);
+		purchaseTokensPanel.SetActive(false);
+		ChangeMenu(0);
 	}
 
 	public void SpendToken()
 	{
-		tokensOwned -= 1;
+		//tokensOwned -= 1;
 		UpdateTokenAmount();
 	}
 
 	public void SetTokenBalance(uint balance)
 	{
-		tokensOwned = balance;
 		UpdateTokenAmount();
 		ShowTokenBalance(true);
 	}
@@ -202,14 +218,11 @@ public class MenuManager : Singleton<MenuManager>
 	public void UpdateTokenAmount()
 	{
 		tokenAmountText.color = tokenAmountDefaultColor;
-
-		if (tokensOwned <= 0)
+		if (ArcadeTokens <= 0)
 		{
 			tokenAmountText.color = tokenAmountEmptyColor;
 		}
-
-		tokenAmountText.text = tokensOwned.ToString("000");
-
+		tokenAmountText.text = ArcadeTokens.ToString("000");
 		ResetMenuOptions();
 	}
 
@@ -231,7 +244,7 @@ public class MenuManager : Singleton<MenuManager>
 
 			if (menuOption.subMenuID == "MainMenuPlay" || menuOption.subMenuID == "GameplayTryAgain")
 			{
-				if (tokensOwned > 0)
+				if (ArcadeTokens > 0)
 				{
 					audioManager.PlaySound(AudioManager.SoundID.insertCoin);
 					SpendToken();
@@ -271,7 +284,7 @@ public class MenuManager : Singleton<MenuManager>
 		switch (menuOption.subMenuID)
 		{
 		case "MainMenuPlay":
-			if (tokensOwned <= 0)
+			if (ArcadeTokens <= 0)
 			{
 				GoToTokenPurchasingScreen();
 				ChangeMenu(1);
@@ -293,7 +306,7 @@ public class MenuManager : Singleton<MenuManager>
 			ChangeMenu(3);
 			break;
 		case "MainMenuQuit":
-			Application.Quit();
+			Launcher.Logout();
 			break;
 
 		case "TokenMenuPurchase":
@@ -323,7 +336,7 @@ public class MenuManager : Singleton<MenuManager>
 			break;
 
 		case "GameplayTryAgain":
-			if (tokensOwned <= 0)
+			if (ArcadeTokens <= 0)
 			{
 				GoToTokenPurchasingScreen();
 				ChangeMenu(1);
@@ -333,8 +346,8 @@ public class MenuManager : Singleton<MenuManager>
 			{
 				ResetMenuOptions();
 				tokensPanel.SetActive(false);
-				gameplayManager.ResetEverythingForANewGame();
 				menuPanel.SetActive(false);
+				yield return StartGame();
 			}
 			break;
 		case "GameplayLeaderboard":
@@ -359,7 +372,6 @@ public class MenuManager : Singleton<MenuManager>
 
 	private IEnumerator StartGame()
 	{
-		audioManager.PlaySound(AudioManager.SoundID.insertCoin);
 		UnityWebRequest www = null;
 		Dictionary<string, string> headers = new Dictionary<string, string>
 		{
@@ -386,7 +398,7 @@ public class MenuManager : Singleton<MenuManager>
 				Debug.Log("Failed to update Arcade Token balance");
 			}
 		}
-
+		yield return RefreshArcadeBalance();
 		if (matchId != null && updateTicket != 0)
 		{
 			EventController.AddMatchStart(matchId, updateTicket);
@@ -397,6 +409,61 @@ public class MenuManager : Singleton<MenuManager>
 		else
 		{
 			SetMenuEnabled(true);
+		}
+	}
+
+	public IEnumerator RefreshArcadeBalance()
+	{
+		UnityWebRequest www = null;
+		Dictionary<string, string> headers = new Dictionary<string, string>
+		{
+			{ "authorizationToken", NiftyUsers.GetMyAuthorization() },
+		};
+		yield return Utils.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/accounts/account/inventory?id=arcade-token", (w) => www = w, headers);
+
+		uint arcadeBalance = 0;
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			print("Failed to fetch inventory");
+			yield break;
+		}
+		else
+		{
+			try
+			{
+				JObject inventory = JObject.Parse(www.downloadHandler.text);
+				arcadeBalance = inventory["balance"] != null ? (uint)inventory["balance"] : 0;
+				NiftyUsers.me.SetArcadeBalance(arcadeBalance);
+			}
+			catch
+			{
+				Debug.Log("Failed to update Arcade Token balance");
+			}
+		}
+	}
+
+	public IEnumerator SubmitTokenPurchase()
+	{
+		UnityWebRequest www = null;
+		Dictionary<string, string> headers = new Dictionary<string, string>
+		{
+			{ "authorizationToken", NiftyUsers.GetMyAuthorization() },
+		};
+		byte[] data = Encoding.ASCII.GetBytes(@"{
+			'id': 'arcade-token-four-pack',
+			'currency': 'nftl',
+			'price': 1000
+		}".Replace('\'', '"'));
+		yield return Utils.PostRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/marketplace/product/purchase", data, (w) => www = w, headers);
+
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			print("Failed to fetch inventory");
+			yield break;
+		}
+		else
+		{
+			print(www.downloadHandler.text);
 		}
 	}
 
@@ -544,19 +611,8 @@ public class MenuManager : Singleton<MenuManager>
 
 	void PurchaseToken()
 	{
-		if (nftlOwned >= currentTokenPrice)
-		{
-			nftlOwned -= currentTokenPrice;
-			GainTokens();
-			GoToTokenPurchasingScreen();
-			TokenPurchaseAnim();
-		}
-		else
-		{
-			ErrorMessage("Not Enough NFTL!");
-		}
-
-		canSelectMenuOptions = true;
+		StartCoroutine(GainTokens());
+		GoToTokenPurchasingScreen();
 	}
 
 	void ErrorMessage(string message)

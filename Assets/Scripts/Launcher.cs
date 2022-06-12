@@ -705,7 +705,6 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 		}
 	}
 
-
 	public IEnumerator StartNewMatch()
 	{
 		UnityWebRequest www = null;
@@ -744,7 +743,6 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 		yield return WebRequestHelper.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/profiles/profile/avatars",
 			"", true, false, resp => result = resp);
 		degens = new HashSet<int>();
-		yield break;
 		try
 		{
 			JObject avatars = JObject.Parse(result);

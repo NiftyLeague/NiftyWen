@@ -15,6 +15,7 @@ public class EventController : MonoBehaviour
 	public float updateInterval;
 
 	private static Match match;
+	private static string latestMatchId;
 
 	private void Awake()
 	{
@@ -83,6 +84,7 @@ public class EventController : MonoBehaviour
 			match = new Match(matchId, updateTicket);
 			AddEvent(new Event(EventTypes.MatchStart, null));
 			print($"{match.shortId} - {match.id}");
+			latestMatchId = matchId;
 		}
 		catch (Exception e)
 		{
@@ -143,6 +145,7 @@ public class EventController : MonoBehaviour
 	{
 		if (match.events.Any(e => e.type == EventTypes.MatchEnd))
 		{
+			latestMatchId = match.id;
 			match.ClearEvents();
 			match = null;
 		}
@@ -176,6 +179,11 @@ public class EventController : MonoBehaviour
 			return match.shortId;
 		}
 		return null;
+	}
+
+	public static string GetLastestMatchId()
+	{
+		return latestMatchId;
 	}
 
 	[Serializable]

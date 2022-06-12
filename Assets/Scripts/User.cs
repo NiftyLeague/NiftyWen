@@ -17,7 +17,7 @@ public static class NiftyUsers
 
 	public static string GetMyAuthorization()
 	{
-		string token = me.authorization;
+		string token = me != null ? me.authorization : "";
 #if USE_TEST_TOKEN
 		string[] toks = {
 			"gAAAAABhtRWrCxVg0pI0el5V-_wDPVHzZ2G-z2ecuKH7HL9Delxi0E1DTs-2ZYdMnvJJCmSRKZ9h1Ww1KwcNFRHELJccZU19rBS-BvTXI9XTg5E7FD6qKwWWAb_9YyGtYmWJKR0fZf99d7UciWtgNaCKgUJJoV8-Ctn8n6QaYnBATb5uusGCGMuGBuXEEbMbsFb5Q4EEykhjXkEmmGkoPUQ8aqO6WlSzoFpzH7OAynJbakZMyu1gbqbFAhzKRP06vssAPUQeMmD2ap2jWyj6fpdaLafgGEwivQ==",

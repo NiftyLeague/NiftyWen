@@ -967,22 +967,40 @@ MonoBehaviour:
     inited: 1
     fakeValue: 0
     fakeValueActive: 0
-  ballsTotal:
-    currentCryptoKey: 1179597981
-    hiddenValue: 1179597981
-    inited: 1
+  totalBalls:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    inited: 0
     fakeValue: 0
     fakeValueActive: 0
-  ballsDodged:
-    currentCryptoKey: 2099529974
-    hiddenValue: 2099529974
-    inited: 1
+  hits:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    inited: 0
     fakeValue: 0
     fakeValueActive: 0
-  bombsDodged:
-    currentCryptoKey: 1788418911
-    hiddenValue: 1788418911
-    inited: 1
+  misses:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    inited: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  dodges:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    inited: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  machineHits:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    inited: 0
+    fakeValue: 0
+    fakeValueActive: 0
+  xp:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    inited: 0
     fakeValue: 0
     fakeValueActive: 0
   currentSpeedIncrease:
@@ -3753,7 +3771,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 5.24, y: -0.325}
+  m_Offset: {x: 5.24, y: -0.25}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -7307,7 +7325,7 @@ MonoBehaviour:
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: -10
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -7441,7 +7459,7 @@ MonoBehaviour:
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: -10
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -7533,7 +7551,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1986840136}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 109273823}
@@ -7738,11 +7756,11 @@ MonoBehaviour:
       subMenuID: GameplayTryAgain
     - menuNameString: NEXT LEADERBOARD
       subMenuID: GameplayLeaderboard
-    - menuNameString: QUIT
+    - menuNameString: BACK
       subMenuID: GameplayQuit
   - menuID: Token Menu
     menuOptions:
-    - menuNameString: PURCHASE TOKENS
+    - menuNameString: PURCHASE
       subMenuID: GameplayTokenPurchase
     - menuNameString: BACK
       subMenuID: GameplayTokenBack
