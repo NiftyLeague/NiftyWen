@@ -265,7 +265,7 @@ public class GameplayManager : MonoBehaviour
 		gameOverStatNamesText.text = "";
 		gameOverStatNumbersText.text = "";
 
-		menuManager.leaderboardToShow = 0;
+		menuManager.leaderboardType = 0;
 		menuManager.UpdateLeaderboardDisplay();
 
 		menuManager.SetMenuEnabled(true);

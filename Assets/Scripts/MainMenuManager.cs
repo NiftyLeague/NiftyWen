@@ -30,7 +30,7 @@ public class MainMenuManager : MonoBehaviour
 	{
 		wenTitle.SetActive(false);
 		leaderboardsPanel.SetActive(true);
-		menuManager.leaderboardToShow = 0;
+		menuManager.leaderboardType = 0;
 		menuManager.UpdateLeaderboardDisplay();
 	}
 

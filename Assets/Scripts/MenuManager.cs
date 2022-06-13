@@ -1,14 +1,14 @@
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using System;
-using TMPro;
-using UnityEngine.SceneManagement;
-using CodeStage.AntiCheat.ObscuredTypes;
-using UnityEngine.Networking;
-using Newtonsoft.Json.Linq;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class MenuManager : Singleton<MenuManager>
 {
@@ -48,16 +48,9 @@ public class MenuManager : Singleton<MenuManager>
 	public TextMeshProUGUI errorMessageText;
 	private Coroutine currentErrorMessageCoroutine;
 
-	[HideInInspector] public ObscuredInt leaderboardToShow;
+	[HideInInspector] public LeaderboardType leaderboardType;
 
-	List<ObscuredString> leaderboardAllTimeNames;
-	List<ObscuredInt> leaderboardAllTimeScores;
-
-	List<ObscuredString> leaderboardMonthlyNames;
-	List<ObscuredInt> leaderboardMonthlyScores;
-
-	List<ObscuredString> leaderboardWeeklyNames;
-	List<ObscuredInt> leaderboardWeeklyScores;
+	private static OrderedDictionary leaderboardRows;
 
 	private MenuOption lastSelectedMenuOption;
 	private bool canSelectMenuOptions;
@@ -469,91 +462,74 @@ public class MenuManager : Singleton<MenuManager>
 
 	public void UpdateLeaderboards()
 	{
-		leaderboardAllTimeNames = new List<ObscuredString>();
-		leaderboardAllTimeScores = new List<ObscuredInt>();
+		StartCoroutine(FetchLeaderboardData(LeaderboardType.Weekly));
+	}
 
-		//TEST LIST DELETE LATER
-		leaderboardAllTimeNames.Add("JOE");
-		leaderboardAllTimeNames.Add("MAC");
-		leaderboardAllTimeNames.Add("ROX");
-		leaderboardAllTimeNames.Add("DAN");
-		leaderboardAllTimeNames.Add("BOB");
-		leaderboardAllTimeNames.Add("JIL");
-		leaderboardAllTimeNames.Add("NED");
-		leaderboardAllTimeNames.Add("REN");
-		leaderboardAllTimeNames.Add("LIL");
-		leaderboardAllTimeNames.Add("BEN");
+	IEnumerator FetchLeaderboardData(LeaderboardType type)
+	{
+		leaderboardRows = new OrderedDictionary(10);
+		UnityWebRequest www = null;
+		yield return Utils.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/scores?count=10&game=wen_game&score_type=score", (w) => www = w);
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			print("Failed to fetch leaderboard data");
+			yield break;
+		}
+		else
+		{
+			try
+			{
+				JObject response = JObject.Parse(www.downloadHandler.text);
+				foreach (JObject row in response["data"])
+				{
+					var lbRow = new LeaderboardRow();
+					lbRow.userId = (string)row["user_id"];
+					lbRow.score = (int)(float)row["score"];
+					leaderboardRows.Add(lbRow.userId, lbRow);
+				}
+			}
+			catch
+			{
+				Debug.Log("Failed to update Arcade Token balance");
+			}
+		}
 
-		leaderboardAllTimeScores.Add(321);
-		leaderboardAllTimeScores.Add(310);
-		leaderboardAllTimeScores.Add(254);
-		leaderboardAllTimeScores.Add(210);
-		leaderboardAllTimeScores.Add(130);
-		leaderboardAllTimeScores.Add(93);
-		leaderboardAllTimeScores.Add(83);
-		leaderboardAllTimeScores.Add(66);
-		leaderboardAllTimeScores.Add(8);
-		leaderboardAllTimeScores.Add(2);
-
-		leaderboardMonthlyNames = new List<ObscuredString>();
-		leaderboardMonthlyScores = new List<ObscuredInt>();
-
-		//TEST LIST DELETE LATER
-		leaderboardMonthlyNames.Add("BOI");
-		leaderboardMonthlyNames.Add("TOM");
-		leaderboardMonthlyNames.Add("NED");
-		leaderboardMonthlyNames.Add("DAN");
-		leaderboardMonthlyNames.Add("LAE");
-		leaderboardMonthlyNames.Add("BAE");
-		leaderboardMonthlyNames.Add("POP");
-		leaderboardMonthlyNames.Add("QWO");
-		leaderboardMonthlyNames.Add("JIO");
-		leaderboardMonthlyNames.Add("ASD");
-
-		leaderboardMonthlyScores.Add(143);
-		leaderboardMonthlyScores.Add(142);
-		leaderboardMonthlyScores.Add(140);
-		leaderboardMonthlyScores.Add(138);
-		leaderboardMonthlyScores.Add(134);
-		leaderboardMonthlyScores.Add(131);
-		leaderboardMonthlyScores.Add(130);
-		leaderboardMonthlyScores.Add(123);
-		leaderboardMonthlyScores.Add(112);
-		leaderboardMonthlyScores.Add(101);
-
-		leaderboardWeeklyNames = new List<ObscuredString>();
-		leaderboardWeeklyScores = new List<ObscuredInt>();
-
-		//TEST LIST DELETE LATER
-		leaderboardWeeklyNames.Add("LOI");
-		leaderboardWeeklyNames.Add("ANA");
-		leaderboardWeeklyNames.Add("REI");
-		leaderboardWeeklyNames.Add("JON");
-		leaderboardWeeklyNames.Add("LUI");
-		leaderboardWeeklyNames.Add("VIV");
-		leaderboardWeeklyNames.Add("REO");
-		leaderboardWeeklyNames.Add("FIO");
-		leaderboardWeeklyNames.Add("DAN");
-		leaderboardWeeklyNames.Add("POT");
-
-		leaderboardWeeklyScores.Add(43);
-		leaderboardWeeklyScores.Add(42);
-		leaderboardWeeklyScores.Add(40);
-		leaderboardWeeklyScores.Add(38);
-		leaderboardWeeklyScores.Add(34);
-		leaderboardWeeklyScores.Add(31);
-		leaderboardWeeklyScores.Add(30);
-		leaderboardWeeklyScores.Add(23);
-		leaderboardWeeklyScores.Add(12);
-		leaderboardWeeklyScores.Add(5);
+		string ids = string.Join(",", leaderboardRows.Keys.Cast<string>());
+		www = null;
+		yield return Utils.GetRequest($"https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/profiles/public/profiles?ids={ids}", (w) => www = w);
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			print("Failed to fetch profile names");
+			yield break;
+		}
+		else
+		{
+			try
+			{
+				JObject profiles = JObject.Parse(www.downloadHandler.text);
+				foreach (var profile in profiles)
+				{
+					LeaderboardRow lbRow = leaderboardRows[profile.Key] as LeaderboardRow;
+					lbRow.username = (string)profile.Value["name_cased"];
+					if (profile.Value["avatar"] != null && profile.Value["avatar"]["id"] != null)
+					{
+						lbRow.avatar = (string)profile.Value["avatar"]["id"];
+					}
+				}
+			}
+			catch
+			{
+				Debug.Log("Failed to update Arcade Token balance");
+			}
+		}
 	}
 
 	public void ChangeCurrentLeaderboard()
 	{
-		leaderboardToShow++;
-		if (leaderboardToShow >= 3)
+		leaderboardType++;
+		if (leaderboardType > LeaderboardType.AllTime)
 		{
-			leaderboardToShow = 0;
+			leaderboardType = LeaderboardType.Weekly;
 		}
 		canSelectMenuOptions = true;
 		UpdateLeaderboardDisplay();
@@ -569,22 +545,21 @@ public class MenuManager : Singleton<MenuManager>
 
 	public void UpdateLeaderboardDisplay()
 	{
-		List<ObscuredString> leaderboardNames = new List<ObscuredString>();
-		List<ObscuredInt> leaderboardScores = new List<ObscuredInt>();
+		StartCoroutine(_UpdateLeaderboardDisplay());
 
-		switch (leaderboardToShow)
+		/*switch (leaderboardType)
 		{
-		case 0:
+		case LeaderboardType.Weekly:
 			leaderboardTitleText.text = "WEEKLY";
 			leaderboardNames = leaderboardWeeklyNames;
 			leaderboardScores = leaderboardWeeklyScores;
 			break;
-		case 1:
+		case LeaderboardType.Monthly:
 			leaderboardTitleText.text = "MONTHLY";
 			leaderboardNames = leaderboardMonthlyNames;
 			leaderboardScores = leaderboardMonthlyScores;
 			break;
-		case 2:
+		case LeaderboardType.AllTime:
 			leaderboardTitleText.text = "ALL TIME";
 			leaderboardNames = leaderboardAllTimeNames;
 			leaderboardScores = leaderboardAllTimeScores;
@@ -599,6 +574,27 @@ public class MenuManager : Singleton<MenuManager>
 		{
 			leaderboardNamesText.text += leaderboardNames[i] + "\n";
 			leaderboardScoresText.text += leaderboardScores[i] + "\n";
+		}*/
+	}
+
+	private IEnumerator _UpdateLeaderboardDisplay()
+	{
+		leaderboardNamesText.text = "";
+		leaderboardScoresText.text = "";
+		// display loading
+		yield return FetchLeaderboardData(leaderboardType);
+		int count = 0;
+		foreach (var row in leaderboardRows.Values.Cast<LeaderboardRow>())
+		{
+			leaderboardNamesText.text += $"{row.username}\n";
+			leaderboardScoresText.text += row.score.ToString("000") + "\n";
+			count++;
+		}
+
+		for (int i = count; i < 10; i++)
+		{
+			leaderboardNamesText.text += "---\n";
+			leaderboardScoresText.text += "---\n";
 		}
 	}
 
@@ -690,4 +686,19 @@ public class MenuOption
 {
 	public string menuNameString;
 	public string subMenuID;
+}
+
+public enum LeaderboardType
+{
+	Weekly = 0,
+	Monthly = 1,
+	AllTime = 2
+}
+
+public class LeaderboardRow
+{
+	public string userId;
+	public string username;
+	public int score;
+	public string avatar;
 }
