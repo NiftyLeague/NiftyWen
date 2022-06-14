@@ -12,6 +12,13 @@ public class PlayerController : MonoBehaviour
 	public RectTransform wenTextTransform;
 	public TextMeshProUGUI wenText;
 	[Space]
+	public LineRenderer wenMessageLineRenderer;
+
+	float currentWenTextPosition;
+	float targetWenTextPosition;
+	float minWenTextPosition = -8.4f;
+	float maxWenTextPosition = 4.2f;
+
 	private InputState input = new InputState();
 
 	private void Start()
@@ -37,20 +44,20 @@ public class PlayerController : MonoBehaviour
 			audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
 			PlayerSpriteManager.I.ChangeCharacter();
 		}
-
-		if (playerTransform.position.x > 0)
-		{
-			wenTextTransform.anchoredPosition = new Vector2(-19.5f, 10);
-			wenText.alignment = TextAlignmentOptions.TopRight;
-		}
-		else
-		{
-			wenTextTransform.anchoredPosition = new Vector2(19.5f, 10);
-			wenText.alignment = TextAlignmentOptions.TopLeft;
-		}
 	}
 
-	private void OnTriggerEnter2D(Collider2D collision)
+    private void Update()
+    {
+		targetWenTextPosition = playerTransform.position.x;
+		targetWenTextPosition = Mathf.Clamp(targetWenTextPosition, minWenTextPosition, maxWenTextPosition);
+		currentWenTextPosition = Mathf.Lerp(currentWenTextPosition, targetWenTextPosition, 0.01f);
+		wenTextTransform.anchoredPosition = new Vector2(currentWenTextPosition, 10f);
+
+		wenMessageLineRenderer.SetPosition(0, new Vector3(wenTextTransform.anchoredPosition.x, -3, 0));
+		wenMessageLineRenderer.SetPosition(1, new Vector3(transform.position.x, transform.position.y + 1, 0));
+	}
+
+    private void OnTriggerEnter2D(Collider2D collision)
 	{
 		if (collision.CompareTag("Projectile"))
 		{
