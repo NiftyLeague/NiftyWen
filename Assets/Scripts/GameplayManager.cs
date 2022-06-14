@@ -43,6 +43,7 @@ public class GameplayManager : MonoBehaviour
 	public GameObject ballPrefab;
 	public GameObject bombPrefab;
 	public GameObject wenLineRendererObject;
+	public GameObject soonLineRendererObject;
 	public Transform ballStartLocation;
 	public Transform worldLeftLimit;
 	public Transform worldRightLimit;
@@ -363,7 +364,7 @@ public class GameplayManager : MonoBehaviour
 		StopCoroutine(nameof(PlaySoonMessage));
 		audioManager.PlaySound(AudioManager.SoundID.messagePopup);
 		soonMessageText.transform.localScale = Vector3.zero;
-
+		soonLineRendererObject.SetActive(true);
 		Tween<float> scaleTween = new Tween<float>(0f, 0.1f, textTweenDuration, textTweenType);
 		while (!scaleTween.IsEnded())
 		{
@@ -372,6 +373,7 @@ public class GameplayManager : MonoBehaviour
 		}
 		yield return new WaitForSeconds(Mathf.Lerp(textDisplayTimeRange.y, textDisplayTimeRange.x, totalBalls / 50f));
 		soonMessageText.transform.localScale = Vector3.zero;
+		soonLineRendererObject.SetActive(false);
 	}
 
 
