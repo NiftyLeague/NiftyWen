@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
 	public LineRenderer wenMessageLineRenderer;
 	[Space]
 	public float wenTextTransformYOffset;
+	public Vector2 wenTextTransformCharacterOffset;
 	public float wenTextLineRenderPointOffset;
 
 	float currentWenTextPosition;
@@ -49,18 +50,18 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-    private void Update()
-    {
+	private void Update()
+	{
 		targetWenTextPosition = playerTransform.position.x;
 		targetWenTextPosition = Mathf.Clamp(targetWenTextPosition, minWenTextPosition, maxWenTextPosition);
 		currentWenTextPosition = Mathf.Lerp(currentWenTextPosition, targetWenTextPosition, 0.03f);
 		wenTextTransform.anchoredPosition = new Vector2(currentWenTextPosition, transform.position.y + wenTextTransformYOffset);
 
-		wenMessageLineRenderer.SetPosition(0, new Vector3(wenTextTransform.anchoredPosition.x, wenTextTransform.anchoredPosition.y + wenTextLineRenderPointOffset, 0));
-		wenMessageLineRenderer.SetPosition(1, new Vector3(transform.position.x, transform.position.y + 1, 0));
+		wenMessageLineRenderer.SetPosition(0, new Vector3(wenTextTransform.anchoredPosition.x, wenTextTransform.anchoredPosition.y + wenTextLineRenderPointOffset, 0f));
+		wenMessageLineRenderer.SetPosition(1, new Vector3(transform.position.x + wenTextTransformCharacterOffset.x, transform.position.y + wenTextTransformCharacterOffset.y, 0f));
 	}
 
-    private void OnTriggerEnter2D(Collider2D collision)
+	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		if (collision.CompareTag("Projectile"))
 		{

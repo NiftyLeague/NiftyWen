@@ -167,7 +167,7 @@ public class MenuManager : Singleton<MenuManager>
 		errorMessageText.text = "";
 	}
 
-	public IEnumerator GainTokens()
+	public IEnumerator ConfirmPurchaseTokens()
 	{
 		yield return SubmitTokenPurchase();
 
@@ -189,6 +189,7 @@ public class MenuManager : Singleton<MenuManager>
 		ShowTokenBalance(true);
 		purchaseTokensPanel.SetActive(false);
 		ChangeMenu(0);
+		Analytics.SendPlayerEvent("PurchaseTokenConfirm");
 	}
 
 	public void SpendToken()
@@ -607,8 +608,9 @@ public class MenuManager : Singleton<MenuManager>
 
 	void PurchaseToken()
 	{
-		StartCoroutine(GainTokens());
+		StartCoroutine(ConfirmPurchaseTokens());
 		GoToTokenPurchasingScreen();
+		Analytics.SendPlayerEvent("PurchaseTokenStart");
 	}
 
 	void ErrorMessage(string message)
