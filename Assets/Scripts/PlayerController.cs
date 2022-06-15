@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
 	public float wenTextTransformYOffset;
 	public Vector2 wenTextTransformCharacterOffset;
 	public float wenTextLineRenderPointOffset;
+	public float wenTextLerpSpeed;
 
 	float currentWenTextPosition;
 	float targetWenTextPosition;
@@ -54,11 +55,14 @@ public class PlayerController : MonoBehaviour
 	{
 		targetWenTextPosition = playerTransform.position.x;
 		targetWenTextPosition = Mathf.Clamp(targetWenTextPosition, minWenTextPosition, maxWenTextPosition);
-		currentWenTextPosition = Mathf.Lerp(currentWenTextPosition, targetWenTextPosition, 0.03f);
+		currentWenTextPosition = Mathf.Lerp(currentWenTextPosition, targetWenTextPosition, wenTextLerpSpeed);
 		wenTextTransform.anchoredPosition = new Vector2(currentWenTextPosition, transform.position.y + wenTextTransformYOffset);
 
-		wenMessageLineRenderer.SetPosition(0, new Vector3(wenTextTransform.anchoredPosition.x, wenTextTransform.anchoredPosition.y + wenTextLineRenderPointOffset, 0f));
-		wenMessageLineRenderer.SetPosition(1, new Vector3(transform.position.x + wenTextTransformCharacterOffset.x, transform.position.y + wenTextTransformCharacterOffset.y, 0f));
+		Vector3 linePos0 = new Vector3(wenTextTransform.anchoredPosition.x, wenTextTransform.anchoredPosition.y + wenTextLineRenderPointOffset, 0f);
+		Vector3 linePos1 = new Vector3(transform.position.x + wenTextTransformCharacterOffset.x, transform.position.y + wenTextTransformCharacterOffset.y, 0f);
+		wenMessageLineRenderer.SetPosition(0, linePos0);
+		wenMessageLineRenderer.SetPosition(1, linePos1);
+		wenMessageLineRenderer.enabled = (linePos1 - linePos0).magnitude < 3f;
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision)

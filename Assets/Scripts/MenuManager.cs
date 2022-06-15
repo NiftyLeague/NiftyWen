@@ -170,6 +170,7 @@ public class MenuManager : Singleton<MenuManager>
 
 	public IEnumerator ConfirmPurchaseTokens()
 	{
+		menuTexts[0].text = "PURCHASING";
 		yield return SubmitTokenPurchase();
 
 		yield return RefreshArcadeBalance();
@@ -251,27 +252,21 @@ public class MenuManager : Singleton<MenuManager>
 			}
 
 			whiteFlash.gameObject.SetActive(true);
-
 			yield return new WaitForSeconds(0.05f);
 
 			whiteFlash.gameObject.SetActive(false);
-
 			yield return new WaitForSeconds(0.1f);
 
 			menuTexts[currentMenuOption].color = optionColorPressed;
-
 			yield return new WaitForSeconds(0.05f);
 
 			menuTexts[currentMenuOption].color = optionColorDefault;
-
 			yield return new WaitForSeconds(0.05f);
 
 			menuTexts[currentMenuOption].color = optionColorPressed;
-
 			yield return new WaitForSeconds(0.05f);
 
 			menuTexts[currentMenuOption].color = optionColorDefault;
-
 			yield return new WaitForSeconds(1f);
 
 		}
@@ -394,6 +389,7 @@ public class MenuManager : Singleton<MenuManager>
 			}
 		}
 		yield return RefreshArcadeBalance();
+		UpdateTokenAmount();
 		if (matchId != null && updateTicket != 0)
 		{
 			EventController.AddMatchStart(matchId, updateTicket);
