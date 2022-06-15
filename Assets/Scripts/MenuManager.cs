@@ -44,6 +44,7 @@ public class MenuManager : Singleton<MenuManager>
 	public TextMeshProUGUI leaderboardPositionsText;
 	public TextMeshProUGUI leaderboardNamesText;
 	public TextMeshProUGUI leaderboardScoresText;
+	public TextMeshProUGUI leaderboardLoadingText;
 	[Space]
 	public TextMeshProUGUI errorMessageText;
 	private Coroutine currentErrorMessageCoroutine;
@@ -470,7 +471,18 @@ public class MenuManager : Singleton<MenuManager>
 	{
 		leaderboardRows = new OrderedDictionary(10);
 		UnityWebRequest www = null;
-		yield return Utils.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/scores?count=10&game=wen_game&score_type=score", (w) => www = w);
+		string lbType = "weekly";
+		switch (type)
+		{
+
+		case LeaderboardType.Monthly:
+			lbType = "monthly";
+			break;
+		case LeaderboardType.AllTime:
+			lbType = "all_time";
+			break;
+		}
+		yield return Utils.GetRequest($"https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/scores?count=10&game=wen_game&score_type=score&time_window={lbType}", (w) => www = w);
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			print("Failed to fetch leaderboard data");
@@ -542,6 +554,7 @@ public class MenuManager : Singleton<MenuManager>
 		leaderboardNamesText.text = "";
 		leaderboardPositionsText.gameObject.SetActive(false);
 		leaderboardScoresText.text = "";
+		leaderboardLoadingText.enabled = false;
 	}
 
 	public void UpdateLeaderboardDisplay()
@@ -582,6 +595,22 @@ public class MenuManager : Singleton<MenuManager>
 	{
 		leaderboardNamesText.text = "";
 		leaderboardScoresText.text = "";
+		leaderboardLoadingText.enabled = true;
+		leaderboardPositionsText.gameObject.SetActive(true);
+
+		switch (leaderboardType)
+		{
+		case LeaderboardType.Weekly:
+			leaderboardTitleText.text = "WEEKLY";
+			break;
+		case LeaderboardType.Monthly:
+			leaderboardTitleText.text = "MONTHLY";
+			break;
+		case LeaderboardType.AllTime:
+			leaderboardTitleText.text = "ALL TIME";
+			break;
+		}
+
 		// display loading
 		yield return FetchLeaderboardData(leaderboardType);
 		int count = 0;
@@ -597,6 +626,7 @@ public class MenuManager : Singleton<MenuManager>
 			leaderboardNamesText.text += "---\n";
 			leaderboardScoresText.text += "---\n";
 		}
+		leaderboardLoadingText.enabled = false;
 	}
 
 	void GoToTokenPurchasingScreen()
