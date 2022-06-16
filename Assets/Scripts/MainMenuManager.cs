@@ -10,7 +10,8 @@ public class MainMenuManager : MonoBehaviour
 	public GameObject wenTitle;
 	public GameObject howToPlayPanel;
 	public GameObject leaderboardsPanel;
-	public GameObject aboutPanel;
+	public GameObject controlsPanel;
+	public GameObject signOutPanel;
 	public TextMeshProUGUI statusText;
 
 	private void Awake()
@@ -34,10 +35,16 @@ public class MainMenuManager : MonoBehaviour
 		menuManager.UpdateLeaderboardDisplay();
 	}
 
-	public void GoToAboutScreen()
+	public void GoToControlsScreen()
 	{
 		wenTitle.SetActive(false);
-		aboutPanel.SetActive(true);
+		controlsPanel.SetActive(true);
+	}
+
+	public void GoToSignOutScreen()
+	{
+		wenTitle.SetActive(false);
+		signOutPanel.SetActive(true);
 	}
 
 	public void GoBack()
@@ -45,7 +52,8 @@ public class MainMenuManager : MonoBehaviour
 		wenTitle.SetActive(true);
 		howToPlayPanel.SetActive(false);
 		leaderboardsPanel.SetActive(false);
-		aboutPanel.SetActive(false);
+		controlsPanel.SetActive(false);
+		signOutPanel.SetActive(false);
 	}
 
 	public static void Initialize()

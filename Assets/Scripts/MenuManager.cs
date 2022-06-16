@@ -78,12 +78,17 @@ public class MenuManager : Singleton<MenuManager>
 			audioManager.PlaySound(AudioManager.SoundID.batSwing);
 			if (mainMenuManager != null)
 			{
+				ChangeMenu("MainMenu");
 				mainMenuManager.GoBack();
+			}
+			else
+			{
+				ChangeMenu("GameplayMenu");
 			}
 			purchaseTokensPanel.SetActive(false);
 			UpdateLeaderboardDisplay();
 			SetMenuEnabled(true);
-			ChangeMenu(0);
+			
 			return;
 		}
 
@@ -115,10 +120,18 @@ public class MenuManager : Singleton<MenuManager>
 		ResetMenuOptions();
 	}
 
-	void ChangeMenu(int menuToChangeTo)
+	void ChangeMenu(string menuIDToChangeTo, int menuOption = 0)
 	{
-		currentMenu = menuToChangeTo;
-		currentMenuOption = 0;
+		for (int i = 0; i < menus.Count; i++)
+		{
+			if (menus[i].menuID == menuIDToChangeTo)
+			{
+				currentMenu = i;
+				break;
+			}
+		}
+
+		currentMenuOption = menuOption;
 		canSelectMenuOptions = true;
 		ResetMenuOptions();
 		SetSelectedMenuOption();
@@ -183,14 +196,15 @@ public class MenuManager : Singleton<MenuManager>
 		if (mainMenuManager != null)
 		{
 			mainMenuManager.GoBack();
+			ChangeMenu("MainMenu");
 		}
 		else
 		{
 			UpdateLeaderboardDisplay();
+			ChangeMenu("GameplayMenu");
 		}
 		ShowTokenBalance(true);
 		purchaseTokensPanel.SetActive(false);
-		ChangeMenu(0);
 		Analytics.SendPlayerEvent("PurchaseTokenConfirm");
 	}
 
@@ -277,7 +291,7 @@ public class MenuManager : Singleton<MenuManager>
 			if (ArcadeTokens <= 0)
 			{
 				GoToTokenPurchasingScreen();
-				ChangeMenu(1);
+				ChangeMenu("MainMenuTokensMenu");
 				ShowTokenBalance(true);
 			}
 			else
@@ -288,32 +302,33 @@ public class MenuManager : Singleton<MenuManager>
 		case "MainMenuHowToPlay":
 			mainMenuManager.GoToHowToPlayScreen();
 			ShowTokenBalance(false);
-			ChangeMenu(2);
+			ChangeMenu("MainMenuHowToPlayMenu");
 			break;
 		case "MainMenuLeaderboards":
 			mainMenuManager.GoToLeaderboardsScreen();
 			ShowTokenBalance(false);
-			ChangeMenu(3);
+			ChangeMenu("MainMenuLeaderboardsMenu");
+			break;
+		case "MainMenuControls":
+			mainMenuManager.GoToControlsScreen();
+			ShowTokenBalance(false);
+			ChangeMenu("MainMenuControlsMenu");
 			break;
 		case "MainMenuQuit":
-			Launcher.Logout();
+			mainMenuManager.GoToSignOutScreen();
+			ShowTokenBalance(false);
+			ChangeMenu("MainMenuSignOutMenu");
 			break;
 
-		case "TokenMenuPurchase":
+		case "MainMenuTokenMenuPurchase":
 			PurchaseToken();
 			ShowTokenBalance(true);
 			break;
-		case "TokenMenuBack":
+		case "MainMenuTokenMenuBack":
 			mainMenuManager.GoBack();
 			ShowTokenBalance(true);
 			purchaseTokensPanel.SetActive(false);
-			ChangeMenu(0);
-			break;
-
-		case "HowToPlayMenuBack":
-			mainMenuManager.GoBack();
-			ShowTokenBalance(true);
-			ChangeMenu(0);
+			ChangeMenu("MainMenu");
 			break;
 
 		case "MainMenuLeaderboardMenuChange":
@@ -322,14 +337,38 @@ public class MenuManager : Singleton<MenuManager>
 		case "MainMenuLeaderboardMenuBack":
 			mainMenuManager.GoBack();
 			ShowTokenBalance(true);
-			ChangeMenu(0);
+			ChangeMenu("MainMenu", 1);
 			break;
+
+		case "MainMenuHowToPlayMenuBack":
+			mainMenuManager.GoBack();
+			ShowTokenBalance(true);
+			ChangeMenu("MainMenu", 2);
+            break;
+
+        case "MainMenuControlsMenuBack":
+			mainMenuManager.GoBack();
+			ShowTokenBalance(true);
+			ChangeMenu("MainMenu", 3);
+			break;
+
+		case "MainMenuSignOutMenuYes":
+			Launcher.Logout();
+			break;
+		case "MainMenuSignOutMenuNo":
+			mainMenuManager.GoBack();
+			ShowTokenBalance(true);
+			ChangeMenu("MainMenu", 4);
+			break;
+
+
+
 
 		case "GameplayTryAgain":
 			if (ArcadeTokens <= 0)
 			{
 				GoToTokenPurchasingScreen();
-				ChangeMenu(1);
+				ChangeMenu("GameplayMenuTokensMenu");
 				ShowTokenBalance(true);
 			}
 			else
@@ -354,7 +393,7 @@ public class MenuManager : Singleton<MenuManager>
 		case "GameplayTokenBack":
 			purchaseTokensPanel.SetActive(false);
 			UpdateLeaderboardDisplay();
-			ChangeMenu(0);
+			ChangeMenu("GameplayMenu");
 			break;
 		}
 	}
