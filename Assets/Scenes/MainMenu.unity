@@ -7335,9 +7335,9 @@ MonoBehaviour:
   - menuID: MainMenuSignOutMenu
     menuOptions:
     - menuNameString: NO
-      subMenuID: MainMenuSignOutMenuYes
-    - menuNameString: YES
       subMenuID: MainMenuSignOutMenuNo
+    - menuNameString: YES
+      subMenuID: MainMenuSignOutMenuYes
   currentMenu: 0
   currentMenuOption: 0
   menuTexts:
