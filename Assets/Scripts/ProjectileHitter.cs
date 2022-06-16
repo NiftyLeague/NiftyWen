@@ -40,7 +40,7 @@ public class ProjectileHitter : MonoBehaviour
 		if (collision.CompareTag("Projectile"))
 		{
 			Projectile hitProjectile = collision.GetComponent<Projectile>();
-			if (hitProjectile.gotHit)
+			if (hitProjectile.gotHit || playerCharacter.hasLost)
 			{
 				return;
 			}

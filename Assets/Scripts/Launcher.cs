@@ -66,6 +66,7 @@ public class Launcher : MonoBehaviour
 		sessionId = Guid.NewGuid().ToString();
 		shortSessionId = XUtils.GetInt32HashCode(sessionId).ToString("X6");
 		//shortSessionId = shortSessionId.Substring(shortSessionId.Length - 6);
+		Application.targetFrameRate = 60;
 	}
 
 	private void Start()

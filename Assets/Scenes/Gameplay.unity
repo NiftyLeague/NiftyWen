@@ -863,7 +863,7 @@ MonoBehaviour:
   wenTextTransformYOffset: 18.2
   wenTextTransformCharacterOffset: {x: 0, y: 1.5}
   wenTextLineRenderPointOffset: -15.2
-  wenTextLerpSpeed: 0.06
+  wenTextLerpSpeed: 0.25
 --- !u!61 &192207256
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4796,6 +4796,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   attackState: 0
+  hasLost:
+    currentCryptoKey: 0
+    hiddenValue: 0
+    inited: 0
+    fakeValue: 0
+    fakeValueActive: 0
   audioManager: {fileID: 201607129}
   projectileHitter: {fileID: 1825532306}
   maxRunSpeed: 20

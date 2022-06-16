@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using CodeStage.AntiCheat.ObscuredTypes;
 
 public enum CharacterState
 {
@@ -40,7 +41,8 @@ public class Character : MonoBehaviour
     public AttackState attackState;
 
     public static bool isTeamMode;
-    public static bool hasLost;
+	[HideInInspector]
+    public ObscuredBool hasLost;
 
     public AudioManager audioManager;
     public ProjectileHitter projectileHitter;
