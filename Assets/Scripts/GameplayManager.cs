@@ -96,11 +96,13 @@ public class GameplayManager : MonoBehaviour
 				if (gameOverTimer1 > 0)
 				{
 					gameOverTimer1 = 0;
+					audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
 					return;
 				}
 				else if (gameOverTimer2 > 0)
 				{
 					gameOverTimer2 = 0;
+					audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
 					return;
 				}
 			}
