@@ -32,6 +32,7 @@ public class GameplayManager : MonoBehaviour
 	public TextMeshProUGUI scoreGainedText;
 	public TextMeshProUGUI gameOverStatNamesText;
 	public TextMeshProUGUI gameOverStatNumbersText;
+	public GameObject gameOverSkipPrompt;
 	[Space]
 	public SimpleAnim ballMachineAnim;
 	public Sprite[] ballMachineSpritesIdle;
@@ -65,6 +66,9 @@ public class GameplayManager : MonoBehaviour
 	ObscuredInt bombsFiredInARow;
 	ObscuredBool pitching = false;
 
+	float gameOverTimer1;
+	float gameOverTimer2;
+
 	private InputState input = new InputState();
 	private Projectile currentProjectile = null;
 
@@ -81,8 +85,40 @@ public class GameplayManager : MonoBehaviour
 		menuManager.menuPanel.SetActive(false);
 	}
 
-	private void FixedUpdate()
+    private void Update()
+    {
+		InputReader.GetInput(input);
+
+		if (input.PressedA)
+		{
+			if (hasGameEnded)
+			{
+				if (gameOverTimer1 > 0)
+				{
+					gameOverTimer1 = 0;
+					return;
+				}
+				else if (gameOverTimer2 > 0)
+				{
+					gameOverTimer2 = 0;
+					return;
+				}
+			}
+		}
+	}
+
+    private void FixedUpdate()
 	{
+		if (gameOverTimer1 > 0)
+		{
+			gameOverTimer1 -= Time.deltaTime;
+		}
+
+		if (gameOverTimer2 > 0)
+		{
+			gameOverTimer2 -= Time.deltaTime;
+		}
+
 		if (hasGameEnded)
 		{
 			return;
@@ -227,7 +263,12 @@ public class GameplayManager : MonoBehaviour
 
 		scoreText.text = "GAME OVER";
 
-		yield return new WaitForSeconds(3f);
+		gameOverSkipPrompt.SetActive(true);
+
+		gameOverTimer1 = 3;
+		gameOverTimer2 = 3;
+
+		yield return new WaitUntil(() => gameOverTimer1 <= 0);
 		yield return GetMatchResults();
 
 		playerCharacter.StandBackUp();
@@ -262,7 +303,9 @@ public class GameplayManager : MonoBehaviour
 
 		gameOverStatNamesText.text = statNames.ToUpper();
 		gameOverStatNumbersText.text = statValeues.ToUpper();
-		yield return new WaitForSeconds(3);
+		yield return new WaitUntil(() => gameOverTimer2 <= 0);
+
+		gameOverSkipPrompt.SetActive(false);
 
 		gameOverStatNamesText.text = "";
 		gameOverStatNumbersText.text = "";
