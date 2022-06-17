@@ -368,7 +368,7 @@ public class MenuManager : Singleton<MenuManager>
 			if (ArcadeTokens <= 0)
 			{
 				GoToTokenPurchasingScreen();
-				ChangeMenu("GameplayMenuTokensMenu");
+				ChangeMenu("GameplayTokenMenu");
 				ShowTokenBalance(true);
 			}
 			else
