@@ -31,6 +31,10 @@ public class SimpleAnim : MonoBehaviour
 		counter = 0f;
 		frame = -1;
 		ping = true;
+		if (frames.Length > 0)
+		{
+			SetFrame(frames[0]);
+		}
 	}
 
 	public void Disable()
@@ -89,10 +93,22 @@ public class SimpleAnim : MonoBehaviour
 				}
 				else
 				{
-					Destroy(gameObject);
+					if (!stayAfterPlayOnce)
+					{
+						Destroy(gameObject);
+					}
+					else
+					{
+						SetFrame(frames[frames.Length - 1]);
+					}
 				}
 			}
 		}
+	}
+
+	public float GetProgress()
+	{
+		return frames != null && frames.Length > 0 ? frame / frames.Length : 0f;
 	}
 
 	private void SetFrame(Sprite sprite)
@@ -106,5 +122,14 @@ public class SimpleAnim : MonoBehaviour
 			img.sprite = sprite;
 			img.enabled = sprite != null;
 		}
+	}
+
+	public int GetFrame()
+	{
+		if (frames.Length > 0)
+		{
+			return frame % frames.Length;
+		}
+		return 0;
 	}
 }
